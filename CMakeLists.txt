@@ -14,7 +14,7 @@ endif()
 
 # Imath version
 
-project(Imath VERSION 3.0.3 LANGUAGES C CXX)
+project(Imath VERSION 3.0.666 LANGUAGES C CXX)
 
 message (STATUS "IMATH_VERSION=${Imath_VERSION}")
 message (STATUS "IMATH_VERSION_PATCH=${Imath_VERSION_PATCH}")
