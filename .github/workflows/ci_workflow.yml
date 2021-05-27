@@ -289,7 +289,7 @@ jobs:
           ./bin/ImathTest
           # Confirm the python module loads
           export PYTHONPATH=../_install/lib/python3/dist-packages
-          echo "import imath\nprint(imath.__version__)" \| python
+          python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
         run: |
