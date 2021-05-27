@@ -53,6 +53,7 @@ jobs:
           - build: 11
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -63,6 +64,7 @@ jobs:
           - build: 12
             build-type: Debug
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -73,6 +75,7 @@ jobs:
           - build: 13
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: g++
             cc-compiler: gcc
@@ -83,6 +86,7 @@ jobs:
           - build: 14
             build-type: Release
             build-shared: 'OFF'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -96,6 +100,7 @@ jobs:
           - build: 1
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -106,6 +111,7 @@ jobs:
           - build: 2
             build-type: Debug
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -116,6 +122,7 @@ jobs:
           - build: 3
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: g++
             cc-compiler: gcc
@@ -126,6 +133,7 @@ jobs:
           - build: 4
             build-type: Release
             build-shared: 'OFF'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -139,12 +147,13 @@ jobs:
           - build: 5
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'ON'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2019
-            exclude-tests: 
+            exclude-tests: -E PyImath.*_Python3
           # -------------------------------------------------------------------
           # Clang, VFX CY2021
           # -------------------------------------------------------------------
@@ -152,6 +161,7 @@ jobs:
           - build: 15
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -162,6 +172,7 @@ jobs:
           - build: 16
             build-type: Debug
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -172,6 +183,7 @@ jobs:
           - build: 17
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: clang++
             cc-compiler: clang
@@ -182,6 +194,7 @@ jobs:
           - build: 18
             build-type: Release
             build-shared: 'OFF'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -195,6 +208,7 @@ jobs:
           - build: 6
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -205,6 +219,7 @@ jobs:
           - build: 7
             build-type: Debug
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -215,6 +230,7 @@ jobs:
           - build: 8
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: clang++
             cc-compiler: clang
@@ -225,6 +241,7 @@ jobs:
           - build: 9
             build-type: Release
             build-shared: 'OFF'
+            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
@@ -238,12 +255,13 @@ jobs:
           - build: 10
             build-type: Release
             build-shared: 'ON'
+            use-python2: 'ON'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2019
-            exclude-tests:
+            exclude-tests: -E PyImath.*_Python3
     env:
       CXX: ${{ matrix.cxx-compiler }}
       CC: ${{ matrix.cc-compiler }}
@@ -264,8 +282,8 @@ jobs:
                 -DCMAKE_CXX_FLAGS=${{ matrix.cxx-flags }} \
                 -DCMAKE_VERBOSE_MAKEFILE:BOOL='OFF' \
                 -DBUILD_SHARED_LIBS=${{ matrix.build-shared }} \
-                -DPYTHON='ON'\
-                -DPYTHON_EXECUTABLE=$(which python) 
+                -DPYTHON='ON' \
+                -DUSE_PYTHON2=${{ matrix.use-python2 }}
         working-directory: _build
       - name: Build
         run: |
@@ -289,7 +307,7 @@ jobs:
           #./bin/ImathTest
           # Confirm the python module loads
           find .. -print
-          export PYTHONPATH=../_install/lib/python3/dist-packages
+          export PYTHONPATH=../_install/lib/python/dist-packages
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
