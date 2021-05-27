@@ -254,9 +254,10 @@ jobs:
         run: |
           mkdir _install
           mkdir _build
+          mkdir _examples
       - name: Configure
         run: |
-          cmake ../. \
+          cmake .. \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ matrix.cxx-standard }} \
@@ -270,9 +271,26 @@ jobs:
         run: |
           cmake --build . \
                 --target install \
-                --config ${{ matrix.build-type }} \
-                -- -j4
+                --config ${{ matrix.build-type }}
         working-directory: _build
+      - name: Examples
+        run: |
+          # Make sure we can build the tests when configured as a
+          # standalone application linking against the just-installed
+          # Imath library.
+          cmake ../src/ImathTest \
+                -DCMAKE_PREFIX_PATH=../../_install \
+                -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+                -DCMAKE_CXX_STANDARD=${{ matrix.cxx-standard }} \
+                -DCMAKE_CXX_FLAGS=${{ matrix.cxx-flags }}
+          cmake --build . \
+                --config ${{ matrix.build-type }}
+          # Confirm the tests run
+          ./bin/ImathTest
+          # Confirm the python module loads
+          export PYTHONPATH=../_install/lib/python3/dist-packages
+          echo "import imath\nprint(imath.__version__)" | python
+        working-directory: _examples 
       - name: Test
         run: |
           ctest -T Test ${{ matrix.exclude-tests }} \

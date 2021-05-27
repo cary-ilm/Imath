@@ -134,6 +134,7 @@ FixedArray2D<int> rangeY(int sizeX, int sizeY)
 
 BOOST_PYTHON_MODULE(imath)
 {
+    scope().attr("__version__") = IMATH_VERSION_STRING;
     
     register_basicTypes();
 
