@@ -306,8 +306,8 @@ jobs:
           # Confirm the tests run
           #./bin/ImathTest
           # Confirm the python module loads
-          find .. -print
-          export PYTHONPATH=../_install/lib/python/dist-packages
+          find .. -name imath.so
+          export PYTHONPATH=../_install/lib/python3.7/site-packages
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
