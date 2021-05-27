@@ -44,8 +44,7 @@ jobs:
       image: aswf/ci-openexr:${{ matrix.vfx-cy }}
     strategy:
       matrix:
-#        build: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-        build: [1]
+        build: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
         include:
           # -------------------------------------------------------------------
           # GCC, VFX CY2021
@@ -287,9 +286,9 @@ jobs:
           cmake --build . \
                 --config ${{ matrix.build-type }}
           # Confirm the tests run
-          ./bin/ImathTest
+#          ./bin/ImathTest
           # Confirm the python module loads
-          find .. -name imath.so
+          find .. -print
           export PYTHONPATH=../_install/lib/python3/dist-packages
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
