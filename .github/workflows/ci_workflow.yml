@@ -307,7 +307,7 @@ jobs:
           #./bin/ImathTest
           # Confirm the python module loads
           find .. -name imath.so
-          export PYTHONPATH=../_install/lib/python3.7/site-packages
+          export PYTHONPATH=`python -c "from distutils.sysconfig import get_python_lib; '../_install/lib/%s/site-packages' % get_python_lib().split('/')[3]"`
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
