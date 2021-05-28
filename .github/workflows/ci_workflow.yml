@@ -306,11 +306,10 @@ jobs:
           cmake --build . \
                 --config ${{ matrix.build-type }}
           # Confirm the tests run
-          #./bin/ImathTest
-          # Confirm the python module loads
-          #export PYTHONPATH=`python -c "from distutils.sysconfig import get_python_lib; print('../_install/lib/%s/site-packages' % get_python_lib().split('/')[4])"`
-          export PYTHONPATH=../_install/lib/${{ ASWF_PATH_MAJOR_MINOR_VERSION }}/site-packages
-          echo "PYTHON=$PYTHONPATH"
+          ./bin/ImathTest
+          # Confirm the python module loads. Query the site-packages directory and substitute ../_install
+          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"          
+          echo "PYTHONPATH=$PYTHONPATH"
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
@@ -398,6 +397,25 @@ jobs:
                 --config ${{ matrix.build-type }} \
                 -- -j2
         working-directory: _build
+      - name: Examples
+        run: |
+          # Make sure we can build the tests when configured as a
+          # standalone application linking against the just-installed
+          # Imath library.
+          cmake ../src/ImathTest \
+                -DCMAKE_PREFIX_PATH=../../_install \
+                -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+                -DCMAKE_CXX_STANDARD=${{ matrix.cxx-standard }} \
+                -DCMAKE_CXX_FLAGS=${{ matrix.cxx-flags }}
+          cmake --build . \
+                --config ${{ matrix.build-type }}
+          # Confirm the tests run
+          ./bin/ImathTest
+          # Confirm the python module loads. Query the site-packages directory and substitute ../_install
+          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"          
+          echo "PYTHONPATH=$PYTHONPATH"
+          python -c "import imath;print(imath.__version__)"
+        working-directory: _examples 
       - name: Test
         run: |
           ctest -T Test ${{matrix.exclude-tests }} \
