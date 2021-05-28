@@ -376,6 +376,7 @@ jobs:
         run: |
           mkdir _install
           mkdir _build
+          mkdir _examples
       ## - name: Install Dependences
       ##   run: |
       ##     share/ci/scripts/macos/install_boost.sh 
