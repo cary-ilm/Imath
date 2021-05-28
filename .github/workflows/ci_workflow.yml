@@ -54,7 +54,6 @@ jobs:
             build-type: Release
             build-shared: 'ON'
             use-python2: 'OFF'
-            python-version: python3.7
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -66,7 +65,6 @@ jobs:
             build-type: Debug
             build-shared: 'ON'
             use-python2: 'OFF'
-            python-version: python3.7
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
@@ -411,13 +409,7 @@ jobs:
           cmake --build . \
                 --config ${{ matrix.build-type }}
           # Confirm the tests run
-          #./bin/ImathTest
-          # Confirm the python module loads. Query the site-packages directory and substitute ../_install
-          echo "find:"
-          find .. -name imath.so
-          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"`          
-          echo "PYTHONPATH=$PYTHONPATH"
-          python -c "import imath;print(imath.__version__)"
+          ./bin/ImathTest
         working-directory: _examples 
       - name: Test
         run: |
