@@ -306,9 +306,9 @@ jobs:
           cmake --build . \
                 --config ${{ matrix.build-type }}
           # Confirm the tests run
-          ./bin/ImathTest
+          #./bin/ImathTest
           # Confirm the python module loads. Query the site-packages directory and substitute ../_install
-          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"          
+          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"`          
           echo "PYTHONPATH=$PYTHONPATH"
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
@@ -413,7 +413,7 @@ jobs:
           # Confirm the tests run
           ./bin/ImathTest
           # Confirm the python module loads. Query the site-packages directory and substitute ../_install
-          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"          
+          export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"`          
           echo "PYTHONPATH=$PYTHONPATH"
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
