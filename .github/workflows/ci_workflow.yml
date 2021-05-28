@@ -53,46 +53,38 @@ jobs:
           - build: 11
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # Debug
           - build: 12
             build-type: Debug
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # C++14
           - build: 13
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # Static
           - build: 14
             build-type: Release
             build-shared: 'OFF'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # -------------------------------------------------------------------
           # GCC, VFX CY2020
           # -------------------------------------------------------------------
@@ -100,46 +92,38 @@ jobs:
           - build: 1
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # Debug
           - build: 2
             build-type: Debug
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # C++14
           - build: 3
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # Static
           - build: 4
             build-type: Release
             build-shared: 'OFF'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: g++
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # -------------------------------------------------------------------
           # GCC, VFX CY2019
           # -------------------------------------------------------------------
@@ -153,7 +137,6 @@ jobs:
             cc-compiler: gcc
             compiler-desc: GCC 6.3.1
             vfx-cy: 2019
-            exclude-tests: -E PyImath.*_Python3
           # -------------------------------------------------------------------
           # Clang, VFX CY2021
           # -------------------------------------------------------------------
@@ -161,46 +144,38 @@ jobs:
           - build: 15
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # Debug
           - build: 16
             build-type: Debug
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # C++14
           - build: 17
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # Static
           - build: 18
             build-type: Release
             build-shared: 'OFF'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2021
-            exclude-tests: -E PyImath.*_Python2
           # -------------------------------------------------------------------
           # Clang, VFX CY2020
           # -------------------------------------------------------------------
@@ -208,46 +183,38 @@ jobs:
           - build: 6
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # Debug
           - build: 7
             build-type: Debug
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # C++14
           - build: 8
             build-type: Release
             build-shared: 'ON'
-            use-python2: 'OFF'
             cxx-standard: 14
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # Static
           - build: 9
             build-type: Release
             build-shared: 'OFF'
-            use-python2: 'OFF'
             cxx-standard: 11
             cxx-compiler: clang++
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2020
-            exclude-tests: -E PyImath.*_Python2
           # -------------------------------------------------------------------
           # Clang, VFX CY2019
           # -------------------------------------------------------------------
@@ -261,7 +228,6 @@ jobs:
             cc-compiler: clang
             compiler-desc: Clang 7
             vfx-cy: 2019
-            exclude-tests: -E PyImath.*_Python3
     env:
       CXX: ${{ matrix.cxx-compiler }}
       CC: ${{ matrix.cc-compiler }}
@@ -308,6 +274,7 @@ jobs:
           # Confirm the python module loads. Query the site-packages directory and substitute ../_install
           export PYTHONPATH=`python -c "import site; print('../_install%s' % site.USER_SITE[len(site.USER_BASE):])"`          
           echo "PYTHONPATH=$PYTHONPATH"
+          echo "matrix.python-version=${{ matrix.python-version }}"
           python -c "import imath;print(imath.__version__)"
         working-directory: _examples 
       - name: Test
