@@ -11,6 +11,31 @@
 
 ## Version 3.1.0 (July 5, 2021)
 
+Minor release with new features:
+
+* Optimized half-to-float and float-to-half conversion, using Intel
+  intrinsics if available, or otherwise using an optimized
+  bit-manipulation algorithm that does not require lookup tables.
+
+  Also available as C-language functions ``imath_half_to_float()`` and
+  ``imath_float_to_half()``.
+  
+  For backwards compatibility and ensured stability in the 3.1
+  release, the optimized conversion is off by default, but it can be
+  enabled at compile-time by disabling the
+  ``IMATH_USE_HALF_LOOKUP_TABLES`` cmake option.
+
+* NOEXEPT specifier can be eliminated at compile-time via the
+  ``IMATH_USE_NOEXCEPT`` CMake option.
+
+* Python bindings:
+  * FixedArray objects support a "read only" state.
+  * FixedArray objects support python buffer protocol.
+
+* Optimized 4x4 matrix multiplication.
+
+### Merged Pull Requests
+
 * [#175](https://github.com/AcademySoftwareFoundation/Imath/pull/175)] Clean up library VERSION and SOVERSION 
 * [#172](https://github.com/AcademySoftwareFoundation/Imath/pull/172)] Use CMAKE_INSTALL_FULL_LIBDIR/INCLUDEDIR for pkgconfig 
 * [#173](https://github.com/AcademySoftwareFoundation/Imath/pull/173)] Update README.md and INSTALL.md for 3.1 

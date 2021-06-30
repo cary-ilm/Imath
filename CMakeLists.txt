@@ -14,7 +14,7 @@ endif()
 
 # Imath version
 
-project(Imath VERSION 3.1.0 LANGUAGES C CXX)
+project(Imath VERSION 3.2.0 LANGUAGES C CXX)
 
 set(IMATH_VERSION_RELEASE_TYPE "-dev" CACHE STRING "Extra version tag string for Imath build, such as -dev, -beta1, etc.")
 
@@ -38,7 +38,7 @@ set(IMATH_VERSION_API "${Imath_VERSION_MAJOR}_${Imath_VERSION_MINOR}")
 #   2. API added:     CURRENT+1.0.AGE+1
 #   3. API changed:   CURRENT+1.0.0
 #
-set(IMATH_LIBTOOL_CURRENT 29)
+set(IMATH_LIBTOOL_CURRENT 99)
 set(IMATH_LIBTOOL_REVISION 0)
 set(IMATH_LIBTOOL_AGE 0)
 set(IMATH_LIB_VERSION "${IMATH_LIBTOOL_CURRENT}.${IMATH_LIBTOOL_REVISION}.${IMATH_LIBTOOL_AGE}")
