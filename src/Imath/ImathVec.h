@@ -207,6 +207,25 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     IMATH_HOSTDEVICE IMATH_CONSTEXPR14 T lengthTiny() const IMATH_NOEXCEPT;
 };
 
+//-------------------------
+// Typedefs for convenience
+//-------------------------
+
+/// Vec4 of short
+typedef Vec4<short> V4s;
+
+/// Vec4 of integer
+typedef Vec4<int> V4i;
+
+/// Vec4 of int64_t
+typedef Vec4<int64_t> V4i64;
+
+/// Vec4 of float
+typedef Vec4<float> V4f;
+
+/// Vec4 of double
+typedef Vec4<double> V4d;
+
 //----------------------------------------------------------------------------
 // Specializations for VecN<short>, VecN<int>
 //
@@ -241,9 +260,384 @@ template <> Vec4<int64_t> Vec4<int64_t>::normalizedExc() const = delete;
 template <> IMATH_HOSTDEVICE Vec4<int64_t> Vec4<int64_t>::normalizedNonNull() const IMATH_NOEXCEPT = delete;
 
 
-#if (defined _WIN32 || defined _WIN64) && defined _MSC_VER
-#    pragma warning(pop)
-#endif
+//-----------------------
+// Implementation of Vec4
+//-----------------------
+
+template <class T>
+IMATH_HOSTDEVICE
+IMATH_CONSTEXPR14 inline T&
+Vec4<T>::operator[] (int i) IMATH_NOEXCEPT
+{
+    return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline const T&
+Vec4<T>::operator[] (int i) const IMATH_NOEXCEPT
+{
+    return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
+}
+
+template <class T> IMATH_HOSTDEVICE inline Vec4<T>::Vec4() IMATH_NOEXCEPT
+{
+    // empty, and not constexpr because data is uninitialized.
+}
+
+template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (T a) IMATH_NOEXCEPT
+    : x(a), y(a), z(a), w(a)
+{
+}
+
+template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (T a, T b, T c, T d) IMATH_NOEXCEPT
+    : x(a), y(b), z(c), w(d)
+{
+}
+
+template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec4& v) IMATH_NOEXCEPT
+    : x(v.x), y(v.y), z(v.z), w(v.w)
+{
+}
+
+template <class T> template <class S>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) IMATH_NOEXCEPT
+    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
+{
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator= (const Vec4& v) IMATH_NOEXCEPT
+{
+    x = v.x;
+    y = v.y;
+    z = v.z;
+    w = v.w;
+    return *this;
+}
+
+template <class T> template <class S>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec3<S>& v) IMATH_NOEXCEPT
+    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(1))
+{
+}
+
+template <class T>
+template <class S>
+IMATH_HOSTDEVICE constexpr inline bool
+Vec4<T>::operator== (const Vec4<S>& v) const IMATH_NOEXCEPT
+{
+    return x == v.x && y == v.y && z == v.z && w == v.w;
+}
+
+template <class T>
+template <class S>
+IMATH_HOSTDEVICE constexpr inline bool
+Vec4<T>::operator!= (const Vec4<S>& v) const IMATH_NOEXCEPT
+{
+    return x != v.x || y != v.y || z != v.z || w != v.w;
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline bool
+Vec4<T>::equalWithAbsError (const Vec4<T>& v, T e) const IMATH_NOEXCEPT
+{
+    for (int i = 0; i < 4; i++)
+        if (!IMATH_INTERNAL_NAMESPACE::equalWithAbsError ((*this)[i], v[i], e))
+            return false;
+
+    return true;
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline bool
+Vec4<T>::equalWithRelError (const Vec4<T>& v, T e) const IMATH_NOEXCEPT
+{
+    for (int i = 0; i < 4; i++)
+        if (!IMATH_INTERNAL_NAMESPACE::equalWithRelError ((*this)[i], v[i], e))
+            return false;
+
+    return true;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline T
+Vec4<T>::dot (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return x * v.x + y * v.y + z * v.z + w * v.w;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline T
+Vec4<T>::operator^ (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return dot (v);
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator+= (const Vec4& v) IMATH_NOEXCEPT
+{
+    x += v.x;
+    y += v.y;
+    z += v.z;
+    w += v.w;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator+ (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return Vec4 (x + v.x, y + v.y, z + v.z, w + v.w);
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator-= (const Vec4& v) IMATH_NOEXCEPT
+{
+    x -= v.x;
+    y -= v.y;
+    z -= v.z;
+    w -= v.w;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator- (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return Vec4 (x - v.x, y - v.y, z - v.z, w - v.w);
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator-() const IMATH_NOEXCEPT
+{
+    return Vec4 (-x, -y, -z, -w);
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::negate() IMATH_NOEXCEPT
+{
+    x = -x;
+    y = -y;
+    z = -z;
+    w = -w;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator*= (const Vec4& v) IMATH_NOEXCEPT
+{
+    x *= v.x;
+    y *= v.y;
+    z *= v.z;
+    w *= v.w;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator*= (T a) IMATH_NOEXCEPT
+{
+    x *= a;
+    y *= a;
+    z *= a;
+    w *= a;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator* (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return Vec4 (x * v.x, y * v.y, z * v.z, w * v.w);
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator* (T a) const IMATH_NOEXCEPT
+{
+    return Vec4 (x * a, y * a, z * a, w * a);
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator/= (const Vec4& v) IMATH_NOEXCEPT
+{
+    x /= v.x;
+    y /= v.y;
+    z /= v.z;
+    w /= v.w;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+Vec4<T>::operator/= (T a) IMATH_NOEXCEPT
+{
+    x /= a;
+    y /= a;
+    z /= a;
+    w /= a;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator/ (const Vec4& v) const IMATH_NOEXCEPT
+{
+    return Vec4 (x / v.x, y / v.y, z / v.z, w / v.w);
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline Vec4<T>
+Vec4<T>::operator/ (T a) const IMATH_NOEXCEPT
+{
+    return Vec4 (x / a, y / a, z / a, w / a);
+}
+
+template <class T>
+IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline T
+Vec4<T>::lengthTiny() const IMATH_NOEXCEPT
+{
+    T absX = (x >= T (0)) ? x : -x;
+    T absY = (y >= T (0)) ? y : -y;
+    T absZ = (z >= T (0)) ? z : -z;
+    T absW = (w >= T (0)) ? w : -w;
+
+    T max = absX;
+
+    if (max < absY)
+        max = absY;
+
+    if (max < absZ)
+        max = absZ;
+
+    if (max < absW)
+        max = absW;
+
+    if (IMATH_UNLIKELY(max == T (0)))
+        return T (0);
+
+    //
+    // Do not replace the divisions by max with multiplications by 1/max.
+    // Computing 1/max can overflow but the divisions below will always
+    // produce results less than or equal to 1.
+    //
+
+    absX /= max;
+    absY /= max;
+    absZ /= max;
+    absW /= max;
+
+    return max * std::sqrt (absX * absX + absY * absY + absZ * absZ + absW * absW);
+}
+
+template <class T>
+IMATH_HOSTDEVICE inline T
+Vec4<T>::length() const IMATH_NOEXCEPT
+{
+    T length2 = dot (*this);
+
+    if (IMATH_UNLIKELY(length2 < T (2) * std::numeric_limits<T>::min()))
+        return lengthTiny();
+
+    return std::sqrt (length2);
+}
+
+template <class T>
+IMATH_HOSTDEVICE constexpr inline T
+Vec4<T>::length2() const IMATH_NOEXCEPT
+{
+    return dot (*this);
+}
+
+template <class T>
+IMATH_HOSTDEVICE const inline Vec4<T>&
+Vec4<T>::normalize() IMATH_NOEXCEPT
+{
+    T l = length();
+
+    if (IMATH_LIKELY(l != T (0)))
+    {
+        //
+        // Do not replace the divisions by l with multiplications by 1/l.
+        // Computing 1/l can overflow but the divisions below will always
+        // produce results less than or equal to 1.
+        //
+
+        x /= l;
+        y /= l;
+        z /= l;
+        w /= l;
+    }
+
+    return *this;
+}
+
+template <class T>
+const inline Vec4<T>&
+Vec4<T>::normalizeExc()
+{
+    T l = length();
+
+    if (IMATH_UNLIKELY(l == T (0)))
+        throw std::domain_error ("Cannot normalize null vector.");
+
+    x /= l;
+    y /= l;
+    z /= l;
+    w /= l;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE inline const Vec4<T>&
+Vec4<T>::normalizeNonNull() IMATH_NOEXCEPT
+{
+    T l = length();
+    x /= l;
+    y /= l;
+    z /= l;
+    w /= l;
+    return *this;
+}
+
+template <class T>
+IMATH_HOSTDEVICE inline Vec4<T>
+Vec4<T>::normalized() const IMATH_NOEXCEPT
+{
+    T l = length();
+
+    if (IMATH_UNLIKELY(l == T (0)))
+        return Vec4 (T (0));
+
+    return Vec4 (x / l, y / l, z / l, w / l);
+}
+
+template <class T>
+inline Vec4<T>
+Vec4<T>::normalizedExc() const
+{
+    T l = length();
+
+    if (IMATH_UNLIKELY(l == T (0)))
+        throw std::domain_error ("Cannot normalize null vector.");
+
+    return Vec4 (x / l, y / l, z / l, w / l);
+}
+
+template <class T>
+IMATH_HOSTDEVICE inline Vec4<T>
+Vec4<T>::normalizedNonNull() const IMATH_NOEXCEPT
+{
+    T l = length();
+    return Vec4 (x / l, y / l, z / l, w / l);
+}
 
 }
 
