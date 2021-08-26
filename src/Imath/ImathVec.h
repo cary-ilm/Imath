@@ -207,23 +207,30 @@ template <class T> class Vec4
      constexpr T lengthTiny() const noexcept;
 };
 
-//-----------------------
-// Implementation of Vec4
-//-----------------------
-
-template <class T>
-
-constexpr inline T&
-Vec4<T>::operator[] (int i) noexcept
+template <class T>  inline Vec4<T>::Vec4() noexcept
 {
-    return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
+    // empty, and not constexpr because data is uninitialized.
 }
 
-template <class T>
- constexpr inline const T&
-Vec4<T>::operator[] (int i) const noexcept
+template <class T>  constexpr inline Vec4<T>::Vec4 (T a) noexcept
+    : x(a), y(a), z(a), w(a)
 {
-    return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
+}
+
+template <class T>  constexpr inline Vec4<T>::Vec4 (T a, T b, T c, T d) noexcept
+    : x(a), y(b), z(c), w(d)
+{
+}
+
+template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
+    : x(v.x), y(v.y), z(v.z), w(v.w)
+{
+}
+
+template <class T> template <class S>
+ constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
+    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
+{
 }
 
 
