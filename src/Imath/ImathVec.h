@@ -36,7 +36,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// @}
     
     /// Element access by index.  
-     IMATH_CONSTEXPR14 T& operator[] (int i) noexcept;
+     constexpr T& operator[] (int i) noexcept;
 
     /// Element access by index.  
      constexpr const T& operator[] (int i) const noexcept;
@@ -63,7 +63,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     template <class S>  explicit constexpr Vec4 (const Vec3<S>& v) noexcept;
 
     /// Assignment
-     IMATH_CONSTEXPR14 const Vec4& operator= (const Vec4& v) noexcept;
+     constexpr const Vec4& operator= (const Vec4& v) noexcept;
 
     /// Destructor
     ~Vec4() noexcept = default;
@@ -84,14 +84,14 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// with an absolute error of no more than e, i.e., for all i, j:
     ///
     ///     abs (this[i][j] - m[i][j]) <= e
-     IMATH_CONSTEXPR14 bool equalWithAbsError (const Vec4<T>& v, T e) const noexcept;
+     constexpr bool equalWithAbsError (const Vec4<T>& v, T e) const noexcept;
 
     /// Compare two matrices and test if they are "approximately equal":
     /// @return True if the coefficients of this and m are the same with
     /// a relative error of no more than e, i.e., for all i, j:
     ///
     ///     abs (this[i] - v[i][j]) <= e * abs (this[i][j])
-     IMATH_CONSTEXPR14 bool equalWithRelError (const Vec4<T>& v, T e) const noexcept;
+     constexpr bool equalWithRelError (const Vec4<T>& v, T e) const noexcept;
 
     /// Dot product
      constexpr T dot (const Vec4& v) const noexcept;
@@ -100,13 +100,13 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
      constexpr T operator^ (const Vec4& v) const noexcept;
 
     /// Component-wise addition
-     IMATH_CONSTEXPR14 const Vec4& operator+= (const Vec4& v) noexcept;
+     constexpr const Vec4& operator+= (const Vec4& v) noexcept;
 
     /// Component-wise addition
      constexpr Vec4 operator+ (const Vec4& v) const noexcept;
 
     /// Component-wise subtraction
-     IMATH_CONSTEXPR14 const Vec4& operator-= (const Vec4& v) noexcept;
+     constexpr const Vec4& operator-= (const Vec4& v) noexcept;
 
     /// Component-wise subtraction
      constexpr Vec4 operator- (const Vec4& v) const noexcept;
@@ -115,13 +115,13 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
      constexpr Vec4 operator-() const noexcept;
 
     /// Component-wise multiplication by -1
-     IMATH_CONSTEXPR14 const Vec4& negate() noexcept;
+     constexpr const Vec4& negate() noexcept;
 
     /// Component-wise multiplication
-     IMATH_CONSTEXPR14 const Vec4& operator*= (const Vec4& v) noexcept;
+     constexpr const Vec4& operator*= (const Vec4& v) noexcept;
 
     /// Component-wise multiplication
-     IMATH_CONSTEXPR14 const Vec4& operator*= (T a) noexcept;
+     constexpr const Vec4& operator*= (T a) noexcept;
 
     /// Component-wise multiplication
      constexpr Vec4 operator* (const Vec4& v) const noexcept;
@@ -130,10 +130,10 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
      constexpr Vec4 operator* (T a) const noexcept;
 
     /// Component-wise division
-     IMATH_CONSTEXPR14 const Vec4& operator/= (const Vec4& v) noexcept;
+     constexpr const Vec4& operator/= (const Vec4& v) noexcept;
 
     /// Component-wise division
-     IMATH_CONSTEXPR14 const Vec4& operator/= (T a) noexcept;
+     constexpr const Vec4& operator/= (T a) noexcept;
 
     /// Component-wise division
      constexpr Vec4 operator/ (const Vec4& v) const noexcept;
@@ -204,7 +204,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     typedef T BaseType;
 
   private:
-     IMATH_CONSTEXPR14 T lengthTiny() const noexcept;
+     constexpr T lengthTiny() const noexcept;
 };
 
 //-----------------------
@@ -213,7 +213,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
 
 template <class T>
 
-IMATH_CONSTEXPR14 inline T&
+constexpr inline T&
 Vec4<T>::operator[] (int i) noexcept
 {
     return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
@@ -253,7 +253,7 @@ template <class T> template <class S>
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator= (const Vec4& v) noexcept
 {
     x = v.x;
@@ -286,7 +286,7 @@ Vec4<T>::operator!= (const Vec4<S>& v) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline bool
+ constexpr inline bool
 Vec4<T>::equalWithAbsError (const Vec4<T>& v, T e) const noexcept
 {
     for (int i = 0; i < 4; i++)
@@ -297,7 +297,7 @@ Vec4<T>::equalWithAbsError (const Vec4<T>& v, T e) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline bool
+ constexpr inline bool
 Vec4<T>::equalWithRelError (const Vec4<T>& v, T e) const noexcept
 {
     for (int i = 0; i < 4; i++)
@@ -322,7 +322,7 @@ Vec4<T>::operator^ (const Vec4& v) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator+= (const Vec4& v) noexcept
 {
     x += v.x;
@@ -340,7 +340,7 @@ Vec4<T>::operator+ (const Vec4& v) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator-= (const Vec4& v) noexcept
 {
     x -= v.x;
@@ -365,7 +365,7 @@ Vec4<T>::operator-() const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::negate() noexcept
 {
     x = -x;
@@ -376,7 +376,7 @@ Vec4<T>::negate() noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator*= (const Vec4& v) noexcept
 {
     x *= v.x;
@@ -387,7 +387,7 @@ Vec4<T>::operator*= (const Vec4& v) noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator*= (T a) noexcept
 {
     x *= a;
@@ -412,7 +412,7 @@ Vec4<T>::operator* (T a) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator/= (const Vec4& v) noexcept
 {
     x /= v.x;
@@ -423,7 +423,7 @@ Vec4<T>::operator/= (const Vec4& v) noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline const Vec4<T>&
+ constexpr inline const Vec4<T>&
 Vec4<T>::operator/= (T a) noexcept
 {
     x /= a;
@@ -448,7 +448,7 @@ Vec4<T>::operator/ (T a) const noexcept
 }
 
 template <class T>
- IMATH_CONSTEXPR14 inline T
+ constexpr inline T
 Vec4<T>::lengthTiny() const noexcept
 {
     T absX = (x >= T (0)) ? x : -x;
