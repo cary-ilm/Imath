@@ -3,8 +3,6 @@
 // Copyright Contributors to the OpenEXR Project.
 // 
 
-namespace Imath {
-    
 ///
 /// 4-element vector
 ///
@@ -33,7 +31,7 @@ template <class T> template <class S>
 {
 }
 
-}
+
 
 
 
