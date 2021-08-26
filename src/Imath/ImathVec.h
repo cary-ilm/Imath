@@ -37,6 +37,8 @@ template <class T> class Vec4
     template <class S>  constexpr Vec4 (const Vec4<S>& v) noexcept;
 };
 
+/// @cond Doxygen_Suppress
+    
 template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
     : x(v.x), y(v.y), z(v.z), w(v.w)
 {
@@ -48,6 +50,7 @@ template <class T> template <class S>
 {
 }
 
+/// @endcond Doxygen_Suppress
 
 
 }
