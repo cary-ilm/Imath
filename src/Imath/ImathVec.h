@@ -16,8 +16,6 @@
 #include <limits>
 #include <stdexcept>
 
-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
-
 template <class T> class Vec4;
 
 /// Enum for the Vec4 to Vec3 conversion constructor
@@ -669,7 +667,5 @@ operator* (T a, const Vec4<T>& v) IMATH_NOEXCEPT
 #if (defined _WIN32 || defined _WIN64) && defined _MSC_VER
 #    pragma warning(pop)
 #endif
-
-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
 
 #endif // INCLUDED_IMATHVEC_H
