@@ -3,19 +3,6 @@
 // Copyright Contributors to the OpenEXR Project.
 // 
 
-//
-// 2D, 3D and 4D point/vector class templates
-//
-
-#ifndef INCLUDED_IMATHVEC_H
-#define INCLUDED_IMATHVEC_H
-
-#include "ImathNamespace.h"
-
-#include <iostream>
-#include <limits>
-#include <stdexcept>
-
 namespace Imath {
     
 template <class T> class Vec4;
@@ -37,8 +24,6 @@ template <class T> class Vec4
     template <class S>  constexpr Vec4 (const Vec4<S>& v) noexcept;
 };
 
-/// @cond Doxygen_Suppress
-    
 template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
     : x(v.x), y(v.y), z(v.z), w(v.w)
 {
@@ -50,10 +35,7 @@ template <class T> template <class S>
 {
 }
 
-/// @endcond Doxygen_Suppress
-
-
 }
 
 
-#endif // INCLUDED_IMATHVEC_H
+
