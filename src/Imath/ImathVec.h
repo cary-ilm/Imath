@@ -252,38 +252,6 @@ template <class T> template <class S>
 {
 }
 
-template <class T>
- constexpr inline const Vec4<T>&
-Vec4<T>::operator= (const Vec4& v) noexcept
-{
-    x = v.x;
-    y = v.y;
-    z = v.z;
-    w = v.w;
-    return *this;
-}
-
-template <class T> template <class S>
- constexpr inline Vec4<T>::Vec4 (const Vec3<S>& v) noexcept
-    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(1))
-{
-}
-
-template <class T>
-template <class S>
- constexpr inline bool
-Vec4<T>::operator== (const Vec4<S>& v) const noexcept
-{
-    return x == v.x && y == v.y && z == v.z && w == v.w;
-}
-
-template <class T>
-template <class S>
- constexpr inline bool
-Vec4<T>::operator!= (const Vec4<S>& v) const noexcept
-{
-    return x != v.x || y != v.y || z != v.z || w != v.w;
-}
 
 
 }
