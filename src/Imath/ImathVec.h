@@ -24,7 +24,7 @@ template <class T> class Vec4;
 /// 4-element vector
 ///
 
-template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
+template <class T> class Vec4
 {
   public:
 
