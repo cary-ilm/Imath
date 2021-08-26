@@ -226,40 +226,6 @@ typedef Vec4<float> V4f;
 /// Vec4 of double
 typedef Vec4<double> V4d;
 
-//----------------------------------------------------------------------------
-// Specializations for VecN<short>, VecN<int>
-//
-// Normalize and length don't make sense for integer vectors, so disable them.
-//----------------------------------------------------------------------------
-
-// Vec4<short>
-template <> IMATH_HOSTDEVICE short Vec4<short>::length() const IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE const Vec4<short>& Vec4<short>::normalize() IMATH_NOEXCEPT = delete;
-template <> const Vec4<short>& Vec4<short>::normalizeExc() = delete;
-template <> IMATH_HOSTDEVICE const Vec4<short>& Vec4<short>::normalizeNonNull() IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE Vec4<short> Vec4<short>::normalized() const IMATH_NOEXCEPT = delete;
-template <> Vec4<short> Vec4<short>::normalizedExc() const = delete;
-template <> IMATH_HOSTDEVICE Vec4<short> Vec4<short>::normalizedNonNull() const IMATH_NOEXCEPT = delete;
-
-// Vec4<int>
-template <> IMATH_HOSTDEVICE int Vec4<int>::length() const IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE const Vec4<int>& Vec4<int>::normalize() IMATH_NOEXCEPT = delete;
-template <> const Vec4<int>& Vec4<int>::normalizeExc() = delete;
-template <> IMATH_HOSTDEVICE const Vec4<int>& Vec4<int>::normalizeNonNull() IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE Vec4<int> Vec4<int>::normalized() const IMATH_NOEXCEPT = delete;
-template <> Vec4<int> Vec4<int>::normalizedExc() const = delete;
-template <> IMATH_HOSTDEVICE Vec4<int> Vec4<int>::normalizedNonNull() const IMATH_NOEXCEPT = delete;
-
-// Vec4<int64_t>
-template <> IMATH_HOSTDEVICE int64_t Vec4<int64_t>::length() const IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE const Vec4<int64_t>& Vec4<int64_t>::normalize() IMATH_NOEXCEPT = delete;
-template <> const Vec4<int64_t>& Vec4<int64_t>::normalizeExc() = delete;
-template <> IMATH_HOSTDEVICE const Vec4<int64_t>& Vec4<int64_t>::normalizeNonNull() IMATH_NOEXCEPT = delete;
-template <> IMATH_HOSTDEVICE Vec4<int64_t> Vec4<int64_t>::normalized() const IMATH_NOEXCEPT = delete;
-template <> Vec4<int64_t> Vec4<int64_t>::normalizedExc() const = delete;
-template <> IMATH_HOSTDEVICE Vec4<int64_t> Vec4<int64_t>::normalizedNonNull() const IMATH_NOEXCEPT = delete;
-
-
 //-----------------------
 // Implementation of Vec4
 //-----------------------
