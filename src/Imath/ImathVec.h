@@ -36,34 +36,34 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// @}
     
     /// Element access by index.  
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 T& operator[] (int i) noexcept;
+     IMATH_CONSTEXPR14 T& operator[] (int i) noexcept;
 
     /// Element access by index.  
-    IMATH_HOSTDEVICE constexpr const T& operator[] (int i) const noexcept;
+     constexpr const T& operator[] (int i) const noexcept;
 
     /// @{
     ///	@name Constructors and Assignment
 
     /// Uninitialized by default
-    IMATH_HOSTDEVICE Vec4() noexcept;                            // no initialization
+     Vec4() noexcept;                            // no initialization
 
     /// Initialize to a scalar `(a,a,a,a)`
-    IMATH_HOSTDEVICE constexpr explicit Vec4 (T a) noexcept;
+     constexpr explicit Vec4 (T a) noexcept;
 
     /// Initialize to given elements `(a,b,c,d)`
-    IMATH_HOSTDEVICE constexpr Vec4 (T a, T b, T c, T d) noexcept;
+     constexpr Vec4 (T a, T b, T c, T d) noexcept;
 
     /// Copy constructor
-    IMATH_HOSTDEVICE constexpr Vec4 (const Vec4& v) noexcept;
+     constexpr Vec4 (const Vec4& v) noexcept;
 
     /// Construct from Vec4 of another base type
-    template <class S> IMATH_HOSTDEVICE constexpr Vec4 (const Vec4<S>& v) noexcept;
+    template <class S>  constexpr Vec4 (const Vec4<S>& v) noexcept;
 
     /// Vec3 to Vec4 conversion, sets w to 1.
-    template <class S> IMATH_HOSTDEVICE explicit constexpr Vec4 (const Vec3<S>& v) noexcept;
+    template <class S>  explicit constexpr Vec4 (const Vec3<S>& v) noexcept;
 
     /// Assignment
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator= (const Vec4& v) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator= (const Vec4& v) noexcept;
 
     /// Destructor
     ~Vec4() noexcept = default;
@@ -74,72 +74,72 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// @name Arithmetic and Comparison
     
     /// Equality
-    template <class S> IMATH_HOSTDEVICE constexpr bool operator== (const Vec4<S>& v) const noexcept;
+    template <class S>  constexpr bool operator== (const Vec4<S>& v) const noexcept;
 
     /// Inequality
-    template <class S> IMATH_HOSTDEVICE constexpr bool operator!= (const Vec4<S>& v) const noexcept;
+    template <class S>  constexpr bool operator!= (const Vec4<S>& v) const noexcept;
 
     /// Compare two matrices and test if they are "approximately equal":
     /// @return True if the coefficients of this and `m` are the same
     /// with an absolute error of no more than e, i.e., for all i, j:
     ///
     ///     abs (this[i][j] - m[i][j]) <= e
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 bool equalWithAbsError (const Vec4<T>& v, T e) const noexcept;
+     IMATH_CONSTEXPR14 bool equalWithAbsError (const Vec4<T>& v, T e) const noexcept;
 
     /// Compare two matrices and test if they are "approximately equal":
     /// @return True if the coefficients of this and m are the same with
     /// a relative error of no more than e, i.e., for all i, j:
     ///
     ///     abs (this[i] - v[i][j]) <= e * abs (this[i][j])
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 bool equalWithRelError (const Vec4<T>& v, T e) const noexcept;
+     IMATH_CONSTEXPR14 bool equalWithRelError (const Vec4<T>& v, T e) const noexcept;
 
     /// Dot product
-    IMATH_HOSTDEVICE constexpr T dot (const Vec4& v) const noexcept;
+     constexpr T dot (const Vec4& v) const noexcept;
 
     /// Dot product
-    IMATH_HOSTDEVICE constexpr T operator^ (const Vec4& v) const noexcept;
+     constexpr T operator^ (const Vec4& v) const noexcept;
 
     /// Component-wise addition
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator+= (const Vec4& v) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator+= (const Vec4& v) noexcept;
 
     /// Component-wise addition
-    IMATH_HOSTDEVICE constexpr Vec4 operator+ (const Vec4& v) const noexcept;
+     constexpr Vec4 operator+ (const Vec4& v) const noexcept;
 
     /// Component-wise subtraction
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator-= (const Vec4& v) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator-= (const Vec4& v) noexcept;
 
     /// Component-wise subtraction
-    IMATH_HOSTDEVICE constexpr Vec4 operator- (const Vec4& v) const noexcept;
+     constexpr Vec4 operator- (const Vec4& v) const noexcept;
 
     /// Component-wise multiplication by -1
-    IMATH_HOSTDEVICE constexpr Vec4 operator-() const noexcept;
+     constexpr Vec4 operator-() const noexcept;
 
     /// Component-wise multiplication by -1
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& negate() noexcept;
+     IMATH_CONSTEXPR14 const Vec4& negate() noexcept;
 
     /// Component-wise multiplication
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator*= (const Vec4& v) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator*= (const Vec4& v) noexcept;
 
     /// Component-wise multiplication
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator*= (T a) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator*= (T a) noexcept;
 
     /// Component-wise multiplication
-    IMATH_HOSTDEVICE constexpr Vec4 operator* (const Vec4& v) const noexcept;
+     constexpr Vec4 operator* (const Vec4& v) const noexcept;
 
     /// Component-wise multiplication
-    IMATH_HOSTDEVICE constexpr Vec4 operator* (T a) const noexcept;
+     constexpr Vec4 operator* (T a) const noexcept;
 
     /// Component-wise division
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator/= (const Vec4& v) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator/= (const Vec4& v) noexcept;
 
     /// Component-wise division
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator/= (T a) noexcept;
+     IMATH_CONSTEXPR14 const Vec4& operator/= (T a) noexcept;
 
     /// Component-wise division
-    IMATH_HOSTDEVICE constexpr Vec4 operator/ (const Vec4& v) const noexcept;
+     constexpr Vec4 operator/ (const Vec4& v) const noexcept;
 
     /// Component-wise division
-    IMATH_HOSTDEVICE constexpr Vec4 operator/ (T a) const noexcept;
+     constexpr Vec4 operator/ (T a) const noexcept;
 
     /// @}
 
@@ -147,14 +147,14 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// @name Query and Manipulation
 
     /// Return the Euclidean norm
-    IMATH_HOSTDEVICE T length() const noexcept;
+     T length() const noexcept;
 
     /// Return the square of the Euclidean norm, i.e. the dot product
     /// with itself.
-    IMATH_HOSTDEVICE constexpr T length2() const noexcept;
+     constexpr T length2() const noexcept;
 
     /// Normalize in place. If length()==0, return a null vector.
-    IMATH_HOSTDEVICE const Vec4& normalize() noexcept; // modifies *this
+     const Vec4& normalize() noexcept; // modifies *this
 
     /// Normalize in place. If length()==0, throw an exception.
     const Vec4& normalizeExc();
@@ -162,10 +162,10 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// Normalize without any checks for length()==0. Slightly faster
     /// than the other normalization routines, but if v.length() is
     /// 0.0, the result is undefined.
-    IMATH_HOSTDEVICE const Vec4& normalizeNonNull() noexcept;
+     const Vec4& normalizeNonNull() noexcept;
 
     /// Return a normalized vector. Does not modify *this.
-    IMATH_HOSTDEVICE Vec4<T> normalized() const noexcept; // does not modify *this
+     Vec4<T> normalized() const noexcept; // does not modify *this
 
     /// Return a normalized vector. Does not modify *this. Throw an
     /// exception if length()==0.
@@ -175,7 +175,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// not check for length()==0. Slightly faster than the other
     /// normalization routines, but if v.length() is 0.0, the result
     /// is undefined.
-    IMATH_HOSTDEVICE Vec4<T> normalizedNonNull() const noexcept;
+     Vec4<T> normalizedNonNull() const noexcept;
 
     /// @}
     
@@ -183,28 +183,28 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     /// @name Numeric Limits
     
     /// Largest possible negative value
-    IMATH_HOSTDEVICE constexpr static T baseTypeLowest() noexcept { return std::numeric_limits<T>::lowest(); }
+     constexpr static T baseTypeLowest() noexcept { return std::numeric_limits<T>::lowest(); }
 
     /// Largest possible positive value
-    IMATH_HOSTDEVICE constexpr static T baseTypeMax() noexcept { return std::numeric_limits<T>::max(); }
+     constexpr static T baseTypeMax() noexcept { return std::numeric_limits<T>::max(); }
 
     /// Smallest possible positive value
-    IMATH_HOSTDEVICE constexpr static T baseTypeSmallest() noexcept { return std::numeric_limits<T>::min(); }
+     constexpr static T baseTypeSmallest() noexcept { return std::numeric_limits<T>::min(); }
 
     /// Smallest possible e for which 1+e != 1
-    IMATH_HOSTDEVICE constexpr static T baseTypeEpsilon() noexcept { return std::numeric_limits<T>::epsilon(); }
+     constexpr static T baseTypeEpsilon() noexcept { return std::numeric_limits<T>::epsilon(); }
 
     /// @}
     
     /// Return the number of dimensions, i.e. 4
-    IMATH_HOSTDEVICE constexpr static unsigned int dimensions() noexcept { return 4; }
+     constexpr static unsigned int dimensions() noexcept { return 4; }
 
     /// The base type: In templates that accept a parameter `V`, you
     /// can refer to `T` as `V::BaseType`
     typedef T BaseType;
 
   private:
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 T lengthTiny() const noexcept;
+     IMATH_CONSTEXPR14 T lengthTiny() const noexcept;
 };
 
 //-----------------------
@@ -212,7 +212,7 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
 //-----------------------
 
 template <class T>
-IMATH_HOSTDEVICE
+
 IMATH_CONSTEXPR14 inline T&
 Vec4<T>::operator[] (int i) noexcept
 {
@@ -220,40 +220,40 @@ Vec4<T>::operator[] (int i) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline const T&
+ constexpr inline const T&
 Vec4<T>::operator[] (int i) const noexcept
 {
     return (&x)[i]; // NOSONAR - suppress SonarCloud bug report.
 }
 
-template <class T> IMATH_HOSTDEVICE inline Vec4<T>::Vec4() noexcept
+template <class T>  inline Vec4<T>::Vec4() noexcept
 {
     // empty, and not constexpr because data is uninitialized.
 }
 
-template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (T a) noexcept
+template <class T>  constexpr inline Vec4<T>::Vec4 (T a) noexcept
     : x(a), y(a), z(a), w(a)
 {
 }
 
-template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (T a, T b, T c, T d) noexcept
+template <class T>  constexpr inline Vec4<T>::Vec4 (T a, T b, T c, T d) noexcept
     : x(a), y(b), z(c), w(d)
 {
 }
 
-template <class T> IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
+template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
     : x(v.x), y(v.y), z(v.z), w(v.w)
 {
 }
 
 template <class T> template <class S>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
+ constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
     : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
 {
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator= (const Vec4& v) noexcept
 {
     x = v.x;
@@ -264,14 +264,14 @@ Vec4<T>::operator= (const Vec4& v) noexcept
 }
 
 template <class T> template <class S>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>::Vec4 (const Vec3<S>& v) noexcept
+ constexpr inline Vec4<T>::Vec4 (const Vec3<S>& v) noexcept
     : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(1))
 {
 }
 
 template <class T>
 template <class S>
-IMATH_HOSTDEVICE constexpr inline bool
+ constexpr inline bool
 Vec4<T>::operator== (const Vec4<S>& v) const noexcept
 {
     return x == v.x && y == v.y && z == v.z && w == v.w;
@@ -279,14 +279,14 @@ Vec4<T>::operator== (const Vec4<S>& v) const noexcept
 
 template <class T>
 template <class S>
-IMATH_HOSTDEVICE constexpr inline bool
+ constexpr inline bool
 Vec4<T>::operator!= (const Vec4<S>& v) const noexcept
 {
     return x != v.x || y != v.y || z != v.z || w != v.w;
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline bool
+ IMATH_CONSTEXPR14 inline bool
 Vec4<T>::equalWithAbsError (const Vec4<T>& v, T e) const noexcept
 {
     for (int i = 0; i < 4; i++)
@@ -297,7 +297,7 @@ Vec4<T>::equalWithAbsError (const Vec4<T>& v, T e) const noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline bool
+ IMATH_CONSTEXPR14 inline bool
 Vec4<T>::equalWithRelError (const Vec4<T>& v, T e) const noexcept
 {
     for (int i = 0; i < 4; i++)
@@ -308,21 +308,21 @@ Vec4<T>::equalWithRelError (const Vec4<T>& v, T e) const noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline T
+ constexpr inline T
 Vec4<T>::dot (const Vec4& v) const noexcept
 {
     return x * v.x + y * v.y + z * v.z + w * v.w;
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline T
+ constexpr inline T
 Vec4<T>::operator^ (const Vec4& v) const noexcept
 {
     return dot (v);
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator+= (const Vec4& v) noexcept
 {
     x += v.x;
@@ -333,14 +333,14 @@ Vec4<T>::operator+= (const Vec4& v) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator+ (const Vec4& v) const noexcept
 {
     return Vec4 (x + v.x, y + v.y, z + v.z, w + v.w);
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator-= (const Vec4& v) noexcept
 {
     x -= v.x;
@@ -351,21 +351,21 @@ Vec4<T>::operator-= (const Vec4& v) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator- (const Vec4& v) const noexcept
 {
     return Vec4 (x - v.x, y - v.y, z - v.z, w - v.w);
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator-() const noexcept
 {
     return Vec4 (-x, -y, -z, -w);
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::negate() noexcept
 {
     x = -x;
@@ -376,7 +376,7 @@ Vec4<T>::negate() noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator*= (const Vec4& v) noexcept
 {
     x *= v.x;
@@ -387,7 +387,7 @@ Vec4<T>::operator*= (const Vec4& v) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator*= (T a) noexcept
 {
     x *= a;
@@ -398,21 +398,21 @@ Vec4<T>::operator*= (T a) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator* (const Vec4& v) const noexcept
 {
     return Vec4 (x * v.x, y * v.y, z * v.z, w * v.w);
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator* (T a) const noexcept
 {
     return Vec4 (x * a, y * a, z * a, w * a);
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator/= (const Vec4& v) noexcept
 {
     x /= v.x;
@@ -423,7 +423,7 @@ Vec4<T>::operator/= (const Vec4& v) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline const Vec4<T>&
+ IMATH_CONSTEXPR14 inline const Vec4<T>&
 Vec4<T>::operator/= (T a) noexcept
 {
     x /= a;
@@ -434,21 +434,21 @@ Vec4<T>::operator/= (T a) noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator/ (const Vec4& v) const noexcept
 {
     return Vec4 (x / v.x, y / v.y, z / v.z, w / v.w);
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline Vec4<T>
+ constexpr inline Vec4<T>
 Vec4<T>::operator/ (T a) const noexcept
 {
     return Vec4 (x / a, y / a, z / a, w / a);
 }
 
 template <class T>
-IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline T
+ IMATH_CONSTEXPR14 inline T
 Vec4<T>::lengthTiny() const noexcept
 {
     T absX = (x >= T (0)) ? x : -x;
@@ -485,7 +485,7 @@ Vec4<T>::lengthTiny() const noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE inline T
+ inline T
 Vec4<T>::length() const noexcept
 {
     T length2 = dot (*this);
@@ -497,14 +497,14 @@ Vec4<T>::length() const noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE constexpr inline T
+ constexpr inline T
 Vec4<T>::length2() const noexcept
 {
     return dot (*this);
 }
 
 template <class T>
-IMATH_HOSTDEVICE const inline Vec4<T>&
+ const inline Vec4<T>&
 Vec4<T>::normalize() noexcept
 {
     T l = length();
@@ -543,7 +543,7 @@ Vec4<T>::normalizeExc()
 }
 
 template <class T>
-IMATH_HOSTDEVICE inline const Vec4<T>&
+ inline const Vec4<T>&
 Vec4<T>::normalizeNonNull() noexcept
 {
     T l = length();
@@ -555,7 +555,7 @@ Vec4<T>::normalizeNonNull() noexcept
 }
 
 template <class T>
-IMATH_HOSTDEVICE inline Vec4<T>
+ inline Vec4<T>
 Vec4<T>::normalized() const noexcept
 {
     T l = length();
@@ -579,7 +579,7 @@ Vec4<T>::normalizedExc() const
 }
 
 template <class T>
-IMATH_HOSTDEVICE inline Vec4<T>
+ inline Vec4<T>
 Vec4<T>::normalizedNonNull() const noexcept
 {
     T l = length();
