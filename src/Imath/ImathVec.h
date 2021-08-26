@@ -212,12 +212,6 @@ template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
 {
 }
 
-template <class T> template <class S>
- constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
-    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
-{
-}
-
 
 
 }
