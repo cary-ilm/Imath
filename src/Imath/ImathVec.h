@@ -10,11 +10,8 @@
 #ifndef INCLUDED_IMATHVEC_H
 #define INCLUDED_IMATHVEC_H
 
-#include "ImathExport.h"
 #include "ImathNamespace.h"
 #include "ImathTypeTraits.h"
-
-#include "ImathMath.h"
 
 #include <iostream>
 #include <limits>
