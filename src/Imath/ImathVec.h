@@ -207,6 +207,11 @@ template <class T> class Vec4
      constexpr T lengthTiny() const noexcept;
 };
 
+template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
+    : x(v.x), y(v.y), z(v.z), w(v.w)
+{
+}
+
 template <class T> template <class S>
  constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
     : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
