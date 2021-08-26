@@ -9,3 +9,7 @@ and 3D vectors and matrices and other simple but useful mathematical
 objects, functions, and data types common in computer graphics
 applications, including the ``half`` 16-bit floating-point type.
 
+.. doxygenclass:: Imath::Vec4
+   :undoc-members:
+   :members:
+
