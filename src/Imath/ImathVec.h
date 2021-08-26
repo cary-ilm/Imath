@@ -5,8 +5,6 @@
 
 namespace Imath {
     
-template <class T> class Vec4;
-
 ///
 /// 4-element vector
 ///
@@ -15,7 +13,7 @@ template <class T> class Vec4
 {
   public:
 
-    T x, y, z, w;
+    T x;
 
     /// Copy constructor
      constexpr Vec4 (const Vec4& v) noexcept;
@@ -25,13 +23,13 @@ template <class T> class Vec4
 };
 
 template <class T>  constexpr inline Vec4<T>::Vec4 (const Vec4& v) noexcept
-    : x(v.x), y(v.y), z(v.z), w(v.w)
+    : x(v.x)
 {
 }
 
 template <class T> template <class S>
  constexpr inline Vec4<T>::Vec4 (const Vec4<S>& v) noexcept
-    : x(T(v.x)), y(T(v.y)), z(T(v.z)), w(T(v.w))
+    : x(T(v.x))
 {
 }
 
