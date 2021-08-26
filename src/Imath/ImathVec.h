@@ -207,25 +207,6 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     IMATH_HOSTDEVICE IMATH_CONSTEXPR14 T lengthTiny() const IMATH_NOEXCEPT;
 };
 
-//-------------------------
-// Typedefs for convenience
-//-------------------------
-
-/// Vec4 of short
-typedef Vec4<short> V4s;
-
-/// Vec4 of integer
-typedef Vec4<int> V4i;
-
-/// Vec4 of int64_t
-typedef Vec4<int64_t> V4i64;
-
-/// Vec4 of float
-typedef Vec4<float> V4f;
-
-/// Vec4 of double
-typedef Vec4<double> V4d;
-
 //-----------------------
 // Implementation of Vec4
 //-----------------------
