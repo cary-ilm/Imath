@@ -10,28 +10,7 @@
 #ifndef INCLUDED_IMATHVEC_H
 #define INCLUDED_IMATHVEC_H
 
-#include "ImathNamespace.h"
-#include "ImathTypeTraits.h"
-
-#include <iostream>
-#include <limits>
-#include <stdexcept>
-
-#if (defined _WIN32 || defined _WIN64) && defined _MSC_VER
-// suppress exception specification warnings
-#    pragma warning(push)
-#    pragma warning(disable : 4290)
-#endif
-
-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
-
 template <class T> class Vec4;
-
-/// Enum for the Vec4 to Vec3 conversion constructor
-enum IMATH_EXPORT_ENUM InfException
-{
-    INF_EXCEPTION
-};
 
 ///
 /// 4-element vector
@@ -82,51 +61,6 @@ template <class T> class IMATH_EXPORT_TEMPLATE_TYPE Vec4
     ~Vec4() IMATH_NOEXCEPT = default;
 
     /// @}
-
-#if IMATH_FOREIGN_VECTOR_INTEROP
-    /// @{
-    /// @name Interoperability with other vector types
-    ///
-    /// Construction and assignment are allowed from other classes that
-    /// appear to be equivalent vector types, provided that they have either
-    /// a subscripting operator, or data members .x, .y, .z, .w that are of
-    /// the same type as the elements of this vector, and their size appears
-    /// to be the right number of elements.
-    ///
-    /// This functionality is disabled for gcc 4.x, which seems to have a
-    /// compiler bug that results in spurious errors. It can also be
-    /// disabled by defining IMATH_FOREIGN_VECTOR_INTEROP to be 0 prior to
-    /// including any Imath header files.
-    ///
-
-    template<typename V, IMATH_ENABLE_IF(has_xyzw<V,T>::value)>
-    IMATH_HOSTDEVICE explicit constexpr Vec4 (const V& v) IMATH_NOEXCEPT
-        : Vec4(T(v.x), T(v.y), T(v.z), T(v.w)) { }
-
-    template<typename V, IMATH_ENABLE_IF(has_subscript<V,T,4>::value
-                                         && !has_xyzw<V,T>::value)>
-    IMATH_HOSTDEVICE explicit Vec4 (const V& v) : Vec4(T(v[0]), T(v[1]), T(v[2]), T(v[3])) { }
-
-    template<typename V, IMATH_ENABLE_IF(has_xyzw<V,T>::value)>
-    IMATH_HOSTDEVICE IMATH_CONSTEXPR14 const Vec4& operator= (const V& v) IMATH_NOEXCEPT {
-        x = T(v.x);
-        y = T(v.y);
-        z = T(v.z);
-        w = T(v.w);
-        return *this;
-    }
-
-    template<typename V, IMATH_ENABLE_IF(has_subscript<V,T,4>::value
-                                         && !has_xyzw<V,T>::value)>
-    IMATH_HOSTDEVICE const Vec4& operator= (const V& v) {
-        x = T(v[0]);
-        y = T(v[1]);
-        z = T(v[2]);
-        w = T(v[3]);
-        return *this;
-    }
-    /// @}
-#endif
 
     /// @{
     /// @name Arithmetic and Comparison
@@ -717,11 +651,5 @@ operator* (T a, const Vec4<T>& v) IMATH_NOEXCEPT
 {
     return Vec4<T> (a * v.x, a * v.y, a * v.z, a * v.w);
 }
-
-#if (defined _WIN32 || defined _WIN64) && defined _MSC_VER
-#    pragma warning(pop)
-#endif
-
-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
 
 #endif // INCLUDED_IMATHVEC_H
