@@ -78,6 +78,8 @@ if (DOCS AND NOT IMATH_IS_SUBPROJECT)
   message(STATUS "adding docs because NOT IMATH_IS_SUBPROJECT")
   option(INSTALL_DOCS "Set ON to install html documentation" ON)
   add_subdirectory(docs)
+else()
+  message(STATUS "not adding docs because IMATH_IS_SUBPROJECT")
 endif()
 
 # If you want to use ctest to configure, build and
