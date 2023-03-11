@@ -8,9 +8,6 @@
 #endif
 
 #include <ImathFun.h>
-#if __cplusplus >= 202002L
-#    include <bit>
-#endif
 #include "testFun.h"
 #include <assert.h>
 #include <cstdint>
@@ -20,7 +17,9 @@
 
 using namespace std;
 
-#if __cplusplus < 202002L
+#if __cplusplus >= 202002L && !(__clang__ && __APPLE__)
+#    include <bit>
+#else
 template <typename To, typename From>
 static inline To
 bit_cast (From from)
