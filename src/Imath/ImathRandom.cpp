@@ -139,7 +139,7 @@ srand48 (long int seed)
     staticState[0] = 0x330e;
 }
 
-float
+IMATH_EXPORT float
 Rand32::nextf ()
 {
     //

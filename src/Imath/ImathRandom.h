@@ -29,7 +29,7 @@ IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
 /// Fast random-number generator that generates
 /// a uniformly distributed sequence with a period
 /// length of 2^32.
-class IMATH_EXPORT Rand32
+class IMATH_EXPORT_TYPE Rand32
 {
 public:
     /// Constructor, given a seed
@@ -59,7 +59,7 @@ private:
 /// Random-number generator based on the C Standard Library
 /// functions erand48(), nrand48() & company; generates a
 /// uniformly distributed sequence.
-class Rand48
+class  IMATH_EXPORT_TYPE Rand48
 {
 public:
     /// Constructor
