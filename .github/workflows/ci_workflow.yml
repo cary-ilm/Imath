@@ -365,6 +365,7 @@ jobs:
             cxx-standard: 17
             exclude-tests:
             osver: 11.0
+            vfx-cy: 23
 
           # Debug
           - build: 2
@@ -374,6 +375,7 @@ jobs:
             cxx-standard: 17
             exclude-tests:
             osver: 11.0
+            vfx-cy: 23
 
 
           # Static
@@ -384,6 +386,7 @@ jobs:
             cxx-standard: 17
             exclude-tests:
             osver: 11.0
+            vfx-cy: 23
 
 
           # C++14
@@ -394,6 +397,7 @@ jobs:
             cxx-standard: 14
             exclude-tests:
             osver: 11.0
+            vfx-cy: 23
 
 
           # C++11
@@ -404,9 +408,10 @@ jobs:
             cxx-standard: 11
             exclude-tests:
             osver: 11.0
+            vfx-cy: 23
               
           # --------------------------------------------------------------------
-          # VFX CY2022 - MacOS 10.15
+          # VFX CY2023 - MacOS 12
           # --------------------------------------------------------------------
           # C++11
           - build: 6
@@ -415,7 +420,8 @@ jobs:
             build-docs: 'ON'
             cxx-standard: 17
             exclude-tests:
-            osver: 10.15
+            osver: 12.0
+            vfx-cy: 23
 
     steps:
       ## - name: Setup Python
