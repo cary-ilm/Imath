@@ -47,7 +47,7 @@ if on_rtd:
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '5.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -167,17 +167,24 @@ html_short_title = "Imath"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "images/imath-logo-blue.png"
+html_logo_url = "_static/imath-logo-blue.png"
+html_logo = "_static/imath-logo-blue.png"
+logo_url = "_static/imath-logo-blue.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = "images/imath-fav.ico"
+html_favicon = "_static/imath-fav.ico"
+html_favicon_url = "_static/imath-fav.ico"
+favicon_url = "_static/imath-fav.ico"
+#favicon_url = "images/imath-fav.ico"
+#html_favicon_url = "https://www.python.org/static/favicon.ico"
+#favicon_url = "https://www.python.org/static/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
