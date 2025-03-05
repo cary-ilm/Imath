@@ -7,7 +7,7 @@
 
 #include <Python.h>
 #include <boost/python.hpp>
-#include <PyImath.h>
+#include "PyImath.h"
 #include <PyImathVec.h>
 #include <PyImathColor.h>
 #include <iostream>
