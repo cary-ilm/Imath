@@ -43,7 +43,7 @@ typedef FixedVArray<int> VIntArray;
 typedef FixedVArray<float> VFloatArray;
 typedef FixedVArray<IMATH_NAMESPACE::Vec2<int> > VV2iArray;
 typedef FixedVArray<IMATH_NAMESPACE::Vec2<float> > VV2fArray;
-
+    
 }
 
 #endif

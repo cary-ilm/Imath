@@ -39,5 +39,5 @@ lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
 lib/cmake/Imath/ImathTargets-release.cmake
 lib/cmake/Imath/ImathTargets.cmake
-lib/libImath-$MAJOR_$MINOR.dll.a
+lib/libImath-$MAJOR_$MINOR.a
 lib/pkgconfig/Imath.pc

@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-find_package(pybind11 REQUIRED)
+message(STATUS "Configuring pybindimath module")
 
-#
-# Source/headers
-#
+find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
+
+set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3_10.so
+set(PYBINDIMATH_MODULE pybindimath) # import pybindimath
 
 set(PYBINDIMATH_SOURCES
     PyBindImathFun.cpp
@@ -14,9 +15,8 @@ set(PYBINDIMATH_SOURCES
     PyBindImathVec.cpp
     PyBindImathPlane.cpp
     PyBindImathLine.cpp
-    
-    # PyBindImathEuler build Error pybind test
-    # PyBindImathFrustum build failing
+#    PyBindImathEuler.cpp
+#    PyBindImathFrustum.cpp
 )
 
 set(PYBINDIMATH_HEADERS
@@ -25,29 +25,116 @@ set(PYBINDIMATH_HEADERS
 )
 
 #
-# shared library, e.g. libPyBindImath_Python3_11-3_2.so.30.3.2.0
+# Shared Library
 #
 
-set(PYBINDIMATH_LIBRARY PyBindImath)
+if (SKBUILD)
 
-add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+  pybind11_add_module(${PYBINDIMATH_MODULE}
+    pybindimathmodule.cpp ${PYBINDIMATH_SOURCES})
 
-target_link_libraries(${PYBINDIMATH_LIBRARY} PRIVATE Imath::Imath pybind11::module)
+  set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
 
-# Set include directories
-target_include_directories(${PYBINDIMATH_LIBRARY} PRIVATE ${Python3_INCLUDE_DIRS} ${Imath_INCLUDE_DIRS})
+  target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 
-if(NOT "${PYBINDIMATH_LIB_PYTHONVER_ROOT}" STREQUAL "")
-  set(pythonver_root "${PYBINDIMATH_LIB_PYTHONVER_ROOT}${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
-  message("pythonver_root ${PYBINDIMATH_LIB_PYTHONVER_ROOT}${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
-endif()
+else()
 
-if(BUILD_SHARED_LIBS)
-  # This creates the so-versioned library symlinks
+  add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+
   set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
     SOVERSION ${IMATH_LIB_SOVERSION}
     VERSION ${IMATH_LIB_VERSION}
-    OUTPUT_NAME "${PYBINDIMATH_CURLIB_OUTROOT}${PYBINDIMATH_LIBRARY}${pythonver_root}${PYBINDIMATH_LIB_SUFFIX}"
+    POSITION_INDEPENDENT_CODE ON
+  )
+
+  target_link_libraries(${PYBINDIMATH_LIBRARY}
+    PRIVATE Imath::Imath pybind11::module)
+
+  target_include_directories(${PYBINDIMATH_LIBRARY}
+      PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
+  )
+
+  #
+  # Python module
+  #
+
+  pybind11_add_module(${PYBINDIMATH_MODULE}
+    pybindimathmodule.cpp $<TARGET_OBJECTS:${PYBINDIMATH_LIBRARY}>)
+
+  target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
+
+  set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
+    PREFIX ""
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
+)
+
+endif()
+
+#
+# Installation
+#
+
+include(GNUInstallDirs)
+
+if(SKBUILD)
+  message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
+  set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+  set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+
+  install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+else()
+
+  if (NOT DEFINED PYTHON_INSTALL_DIR)
+
+    set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+    message(STATUS "installing ${PYBINDIMATH_MODULE} to ${PYTHON_INSTALL_DIR}")
+
+  else()
+
+    message(STATUS "installing ${PYBINDIMATH_MODULE} to ${PYTHON_INSTALL_DIR} (set externally)")
+  
+  endif()
+  
+  # Install shared library
+  install(TARGETS ${PYBINDIMATH_LIBRARY}
+    EXPORT "${PYBINDIMATH_LIBRARY}Targets"
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+
+  # Install headers
+  install(FILES ${PYBINDIMATH_HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYBINDIMATH_LIBRARY})
+
+  # Install export set for downstream CMake
+  install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
+    FILE ${PYBINDIMATH_LIBRARY}Targets.cmake
+    NAMESPACE ${PYBINDIMATH_LIBRARY}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYBINDIMATH_LIBRARY}
+  )
+
+  # Install Python module 
+  install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY
+    DESTINATION ${PYTHON_INSTALL_DIR})
+
+  # Config file for find_package()
+  include(CMakePackageConfigHelpers)
+
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYBINDIMATH_LIBRARY}ConfigVersion.cmake"
+    VERSION 1.0.0
+    COMPATIBILITY AnyNewerVersion
+  )
+
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYBINDIMATH_LIBRARY}ConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYBINDIMATH_LIBRARY}
   )
 endif()
 
@@ -122,4 +209,3 @@ if(IMATH_BUILD_APPLE_FRAMEWORKS)
         MACOSX_FRAMEWORK_BUNDLE_VERSION PYBINDIMATH_LIB_SUFFIX
         MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${Imath_VERSION})
 endif()
-

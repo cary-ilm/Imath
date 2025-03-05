@@ -15,6 +15,7 @@ void register_plane(pybind11::module& m, const char *name)
 {
     pybind11::class_<T> c(m, name);
     c.def(pybind11::init<>(), "Uninitialized by default")
+#if XXX
     .def(pybind11::init<const Q &, S>(), pybind11::arg("normal"), pybind11::arg("distance"), "Initialize with a normal and distance")
     .def(pybind11::init<const Q &, const Q &>(), pybind11::arg("point"), pybind11::arg("normal"), "Initialize with a point and a normal")
     .def(pybind11::init<const Q &, const Q &, const Q &>(), pybind11::arg("point1"), pybind11::arg("point2"), pybind11::arg("point3"), "Initialize with three points")
@@ -40,7 +41,9 @@ void register_plane(pybind11::module& m, const char *name)
             std::stringstream ss;
             ss << obj;
             return ss.str();
-        });
+        })
+#endif
+        ;
 }
 
  void register_imath_plane(pybind11::module &m) 

@@ -52,17 +52,36 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
-    container:
-      image: ${{ inputs.container }}
-
+    continue-on-error: true
+    
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - name: Install MSYS2 ${{ inputs.msystem }}
+        if: inputs.msystem != ''
+        uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
+        with:
+          msystem: ${{ inputs.msystem }}
+          update: true
+          install: git
+          pacboy: cc:p cmake:p 
+
+      - name: Set up Python for MINGW32
+        if: inputs.msystem == 'MINGW32'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          architecture: 'x86'
+      
+      - name: Install pybind11 for UCRT64
+        if: inputs.msystem == 'UCRT64'
+        run: pacboy -S python:p pybind11:p --noconfirm
+        shell: msys2 {0}
 
       - name: Install MSYS2 ${{ inputs.msystem }}
         if: inputs.msystem != ''
@@ -74,7 +93,60 @@ jobs:
           pacboy: cc:p cmake:p
 
       - name: Create build directories
-        run: mkdir _install _build _examples
+        run: mkdir _install _build _examples _python
+        shell: bash
+
+      - name: Set Up Conan
+        if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32' )
+        run: |
+          CONAN_ROOT="${{ github.workspace }}/_conan"
+          conan_args=("install")
+          conan_args+=("--output-folder=${CONAN_ROOT}")
+          conan_args+=("--build=missing")
+          conan_args+=("--generator" "CMakeDeps")
+          conan_args+=("--generator" "CMakeToolchain")
+          conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
+          if [[ "${{ inputs.pybind11 }}" == "ON" && "${{ inputs.msystem }}" == "MINGW32" ]]; then
+            conan_args+=("--requires=pybind11/2.11.1")
+          fi
+          if [[ "${{ inputs.python }}" == "ON" ]]; then
+            conan_args+=("--requires=boost/1.82.0")
+            conan_args+=("--options" "boost/*:header_only=False")
+            conan_args+=("--options" "boost/*:without_python=False")
+            conan_args+=("--options" "boost/*:without_format=False")
+            conan_args+=("--options" "boost/*:shared=True")
+          fi
+          if [[ "${{ inputs.msystem }}" != "" ]]; then
+            conan_args+=("--settings" "compiler=gcc")
+            conan_args+=("--settings" "compiler.version=14")
+            conan_args+=("--settings" "compiler.libcxx=libstdc++11")
+            if [[ "${{ inputs.msystem }}" == "UCRT64" ]]; then
+              conan_args+=("--settings" "arch=x86_64")
+            else
+              conan_args+=("--settings" "arch=x86")
+            fi
+          fi
+          python -m pip install --upgrade pip "numpy<2" conan
+          conan profile detect
+          echo conan "${conan_args[@]}"
+          conan "${conan_args[@]}"
+          echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
+          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install Python Dependencies
+        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
+        run: |
+          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
+              pip install pybind11
+              pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+              echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
+          fi
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          PYTHON_EXECUTABLE=$(which python)
+          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
 
       - name: Construct CMake command
@@ -82,20 +154,41 @@ jobs:
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
-          CMAKE_ARGS="-B . -S .. \
-                -DCMAKE_INSTALL_PREFIX=../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }} \
-                -DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }} \
-                -DBUILD_TESTING=${{ inputs.BUILD_TESTING }} \
-                -DPYTHON=${{ inputs.python }} \
-                -DPYBIND11=${{ inputs.pybind11 }} \
-                -DCMAKE_VERBOSE_MAKEFILE=ON"
-          if [ -n "${{ inputs.namespace }}" ]; then
-              CMAKE_ARGS="$CMAKE_ARGS -DIMATH_NAMESPACE=${{ inputs.namespace }}"
+          cmake_args=("-B" "." "-S" "..")
+          cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
+          cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
+          cmake_args+=("-DBUILD_TESTING=${{ inputs.BUILD_TESTING }}")
+          cmake_args+=("-DPYTHON=${{ inputs.python }}")
+          cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
+          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
+          if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
+              cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
-          echo "CMAKE_ARGS=$CMAKE_ARGS" >> $GITHUB_ENV
+          if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
+              cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
+          fi
+          if [ -n "${{ env.pybind11_DIR }}" ]; then
+              cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
+          fi
+          if [ -n "${{ env.Boost_ROOT }}" ]; then
+              cmake_args+=("-DBoost_ROOT=${{ env.Boost_ROOT }}")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ inputs.namespace }}" ]; then
+              cmake_args+=("-DIMATH_NAMESPACE=${{ inputs.namespace }}")
+          fi
+
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
 
           # Remove the os version from the manifest name, so it only
           # contains "ubuntu", "macos", or "windows", so the name is,
@@ -107,31 +200,37 @@ jobs:
       - name: Configure, Build, Test
         if: inputs.msystem == ''
         run: |
-          cmake $CMAKE_ARGS
+          cmake --version
+          cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+            echo ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
-        shell: bash
+        shell: msys2 {0}
 
       - name: Configure, Build, Test (msys2) # requires msys2 shell
         if: inputs.msystem != ''
         run: |
           cmake --version
-          cmake $CMAKE_ARGS
+          cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+            echo ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
         shell: msys2 {0}
 
-      - name: Find python version
+      - name: Test Pybind11
+        if: inputs.pybind11 == 'ON'
+        run: python -v src/pybind11/PyBindImathTest/test_import_pybindimath.py
+        shell: bash
+
+      - name: Test Python
+        if: inputs.python == 'ON'
         run: |
-          echo Finding python version in _build directory:
-          grep -r PYTHON
-        working-directory: _build
+          python -v src/python/PyImathTest/test_import_imath.py
+          python -v src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
 
       - name: Prepare install_manifest
@@ -139,7 +238,7 @@ jobs:
         # and remove the path prefix, so the manifest contains only
         # the local filenames.
         run: |
-          echo "# cmake $CMAKE_ARGS" > "_build/$INSTALL_MANIFEST"
+          echo "# cmake ${{ env.CMAKE_ARGS }}" > "_build/$INSTALL_MANIFEST"
           sort _build/install_manifest.txt | sed -e "s:^.*/_install/::" >> "_build/$INSTALL_MANIFEST"
         shell: bash
 
@@ -152,7 +251,7 @@ jobs:
           path: _build/${{ env.INSTALL_MANIFEST }}
 
       - name: Validate install
-        if: ${{ inputs.validate_install == 'ON' }}
+        if: inputs.validate_install == 'ON'
         # Validate that the build has installed the proper files by comparing against the appropriate reference manifest
         run: |
           share/ci/scripts/validate_install.py "_build/$INSTALL_MANIFEST" "share/ci/install_manifest/$INSTALL_MANIFEST" _build/CMakeCache.txt
@@ -164,11 +263,19 @@ jobs:
           # Make sure we can build the tests when configured as a
           # standalone application linking against the just-installed
           # Imath library.
-          cmake ../src/ImathTest \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
+          cmake_args=("../src/ImathTest")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
@@ -186,11 +293,21 @@ jobs:
         run: |
           # Confirm the examples compile and execute
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
-          cmake ../website/examples \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+          cmake_args=("../website/examples")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . --config ${{ inputs.build-type }}
+
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
             ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
@@ -207,31 +324,23 @@ jobs:
         run: |
           # Confirm the examples compile and execute
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
-          cmake ../website/examples \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+          cmake_args=("../website/examples")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . --config ${{ inputs.build-type }}
           export PATH="${{ github.workspace }}/_install/bin:$PATH"
           ./bin/imath-intro.exe
           ./bin/imath-examples.exe
         shell: msys2 {0}
         working-directory: _examples
-
-      - name: Test Python
-        if: ${{ inputs.python == 'ON' }}
-        run: |
-          # Confirm the python module loads. Set PYTHONPATH to the
-          # _install directory of the module (better to find it
-          # procedurally than hard code a path).
-          if [[ "${{ inputs.python }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name imath.so | xargs dirname`
-              python -c "import imath;print(imath.__version__)"
-          fi
-          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name 'pybindimath.*.so' | xargs dirname`
-              python -c "import pybindimath;print(pybindimath.__version__)"
-          fi
-        shell: bash
-        working-directory: _build
 

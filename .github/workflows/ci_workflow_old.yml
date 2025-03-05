@@ -22,12 +22,16 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
+      - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow_old.yml'
   pull_request:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
+      - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow_old.yml'
 
