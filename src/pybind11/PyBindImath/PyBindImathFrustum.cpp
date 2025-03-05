@@ -15,6 +15,7 @@ void register_frustum(pybind11::module& m, const char *name)
 {
     pybind11::class_<T> c(m, name);
     c.def(pybind11::init<>(), "Uninitialized by default")
+#if XXX
     .def(pybind11::init<T>(), pybind11::arg("frustum"), "Copy constructor")
     .def(pybind11::init<S, S, S, S>(), pybind11::arg("nearPlane"), pybind11::arg("farPlane"), pybind11::arg("fovx"), pybind11::arg("aspect"), "Initialize with basic frustum properties")
     
@@ -47,13 +48,15 @@ void register_frustum(pybind11::module& m, const char *name)
             std::stringstream ss;
             ss << obj;
             return ss.str();
-        });
+        })
+#endif
+        ;
 }
 
 void register_imath_frustum(pybind11::module &m) 
 {
-    register_frustum<IMATH_NAMESPACE::Frustumf, IMATH_NAMESPACE::V3f, IMATH_NAMESPACE::M44f, float>(m, "Frustumf");
-    register_frustum<IMATH_NAMESPACE::Frustumd, IMATH_NAMESPACE::V3d, IMATH_NAMESPACE::M44d, double>(m, "Frustumd");
+    register_frustum<IMATH_NAMESPACE::Frustumf, IMATH_NAMESPACE::V3f, IMATH_NAMESPACE::M44f>(m, "Frustumf");
+    register_frustum<IMATH_NAMESPACE::Frustumd, IMATH_NAMESPACE::V3d, IMATH_NAMESPACE::M44d>(m, "Frustumd");
 }
 
 }

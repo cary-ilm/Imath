@@ -199,10 +199,7 @@ endif()
 
 message(STATUS "Boost PyImath")
 add_subdirectory( PyImath )
-
-if(TARGET Python2::ImathNumPy OR TARGET Python3::ImathNumPy)
-  add_subdirectory( PyImathNumpy )
-endif()
+add_subdirectory( PyImathNumpy )
 
 ##########################
 # Tests

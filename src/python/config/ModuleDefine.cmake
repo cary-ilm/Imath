@@ -157,7 +157,10 @@ function(PYIMATH_DEFINE_MODULE modname)
         LIBRARY_OUTPUT_NAME "${modname}"
         DEBUG_POSTFIX ""
       )
-      install(TARGETS ${modname}_python3 DESTINATION ${PyImath_Python3_SITEARCH_REL})
+
+      if(NOT SKBUILD)
+        install(TARGETS ${modname}_python3 DESTINATION ${PyImath_Python3_SITEARCH_REL})
+      endif()
     endif()
   endif()
 endfunction()

@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
+message(STATUS "Configuring imathnumpy module")
+
 if(TARGET Python2::Python AND
    TARGET Boost::${PYIMATH_BOOST_PY_COMPONENT} AND
    TARGET Python2::ImathNumPy)

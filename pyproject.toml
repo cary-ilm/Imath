@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Contributors to the OpenEXR Project.
+
+[build-system]
+requires = ["scikit-build-core==0.10.7", "pybind11", "numpy"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "Imath"
+dynamic = ["version"]
+
+description="Python bindings for the Imath library"
+readme = "README.md"
+authors = [
+  { name="Contributors to the Imath project", email="info@openexr.com" },
+]
+requires-python = ">=3.7"
+
+dependencies = [
+  "numpy>=1.7.0"
+]
+
+[project.urls]
+"Homepage" = "https://openexr.com"
+"Source" = "https://github.com/AcademySoftwareFoundation/Imath"
+"Bug Tracker" = "https://github.com/AcademySoftwareFoundation/Imath/issues"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+log_cli_level = "INFO"
+filterwarnings = [
+  "error",
+]
+testpaths = ["tests"]
+
+[tool.scikit-build]
+wheel.expand-macos-universal-tags = true
+sdist.exclude = [".github"]
+
+#
+# Only build the python/pybind modules:
+#   cmake --build <build> --target pybindimath imath_python3 imathnumpy_python3
+#
+build.targets = ["pybindimath", "imath_python3", "imathnumpy_python3"]
+# Only install the "python" component (cmake --install --component python).
+# This makes sure that only files marked as "python" component are installed.
+install.components = ["python"]
+# strip debug symbols
+install.strip = true
+
+# Enable experimental features if any are available
+# In this case we need custom local plugin to get
+# the project version from cmake.
+experimental = true
+metadata.version.provider = "imath_skbuild_plugin"
+metadata.version.provider-path = "./share/ci/scripts"
+
+
+[tool.scikit-build.cmake.define]
+IMATH_INSTALL = 'OFF'
+PYTHON = 'ON'
+PYBIND11 = 'ON'
+IMATH_INSTALL_PKG_CONFIG = 'OFF'
+BUILD_TESTING = 'OFF'
+BUILD_SHARED_LIBS = 'OFF'
+CMAKE_OSX_DEPLOYMENT_TARGET = '10.15'
+CMAKE_POSITION_INDEPENDENT_CODE = 'ON'
+
+[tool.cibuildwheel]
+test-command = "pytest -s {project}/src/pybind11/PyBindImathTest"
+test-requires = ["numpy"]
+test-extras = ["test"]
+test-skip = ["*universal2:arm64"]
+build-verbosity = 1
+
+manylinux-x86_64-image = "manylinux2014"
+manylinux-i686-image = "manylinux2014"
+manylinux-aarch64-image = "manylinux2014"
+
+# Needed for full C++17 support
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.15"
