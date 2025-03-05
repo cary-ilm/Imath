@@ -5,8 +5,11 @@
 
 #include "PyBindImath.h"
 #include <ImathFrustum.h>
-namespace PyBindImath {
+#include <ImathVec.h>
+#include <ImathMatrix.h>
+
 namespace py = pybind11;
+
 namespace {
 
 template<typename T>
@@ -221,4 +224,3 @@ void register_imath_frustum(py::module &m)
     register_Frustum<IMATH_NAMESPACE::Frustumd>(m, "Frustumd");
 }
 
-} // PyBindImath
