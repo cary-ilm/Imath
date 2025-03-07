@@ -57,8 +57,11 @@ jobs:
       - name: Create sdist
         # Only create it once.
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: pipx run build --sdist . --outdir wheelhouse
+        run: 
+          PYBIND11_CMAKE_DIR=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")
+          pipx run build --sdist . --outdir wheelhouse -- -DCMAKE_PREFIX_PATH="$PYBIND11_CMAKE_DIR"
 
+             
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
