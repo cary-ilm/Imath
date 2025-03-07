@@ -65,7 +65,6 @@ def dynamic_metadata(
                         current_dir + "../../../..",
                         "-B",
                         tmpdir,
-                        "-DPYBIND11=ON",
                     ],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
