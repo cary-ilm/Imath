@@ -20,6 +20,7 @@ on:
       - 'src/**'
       - 'pyproject.toml'
       - '.github/workflows/python-wheels.yml'
+      - 'share/ci/scripts/imath_skbuild_plugin.py'
   pull_request:
     branches-ignore:
       - RB-*
@@ -27,6 +28,7 @@ on:
       - 'src/**'
       - 'pyproject.toml'
       - '.github/workflows/python-wheels.yml'
+      - 'share/ci/scripts/imath_skbuild_plugin.py'
 
 permissions:
   contents: read
