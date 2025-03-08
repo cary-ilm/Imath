@@ -82,7 +82,7 @@ install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
 )
 
 # Install Python module 
-install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
+install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
 # Config file for find_package()
 include(CMakePackageConfigHelpers)
