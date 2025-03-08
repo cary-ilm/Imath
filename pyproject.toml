@@ -25,6 +25,7 @@ requires-python = ">=3.7"
 dependencies = [
   "numpy>=1.7.0"
 ]
+requires-python = ">= 3.8"
 
 [project.urls]
 "Homepage" = "https://openexr.com"
@@ -47,12 +48,14 @@ testpaths = ["tests"]
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
 sdist.exclude = [".github"]
+build.verbose=true
 
 #
 # Only build the python/pybind modules:
 #   cmake --build <build> --target pybindimath imath_python3 imathnumpy_python3
 #
-build.targets = ["pybindimath", "imath_python3", "imathnumpy_python3"]
+#build.targets = ["pybindimath", "imath_python3", "imathnumpy_python3"]
+build.targets = ["pybindimath"]
 # Only install the "python" component (cmake --install --component python).
 # This makes sure that only files marked as "python" component are installed.
 install.components = ["python"]
@@ -69,13 +72,14 @@ metadata.version.provider-path = "./share/ci/scripts"
 
 [tool.scikit-build.cmake.define]
 IMATH_INSTALL = 'OFF'
-PYTHON = 'ON'
+PYTHON = 'OFF'
 PYBIND11 = 'ON'
 IMATH_INSTALL_PKG_CONFIG = 'OFF'
 BUILD_TESTING = 'OFF'
 BUILD_SHARED_LIBS = 'OFF'
 CMAKE_OSX_DEPLOYMENT_TARGET = '10.15'
 CMAKE_POSITION_INDEPENDENT_CODE = 'ON'
+CMAKE_VERBOSE_MAKEFILE = 'ON'
 
 [tool.cibuildwheel]
 test-command = "pytest -s {project}/src/pybind11/PyBindImathTest"
