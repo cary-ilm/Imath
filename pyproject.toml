@@ -5,11 +5,11 @@
 requires = ["scikit-build-core==0.10.7", "python", "pybind11", "numpy"]
 build-backend = "scikit_build_core.build"
 
-[tool.scikit-build]
-cmake.define = [
-    "Boost_DIR" = "${Boost_ROOT}/lib/cmake/Boost-x.y.z",  # Substitute the correct version
-    "BOOST_ROOT" = "${BOOST_ROOT}",  # Use environment variable if set
-]
+#[tool.scikit-build]
+#cmake.define = [
+#    "Boost_DIR" = "${Boost_ROOT}/lib/cmake/Boost-x.y.z",  # Substitute the correct version
+#    "BOOST_ROOT" = "${BOOST_ROOT}",  # Use environment variable if set
+#]
 
 [project]
 name = "Imath"
