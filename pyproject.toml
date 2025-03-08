@@ -20,12 +20,10 @@ readme = "README.md"
 authors = [
   { name="Contributors to the Imath project", email="info@openexr.com" },
 ]
-requires-python = ">=3.7"
-
+requires-python = ">=3.8"
 dependencies = [
   "numpy>=1.7.0"
 ]
-requires-python = ">= 3.8"
 
 [project.urls]
 "Homepage" = "https://openexr.com"
