@@ -12,6 +12,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
       - '.github/workflows/ci_steps.yml'
@@ -19,6 +20,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
       - '.github/workflows/ci_steps.yml'

@@ -44,6 +44,7 @@ filterwarnings = [
 #testpaths = ["tests"]
 
 [tool.scikit-build]
+test-requires = ["pytest"]
 wheel.expand-macos-universal-tags = true
 sdist.exclude = [".github"]
 build.verbose=true
