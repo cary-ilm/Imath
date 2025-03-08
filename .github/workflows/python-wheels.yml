@@ -64,9 +64,16 @@ jobs:
           export PEP517_CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")"
           pipx run build --sdist . --outdir wheelhouse
              
+      - name: Install Boost
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-all-dev
+          echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
+
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
+          BOOST_ROOT: /usr
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
           # Skip python 3.7 since scikit-build-core requires 3.8+
