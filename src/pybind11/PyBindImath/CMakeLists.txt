@@ -14,7 +14,6 @@ set(PYBINDIMATH_SOURCES
     PyBindImathVec.cpp
     PyBindImathPlane.cpp
     PyBindImathLine.cpp
-    PyBindImathFun.cpp
 #    PyBindImathEuler.cpp
 #    PyBindImathFrustum.cpp
 )
