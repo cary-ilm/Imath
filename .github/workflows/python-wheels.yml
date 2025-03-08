@@ -97,7 +97,9 @@ jobs:
           CIBW_SKIP: "*-win32 *_i686"
           CIBW_TEST_SKIP: "*-macosx*arm64"
           OPENEXR_TEST_IMAGE_REPO: "https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main"
-
+        run: |
+          CMAKE_ARGS="-DPython3_EXECUTABLE=$(which python3)" python -m build
+    
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
