@@ -56,7 +56,9 @@ target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE ${PYBINDIMATH_LIBRARY} Imath
 
 include(GNUInstallDirs)
 
-if(NOT SKBUILD)
+if(SKBUILD)
+  set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+else()
   set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
 endif()
 
