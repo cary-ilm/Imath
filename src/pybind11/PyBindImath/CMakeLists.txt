@@ -48,7 +48,7 @@ target_include_directories(${PYBINDIMATH_LIBRARY}
 #
 
 pybind11_add_module(${PYBINDIMATH_MODULE} pybindimathmodule.cpp $<TARGET_OBJECTS:${PYBINDIMATH_LIBRARY}>)
-target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE ${PYBINDIMATH_LIBRARY} Imath::Imath)
+target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 if (SKBUILD)
   set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
