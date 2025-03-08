@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
-import pybindimath
-print(pybindimath.__file__)
-print("ok")
+def test_import():
+    import pybindimath
+    print()
+    print(f"pybindimath imported from {pybindimath.__file__}")
+    print("ok")
+
+test_import()
