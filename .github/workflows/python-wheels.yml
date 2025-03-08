@@ -83,7 +83,7 @@ jobs:
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
-          CIBW_BEFORE_BUILD="python3-config --includes && python3-config --ldflags"
+          CIBW_BEFORE_BUILD: "python3-config --includes && python3-config --ldflags"
           BOOST_ROOT: ${{ env.BOOST_ROOT }}
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
