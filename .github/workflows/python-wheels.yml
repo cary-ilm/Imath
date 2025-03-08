@@ -61,8 +61,6 @@ jobs:
         # Only create it once.
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
-          python -c "import pybind11; print(f'pybind11 cmake dir: {pybind11.get_cmake_dir()}')"
-          export PEP517_CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")"
           pipx run build --sdist . --outdir wheelhouse
              
       - name: Install Boost
@@ -86,19 +84,16 @@ jobs:
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
           SCIKIT_BUILD_CORE_VERBOSE: 1
-          BOOST_ROOT: /usr
+          BOOST_ROOT: $BOOST_ROOT
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
           # Skip python 3.7 since scikit-build-core requires 3.8+
           # Skip 32-bit wheels builds on Windows
           # Also skip the PyPy builds, since they fail the unit tests
-          # CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-*"
           CIBW_BUILD: "cp310-* cp311-* cp312-*"
           CIBW_SKIP: "*-win32 *_i686"
           CIBW_TEST_SKIP: "*-macosx*arm64"
           OPENEXR_TEST_IMAGE_REPO: "https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main"
-        run: |
-          CMAKE_ARGS="-DPython3_EXECUTABLE=$(which python3)" python -m build
     
       - name: Upload artifact
         uses: actions/upload-artifact@v4
