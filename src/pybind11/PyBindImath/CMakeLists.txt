@@ -82,11 +82,7 @@ install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
 )
 
 # Install Python module 
-if(NOT SKBUILD)
-  install(TARGETS pybindimath
-      LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
-  )
-endif()
+install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
 
 # Config file for find_package()
 include(CMakePackageConfigHelpers)
