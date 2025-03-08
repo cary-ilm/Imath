@@ -49,6 +49,10 @@ target_include_directories(${PYBINDIMATH_LIBRARY}
 
 pybind11_add_module(${PYBINDIMATH_MODULE} pybindimathmodule.cpp $<TARGET_OBJECTS:${PYBINDIMATH_LIBRARY}>)
 target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE ${PYBINDIMATH_LIBRARY} Imath::Imath)
+if (SKBUILD)
+  set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
+endif()
 
 #
 # Installation
@@ -57,9 +61,13 @@ target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE ${PYBINDIMATH_LIBRARY} Imath
 include(GNUInstallDirs)
 
 if(SKBUILD)
+  message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
   set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
+  set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
 else()
   set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+  message(STATUS "setting PYTHON_INSTALL_DIR: ${PYTHON_INSTALL_DIR}")
 endif()
 
 # Install shared library
@@ -82,6 +90,7 @@ install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
 )
 
 # Install Python module 
+message(STATUS "install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})")
 install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
 # Config file for find_package()
