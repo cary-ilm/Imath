@@ -3,8 +3,8 @@
 
 message(STATUS "Configuring pybindimath module")
 
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-find_package(pybind11 REQUIRED)
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
 
 set(PYBINDIMATH_LIBRARY PyBindImath) # libPyBindImath.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
