@@ -6,7 +6,7 @@ message(STATUS "Configuring pybindimath module")
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
-set(PYBINDIMATH_LIBRARY PyBindImath) # libPyBindImath.so
+set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3.10.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
 
 set(PYBINDIMATH_SOURCES
