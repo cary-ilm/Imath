@@ -81,7 +81,7 @@ jobs:
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
-                -DPybind11_DIR=${{ env.PYBIND11_CMAKE_DIR }} \
+                -Dpybind11_DIR=${{ env.PYBIND11_CMAKE_DIR }} \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
