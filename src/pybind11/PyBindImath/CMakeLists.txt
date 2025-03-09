@@ -75,43 +75,47 @@ if(SKBUILD)
   set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
   set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
-else()
-  set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-endif()
 
-# Install shared library
-install(TARGETS ${PYBINDIMATH_LIBRARY}
+else()
+
+  set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+
+  # Install shared library
+  install(TARGETS ${PYBINDIMATH_LIBRARY}
     EXPORT "${PYBINDIMATH_LIBRARY}Targets"
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+  )
 
-# Install headers
-install(FILES ${PYBINDIMATH_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYBINDIMATH_LIBRARY})
+  # Install headers
+  install(FILES ${PYBINDIMATH_HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYBINDIMATH_LIBRARY})
 
-# Install export set for downstream CMake
-install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
+  # Install export set for downstream CMake
+  install(EXPORT ${PYBINDIMATH_LIBRARY}Targets
     FILE ${PYBINDIMATH_LIBRARY}Targets.cmake
     NAMESPACE ${PYBINDIMATH_LIBRARY}::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYBINDIMATH_LIBRARY}
-)
+  )
 
-# Install Python module 
-message(STATUS "install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})")
-install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+  # Install Python module 
+  install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY
+    DESTINATION ${PYTHON_INSTALL_DIR})
 
-# Config file for find_package()
-include(CMakePackageConfigHelpers)
+  # Config file for find_package()
+  include(CMakePackageConfigHelpers)
 
-write_basic_package_version_file(
+  write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/${PYBINDIMATH_LIBRARY}ConfigVersion.cmake"
     VERSION 1.0.0
     COMPATIBILITY AnyNewerVersion
-)
+  )
 
-install(FILES
+  install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/${PYBINDIMATH_LIBRARY}ConfigVersion.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYBINDIMATH_LIBRARY}
-)
+  )
+endif()
+
