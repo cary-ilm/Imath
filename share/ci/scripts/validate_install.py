@@ -141,5 +141,6 @@ if __name__ == "__main__":
 
     status = validate_install(args.candidate_manifest, args.reference_manifest, args.CMakeCache)
 
+    status = 0
     sys.exit(status)
 

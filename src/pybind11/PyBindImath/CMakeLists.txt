@@ -6,6 +6,12 @@ message(STATUS "Configuring pybindimath module")
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "variable ${_variableName}=${${_variableName}}")
+endforeach()
+
 set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3.10.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
 
@@ -76,8 +82,9 @@ include(GNUInstallDirs)
 if(SKBUILD)
   message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
   set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
   set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+
+  install(TARGETS ${PYBINDIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
 else()
 

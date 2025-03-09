@@ -61,7 +61,7 @@ jobs:
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
       namespace: ${{ matrix.namespace }}
-      validate_install: ${{ matrix.validate_install || 'OFF' }}
+      validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
       matrix:
         include:
