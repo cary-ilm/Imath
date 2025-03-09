@@ -30,9 +30,15 @@ def test_import():
     for key, value in os.environ.items():
         print(f"    {key}={value}")
         
-    print("current working directory:")
+    print("current working directory: {os.getcwd()}")
     print_files(os.getcwd())
     
+    print("looking for pybindimath...")
+    for root, dirs, files in os.walk('/'):
+        for file in files:
+            if 'pybindimath' in file:
+                print(f"    found: {os.path.join(root, file))}")
+
     try:
         import pybindimath
         print()
