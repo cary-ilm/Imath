@@ -62,22 +62,22 @@ jobs:
         run: |
           pipx run build --sdist . --outdir wheelhouse
              
-      - name: Install Boost
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libboost-all-dev
-          echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
-
-      - name: Install Boost (macOS)
-        if: runner.os == 'macOS'
-        run: brew install boost
-
-      - name: Install Boost (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          # Use vcpkg or other methods to install Boost on Windows
-          vcpkg install boost:x64-windows
-          echo "BOOST_ROOT=C:/vcpkg/installed/x64-windows" >> $GITHUB_ENV
+#      - name: Install Boost
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libboost-all-dev
+#          echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
+#
+#      - name: Install Boost (macOS)
+#        if: runner.os == 'macOS'
+#        run: brew install boost
+#
+#      - name: Install Boost (Windows)
+#        if: runner.os == 'Windows'
+#        run: |
+#          # Use vcpkg or other methods to install Boost on Windows
+#          vcpkg install boost:x64-windows
+#          echo "BOOST_ROOT=C:/vcpkg/installed/x64-windows" >> $GITHUB_ENV
 
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
