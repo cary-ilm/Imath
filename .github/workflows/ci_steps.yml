@@ -189,6 +189,11 @@ jobs:
         shell: bash
         working-directory: _examples 
 
+      - name: Find modules
+        run: |
+            find / -name "imath.*so"
+            find / -name "pybindimath.*so"
+            
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
         run: |
@@ -196,7 +201,7 @@ jobs:
           # _install directory of the module (better to find it
           # procedurally than hard code a path).
           if [[ "${{ inputs.python }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name imath.so | xargs dirname`
+              export PYTHONPATH=`find ../_install -name 'imath.*so' | xargs dirname`
               python -c "import imath;print(imath.__version__)"
           fi
         shell: bash
@@ -209,7 +214,7 @@ jobs:
           # _install directory of the module (better to find it
           # procedurally than hard code a path).
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name 'pybindimath.*.so' | xargs dirname`
+              export PYTHONPATH=`find ../_install -name 'pybindimath.*so' | xargs dirname`
               python -c "import pybindimath;print(pybindimath.__version__)"
           fi
         shell: bash

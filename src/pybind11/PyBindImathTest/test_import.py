@@ -37,7 +37,7 @@ def test_import():
     for root, dirs, files in os.walk('/'):
         for file in files:
             if 'pybindimath' in file:
-                print(f"    found: {os.path.join(root, file))}")
+                print(f"    found: {os.path.join(root, file)}")
 
     try:
         import pybindimath
