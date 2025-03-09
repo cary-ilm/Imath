@@ -189,11 +189,6 @@ jobs:
         shell: bash
         working-directory: _examples 
 
-      - name: Find modules
-        run: |
-            find / -name "imath.*so"
-            find / -name "pybindimath.*so"
-            
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
         run: |
