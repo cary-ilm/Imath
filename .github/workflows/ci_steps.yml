@@ -69,11 +69,9 @@ jobs:
       - name: Install pybind11
         run: |
           pip install pybind11
+          echo "PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
         shell: bash
 
-      - name: Set PYBIND11_CMAKE_DIR
-        run: |
-          echo "PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
 
       - name: Construct CMake command
         run: |

@@ -108,12 +108,12 @@ jobs:
       build: ${{ matrix.build }}
       cxx-standard: ${{ matrix.cxx-standard || '17' }}
       build-type: ${{ matrix.build-type || 'Release' }}
-      python: ${{ matrix.python || 'OFF' }}
+      python: ${{ matrix.python || 'ON' }}
       pybind11: ${{ matrix.pybind11 || 'ON' }}
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
-      validate_install: ${{ matrix.validate_install || 'OFF' }}
+      validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
       matrix:
         include:
@@ -133,6 +133,8 @@ jobs:
             label: pkgconfig=OFF, testing=OFF
             IMATH_INSTALL_PKG_CONFIG: 'OFF'
             BUILD_TESTING: 'OFF'
+            python: 'OFF'
+            pybind11: 'OFF'
 
           - build: 5
             label: macos-13
@@ -149,12 +151,12 @@ jobs:
       build: ${{ matrix.build }}
       cxx-standard: ${{ matrix.cxx-standard || '17' }}
       build-type: ${{ matrix.build-type || 'Release' }}
-      python: ${{ matrix.python || 'OFF' }}
-      pybind11: ${{ matrix.pybind11 || 'OFF' }}
+      python: ${{ matrix.python || 'ON' }}
+      pybind11: ${{ matrix.pybind11 || 'ON' }}
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
-      validate_install: ${{ matrix.validate_install || 'OFF' }}
+      validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
       matrix:
         include:
@@ -173,6 +175,8 @@ jobs:
             label: pkgconfig=OFF, testing=OFF
             IMATH_INSTALL_PKG_CONFIG: 'OFF'
             BUILD_TESTING: 'OFF'
+            python: 'OFF'
+            pybind11: 'OFF'
 
           - build: 6
             label: vfx2022

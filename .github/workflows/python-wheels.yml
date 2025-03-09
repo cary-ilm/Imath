@@ -82,7 +82,7 @@ jobs:
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
-          BOOST_ROOT: ${{ env.BOOST_ROOT }}
+#          BOOST_ROOT: ${{ env.BOOST_ROOT }}
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
           # Skip python 3.7 since scikit-build-core requires 3.8+
