@@ -12,6 +12,7 @@ template <class T, class V>
 void register_box(pybind11::class_<T>& c)
 {
     c.def(pybind11::init<>())
+#if XXX
     .def(pybind11::init<const V &>())
     .def(pybind11::init<const V &, const V &>())
     .def(pybind11::self == pybind11::self)
@@ -29,7 +30,9 @@ void register_box(pybind11::class_<T>& c)
     .def("majorAxis",&T::majorAxis, "majorAxis() major axis of the box")
     .def("isEmpty",&T::isEmpty, "isEmpty() returns true if the box is empty")
     .def("isInfinite",&T::isInfinite, "isInfinite() returns true if the box covers all space")
-    .def("hasVolume",&T::hasVolume, "hasVolume() returns true if the box has volume");
+    .def("hasVolume",&T::hasVolume, "hasVolume() returns true if the box has volume")
+#endif
+        ;
 
 }
 
