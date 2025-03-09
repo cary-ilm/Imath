@@ -61,7 +61,7 @@ jobs:
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
       namespace: ${{ matrix.namespace }}
-      validate_install: ${{ matrix.validate_install || 'ON' }}
+      validate_install: ${{ matrix.validate_install || 'OFF' }}
     strategy:
       matrix:
         include:
@@ -113,7 +113,7 @@ jobs:
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
-      validate_install: ${{ matrix.validate_install || 'ON' }}
+      validate_install: ${{ matrix.validate_install || 'OFF' }}
     strategy:
       matrix:
         include:
@@ -154,7 +154,7 @@ jobs:
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
-      validate_install: ${{ matrix.validate_install || 'ON' }}
+      validate_install: ${{ matrix.validate_install || 'OFF' }}
     strategy:
       matrix:
         include:

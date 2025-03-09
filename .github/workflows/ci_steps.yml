@@ -66,6 +66,10 @@ jobs:
         run: mkdir _install _build _examples
         shell: bash
 
+      - name: Install pybind11
+        run: pip install pybind11
+        shell: bash
+
       - name: Construct CMake command
         run: |
           # Construct the cmake command as a variable, so the
