@@ -27,31 +27,41 @@ set(PYBINDIMATH_HEADERS
 # Shared Library
 #
 
-add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
-
-set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
-  SOVERSION ${IMATH_LIB_SOVERSION}
-  VERSION ${IMATH_LIB_VERSION}
-  POSITION_INDEPENDENT_CODE ON
-)
-
-target_link_libraries(${PYBINDIMATH_LIBRARY} PRIVATE Imath::Imath pybind11::module)
-
-target_include_directories(${PYBINDIMATH_LIBRARY}
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:include>
-)
-
-#
-# Python module
-#
-
-pybind11_add_module(${PYBINDIMATH_MODULE} pybindimathmodule.cpp $<TARGET_OBJECTS:${PYBINDIMATH_LIBRARY}>)
-target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 if (SKBUILD)
+
+  pybind11_add_module(${PYBINDIMATH_MODULE}
+    pybindimathmodule.cpp ${PYBINDIMATH_SOURCES})
   set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
+
+else()
+
+  add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+
+  set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+    SOVERSION ${IMATH_LIB_SOVERSION}
+    VERSION ${IMATH_LIB_VERSION}
+    POSITION_INDEPENDENT_CODE ON
+  )
+
+  target_link_libraries(${PYBINDIMATH_LIBRARY}
+    PRIVATE Imath::Imath pybind11::module)
+
+  target_include_directories(${PYBINDIMATH_LIBRARY}
+      PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
+  )
+
+  #
+  # Python module
+  #
+
+  pybind11_add_module(${PYBINDIMATH_MODULE}
+    pybindimathmodule.cpp $<TARGET_OBJECTS:${PYBINDIMATH_LIBRARY}>)
+
+  target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
+
 endif()
 
 #
@@ -67,7 +77,6 @@ if(SKBUILD)
   set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
 else()
   set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-  message(STATUS "setting PYTHON_INSTALL_DIR: ${PYTHON_INSTALL_DIR}")
 endif()
 
 # Install shared library
