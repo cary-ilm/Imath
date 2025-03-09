@@ -31,8 +31,11 @@ if (SKBUILD)
 
   pybind11_add_module(${PYBINDIMATH_MODULE}
     pybindimathmodule.cpp ${PYBINDIMATH_SOURCES})
+
   set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${SKBUILD_PLATLIB_DIR})
+
+  target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 
 else()
 
