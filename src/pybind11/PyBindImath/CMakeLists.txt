@@ -12,7 +12,7 @@ foreach (_variableName ${_variableNames})
     message(STATUS "variable ${_variableName}=${${_variableName}}")
 endforeach()
 
-set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3.10.so
+set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyBindImath_Python3_10.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
 
 set(PYBINDIMATH_SOURCES
@@ -88,7 +88,7 @@ if(SKBUILD)
 
 else()
 
-  set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+  set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
 
   # Install shared library
   install(TARGETS ${PYBINDIMATH_LIBRARY}
