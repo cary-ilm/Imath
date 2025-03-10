@@ -62,27 +62,31 @@ jobs:
         run: |
           pipx run build --sdist . --outdir wheelhouse
              
-#      - name: Install Boost
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y libboost-all-dev
-#          echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
-#
-#      - name: Install Boost (macOS)
-#        if: runner.os == 'macOS'
-#        run: brew install boost
-#
-#      - name: Install Boost (Windows)
-#        if: runner.os == 'Windows'
-#        run: |
-#          # Use vcpkg or other methods to install Boost on Windows
-#          vcpkg install boost:x64-windows
-#          echo "BOOST_ROOT=C:/vcpkg/installed/x64-windows" >> $GITHUB_ENV
+      - name: Install Boost
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-all-dev
+          echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
+
+      - name: Install Boost (macOS)
+        if: runner.os == 'macOS'
+        run: brew install boost
+
+      - name: Install Boost (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+          ./vcpkg install boost-python:x64-windows boost-format:x64-windows
+          echo "CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
+          echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
 
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
-#          BOOST_ROOT: ${{ env.BOOST_ROOT }}
+          BOOST_ROOT: ${{ env.BOOST_ROOT }}
+          CIBW_CMAKE_ARGS="-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DBOOST_ROOT=$PWD/vcpkg/installed/x64-windows"
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
           # Skip python 3.7 since scikit-build-core requires 3.8+

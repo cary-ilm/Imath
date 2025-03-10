@@ -79,7 +79,7 @@ jobs:
           brew install boost boost-python3
         shell: bash
 
-      - name: Install Boost for Python on Windows 
+      - name: Install Boost for Python on Windows
         if: inputs.python == 'ON' && runner.os == 'Windows'
         run: |
           set -x
@@ -92,9 +92,12 @@ jobs:
           ls -R
         shell: bash
 
+      - name: Find SITE_PACKAGES
+        run: |
+          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
+        shell: bash
+
       - name: Construct CMake command
-        env:
-          SITE_PACKAGES: $(python -c 'import site; print(site.getsitepackages()[0])')
         run: |
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
@@ -185,7 +188,7 @@ jobs:
             ./bin/ImathTest
           fi
         shell: bash
-        working-directory: _examples 
+        working-directory: _examples
 
       - name: Examples
         # The example code use the Imath:: namespace explicitly, they won't work with a custom namespace, so skip the test in that case.
@@ -207,7 +210,7 @@ jobs:
           fi
 
         shell: bash
-        working-directory: _examples 
+        working-directory: _examples
 
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
@@ -223,7 +226,7 @@ jobs:
       - name: Test Pybind11
         if: ${{ inputs.pybind11 == 'ON' }}
         run: |
-          # Confirm the pybindimath module loads. 
+          # Confirm the pybindimath module loads.
           env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python -c "import pybindimath;print(f'found pybindimath at {pybindimath.__file__}')"
         shell: bash
         working-directory: _build
