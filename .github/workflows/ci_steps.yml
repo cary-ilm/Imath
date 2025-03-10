@@ -73,20 +73,27 @@ jobs:
           echo "pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
         shell: bash
 
-
       - name: Install Boost for Python on macOS
         if: inputs.python == 'ON' && runner.os == 'macOS'
         run: |
           brew install boost boost-python3
+        shell: bash
 
       - name: Install Boost for Python on Windows 
         if: inputs.python == 'ON' && runner.os == 'Windows'
         run: |
+          set -x
+          echo "executing: git clone https://github.com/microsoft/vcpkg.git"
           git clone https://github.com/microsoft/vcpkg.git
-          cd vcpkg
+          echo cd vcpkg
+          cd "executing: vcpkg"
+          echo .\bootstrap-vcpkg.bat
           .\bootstrap-vcpkg.bat
+          echo "executng: .\vcpkg install boost-python3:x64-windows"
           .\vcpkg install boost-python3:x64-windows
-          echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "executing: echo"
+          echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
+        shell: bash
 
       - name: Construct CMake command
         env:
