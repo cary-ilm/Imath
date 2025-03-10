@@ -218,7 +218,7 @@ jobs:
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
           ls "${{ env.SITE_PACKAGES }}"/imath*
           # Confirm the pybindimath module loads.
-          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyBindImathTest/test_import.py"
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyBindImathTest/test_import.py
         shell: bash
         working-directory: _build
 
@@ -228,7 +228,7 @@ jobs:
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
           ls "${{ env.SITE_PACKAGES }}"/imath*
           # Confirm the python module loads.
-          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyImathTest/test_import.py"
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyImathTest/test_import.py
           fi
         shell: bash
 
