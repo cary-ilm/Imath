@@ -220,7 +220,6 @@ jobs:
           # Confirm the pybindimath module loads.
           env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/pybind11/PyBindImathTest/test_import.py
         shell: bash
-        working-directory: _build
 
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
