@@ -80,8 +80,6 @@ jobs:
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
-          PYTHON_INSTALL_DIR=$(python -c 'import site; print(site.getsitepackages()[0])')
-          PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
           CMAKE_COMMAND="cmake -B . -S .. \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
