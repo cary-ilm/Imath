@@ -75,7 +75,7 @@ jobs:
 
       - name: Construct CMake command
         env:
-          PYTHON_INSTALL_DIR: $(python -c 'import site; print(site.getsitepackages()[0])')
+          SITE_PACKAGES: $(python -c 'import site; print(site.getsitepackages()[0])')
         run: |
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
@@ -90,7 +90,8 @@ jobs:
                 -DPYTHON=${{ inputs.python }} \
                 -DPYBIND11=${{ inputs.pybind11 }} \
                 -Dpybind11_DIR=${{ env.pybind11_DIR }} \
-                -DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }} \
+                -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
+                -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
