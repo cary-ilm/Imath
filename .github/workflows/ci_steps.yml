@@ -110,6 +110,9 @@ jobs:
                 -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
+          if [ -n "${{ env.BOOST_ROOT }}" ]; then
+              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE:${{ env.BOOST_ROOT }}"
+          fi
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
           fi
