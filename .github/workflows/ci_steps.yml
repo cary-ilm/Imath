@@ -67,19 +67,22 @@ jobs:
         shell: bash
 
       - name: Install pybind11
+        if: ${{ inputs.pybind11 == 'ON' }}
         run: |
           pip install pybind11
-          echo "PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
+#          echo "PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
         shell: bash
 
+      - name: 
 
       - name: Construct CMake command
         run: |
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
+          PYTHON_INSTALL_DIR=$(python -c 'import site; print(site.getsitepackages()[0])')
+          PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
           CMAKE_COMMAND="cmake -B . -S .. \
-                -Dpybind11_DIR=${{ env.PYBIND11_CMAKE_DIR }} \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
@@ -88,6 +91,8 @@ jobs:
                 -DBUILD_TESTING=${{ inputs.BUILD_TESTING }} \
                 -DPYTHON=${{ inputs.python }} \
                 -DPYBIND11=${{ inputs.pybind11 }} \
+                -Dpybind11_DIR=${{ env.PYBIND11_CMAKE_DIR }} \
+                -DPYTHON_INSTALL_DIR=$PYTHON_INSTALL_DIR \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
@@ -113,12 +118,12 @@ jobs:
         working-directory: _build
         shell: bash
 
-      - name: Find python version
-        run: |
-          echo Finding python version in _build directory:
-          grep -r PYTHON
-        working-directory: _build
-        shell: bash
+#      - name: Find python version
+#        run: |
+#          echo Finding python version in _build directory:
+#          grep -r PYTHON
+#        working-directory: _build
+#        shell: bash
 
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,

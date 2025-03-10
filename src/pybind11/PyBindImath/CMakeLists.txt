@@ -88,8 +88,10 @@ if(SKBUILD)
 
 else()
 
-  set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
-
+  if (NOT DEFINED PYTHON_INSTALL_DIR)
+    set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+  endif()
+  
   # Install shared library
   install(TARGETS ${PYBINDIMATH_LIBRARY}
     EXPORT "${PYBINDIMATH_LIBRARY}Targets"
