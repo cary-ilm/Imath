@@ -212,24 +212,25 @@ jobs:
         shell: bash
         working-directory: _examples
 
+      - name: Test Pybind11
+        if: ${{ inputs.pybind11 == 'ON' }}
+        run: |
+          echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
+          ls "${{ env.SITE_PACKAGES }}"/imath*
+          # Confirm the pybindimath module loads.
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyBindImathTest/test_import.py"
+        shell: bash
+        working-directory: _build
+
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
         run: |
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
-          ls -R "${{ env.SITE_PACKAGES }}"
+          ls "${{ env.SITE_PACKAGES }}"/imath*
           # Confirm the python module loads.
-          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python -c "import imath;print(f'found imath at {imath.__file__}')"
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyImathTest/test_import.py"
           fi
         shell: bash
-        working-directory: _build
-
-      - name: Test Pybind11
-        if: ${{ inputs.pybind11 == 'ON' }}
-        run: |
-          # Confirm the pybindimath module loads.
-          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python -c "import pybindimath;print(f'found pybindimath at {pybindimath.__file__}')"
-        shell: bash
-        working-directory: _build
 
       - name: Test
         run: |
