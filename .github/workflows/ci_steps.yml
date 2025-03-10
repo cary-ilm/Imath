@@ -87,6 +87,7 @@ jobs:
           cd vcpkg
           ./bootstrap-vcpkg.sh
           ./vcpkg install boost-python:x64-windows
+          echo "CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
           echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
         shell: bash
 
@@ -110,8 +111,11 @@ jobs:
                 -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}"
+          fi
           if [ -n "${{ env.BOOST_ROOT }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE:${{ env.BOOST_ROOT }}"
+              CMAKE_COMMAND="$CMAKE_COMMAND -DBOOST_ROOT=${{ env.BOOST_ROOT }}"
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
