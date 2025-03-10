@@ -73,8 +73,6 @@ jobs:
 #          echo "PYBIND11_CMAKE_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
         shell: bash
 
-      - name: 
-
       - name: Construct CMake command
         run: |
           # Construct the cmake command as a variable, so the
