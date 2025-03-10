@@ -89,6 +89,7 @@ jobs:
           ./vcpkg install boost-python:x64-windows
           echo "CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
           echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
+          ls -R
         shell: bash
 
       - name: Construct CMake command
@@ -115,7 +116,7 @@ jobs:
               CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}"
           fi
           if [ -n "${{ env.BOOST_ROOT }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DBOOST_ROOT=${{ env.BOOST_ROOT }}"
+              CMAKE_COMMAND="$CMAKE_COMMAND -DBOOST_ROOT=${{ env.BOOST_ROOT }} -DBOOST_INCLUDEDIR=${{ github.workspace }}/vcpkg/installed/x64-windows/include"
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
