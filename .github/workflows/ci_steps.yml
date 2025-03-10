@@ -73,6 +73,21 @@ jobs:
           echo "pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
         shell: bash
 
+
+      - name: Install Boost for Python on macOS
+        if: ${{ inputs.python == 'ON' && runner.os == 'macOS' }}
+        run: |
+          brew install boost boost-python3
+
+      - name: Install Boost for Python on Windows 
+        if: ${{ env.python == 'ON' && runner.os == 'Windows' }}
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+          .\vcpkg install boost-python3:x64-windows
+          echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" | Out-File -Append -FilePath $env:GITHUB_ENV
+
       - name: Construct CMake command
         env:
           SITE_PACKAGES: $(python -c 'import site; print(site.getsitepackages()[0])')
@@ -116,13 +131,6 @@ jobs:
           cmake --build . --target install --config ${{ inputs.build-type }}
         working-directory: _build
         shell: bash
-
-#      - name: Find python version
-#        run: |
-#          echo Finding python version in _build directory:
-#          grep -r PYTHON
-#        working-directory: _build
-#        shell: bash
 
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
