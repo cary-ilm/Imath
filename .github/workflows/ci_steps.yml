@@ -212,26 +212,19 @@ jobs:
       - name: Test Python
         if: ${{ inputs.python == 'ON' }}
         run: |
-          # Confirm the python module loads. Set PYTHONPATH to the
-          # _install directory of the module (better to find it
-          # procedurally than hard code a path).
-          if [[ "${{ inputs.python }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name 'imath.*so' | xargs dirname`
-              python -c "import imath;print(imath.__version__)"
+          echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
+          ls -R "${{ env.SITE_PACKAGES }}"
+          # Confirm the python module loads.
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python -c "import imath;print(f'found imath at {imath.__file__}')"
           fi
         shell: bash
         working-directory: _build
 
       - name: Test Pybind11
-        if: ${{ inputs.python == 'ON' }}
+        if: ${{ inputs.pybind11 == 'ON' }}
         run: |
-          # Confirm the pybindimath module loads. Set PYTHONPATH to the
-          # _install directory of the module (better to find it
-          # procedurally than hard code a path).
-          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-              export PYTHONPATH=`find ../_install -name 'pybindimath.*so' | xargs dirname`
-              python -c "import pybindimath;print(pybindimath.__version__)"
-          fi
+          # Confirm the pybindimath module loads. 
+          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python -c "import pybindimath;print(f'found pybindimath at {pybindimath.__file__}')"
         shell: bash
         working-directory: _build
 
