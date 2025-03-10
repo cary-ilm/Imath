@@ -83,15 +83,10 @@ jobs:
         if: inputs.python == 'ON' && runner.os == 'Windows'
         run: |
           set -x
-          echo "executing: git clone https://github.com/microsoft/vcpkg.git"
           git clone https://github.com/microsoft/vcpkg.git
-          echo cd vcpkg
-          cd "executing: vcpkg"
-          echo .\bootstrap-vcpkg.bat
-          .\bootstrap-vcpkg.bat
-          echo "executng: .\vcpkg install boost-python3:x64-windows"
-          .\vcpkg install boost-python3:x64-windows
-          echo "executing: echo"
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+          ./vcpkg install boost-python3:x64-windows
           echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
         shell: bash
 
