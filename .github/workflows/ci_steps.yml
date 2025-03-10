@@ -74,6 +74,9 @@ jobs:
         shell: bash
 
       - name: Construct CMake command
+        env:
+          PYTHON_INSTALL_DIR: $(python -c 'import site; print(site.getsitepackages()[0])')
+          pybind11_DIR: $(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
         run: |
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
@@ -89,8 +92,8 @@ jobs:
                 -DBUILD_TESTING=${{ inputs.BUILD_TESTING }} \
                 -DPYTHON=${{ inputs.python }} \
                 -DPYBIND11=${{ inputs.pybind11 }} \
-                -Dpybind11_DIR=${{ env.PYBIND11_CMAKE_DIR }} \
-                -DPYTHON_INSTALL_DIR=$PYTHON_INSTALL_DIR \
+                -Dpybind11_DIR=${{ env.pybind_DIR }} \
+                -DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
