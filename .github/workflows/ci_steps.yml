@@ -89,7 +89,6 @@ jobs:
           ./vcpkg install boost-python:x64-windows boost-format:x64-windows
           echo "CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
           echo "BOOST_ROOT=$PWD/vcpkg/installed/x64-windows" >> $GITHUB_ENV
-          ls -R
         shell: bash
 
       - name: Find SITE_PACKAGES
@@ -217,8 +216,8 @@ jobs:
         run: |
           set -x
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
-          ls -l ${{ env.SITE_PACKAGES }}/pybindimath*
-          dumpbin /dependents ${{ env.SITE_PACKAGES }}/pybindimath*
+          ls -l C:/hostedtoolcache/windows/Python/3.9.13/x64/pybindimath.cp311-win_amd64.pyd
+          dumpbin /dependents C:/hostedtoolcache/windows/Python/3.9.13/x64/pybindimath.cp311-win_amd64.pyd
           python src/pybind11/PyBindImathTest/test_import.py
           env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/pybind11/PyBindImathTest/test_import.py
         shell: bash
@@ -228,8 +227,8 @@ jobs:
         run: |
           set -x
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
-          ls -l ${{ env.SITE_PACKAGES }}/imath*
-          dumpbin /dependents ${{ env.SITE_PACKAGES }}/imath*
+          ls -l C:/hostedtoolcache/windows/Python/3.9.13/x64/imath.pyd
+          dumpbin /dependents C:/hostedtoolcache/windows/Python/3.9.13/x64/imath.pyd
           python src/python/PyImathTest/test_import.py
           fi
         shell: bash
