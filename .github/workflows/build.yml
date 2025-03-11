@@ -31,15 +31,15 @@ jobs:
         run: mkdir _install _build
         shell: bash
 
-      - name: Install Python Dependencies
-        run: python -m pip install --upgrade pip "numpy<2" conan
-
-      - name: Detect Conan Profile
-        run: conan profile detect
-
-      - name: Install Dependencies with Conan
-        run: |
-          conan install . --output-folder=build --build=missing
+#      - name: Install Python Dependencies
+#        run: python -m pip install --upgrade pip "numpy<2" conan
+#
+#      - name: Detect Conan Profile
+#        run: conan profile detect
+#
+#      - name: Install Dependencies with Conan
+#        run: |
+#          conan install . --output-folder=build --build=missing
 
       - name: Find SITE_PACKAGES
         run: |
@@ -60,7 +60,6 @@ jobs:
                 -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
                 -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
-          fi
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
         working-directory: _build
         shell: bash
