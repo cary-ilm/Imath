@@ -8,9 +8,6 @@ boost/*:without_python=False
 boost/*:without_format=False
 boost/*:shared=True
 
-[build_requires]
-numpy/1.26.0
-
 [generators]
 CMakeDeps
 CMakeToolchain
