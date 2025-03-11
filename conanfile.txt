@@ -1,5 +1,5 @@
 [requires]
-boost/1.83.0
+boost/1.82.0
 pybind11/2.11.1
 
 [options]

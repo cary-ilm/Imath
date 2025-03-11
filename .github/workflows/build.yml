@@ -32,7 +32,7 @@ jobs:
         shell: bash
 
       - name: Install Python Dependencies
-        run: python -m pip install --upgrade pip numpy conan
+        run: python -m pip install --upgrade pip "numpy<2" conan
 
       - name: Detect Conan Profile
         run: conan profile detect
