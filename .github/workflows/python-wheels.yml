@@ -19,6 +19,7 @@ on:
     paths:
       - 'src/**'
       - 'pyproject.toml'
+      - '!connanfile.txt'
       - '.github/workflows/python-wheels.yml'
       - 'share/ci/scripts/imath_skbuild_plugin.py'
   pull_request:
@@ -26,6 +27,7 @@ on:
       - RB-*
     paths:
       - 'src/**'
+      - '!connanfile.txt'
       - 'pyproject.toml'
       - '.github/workflows/python-wheels.yml'
       - 'share/ci/scripts/imath_skbuild_plugin.py'

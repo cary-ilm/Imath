@@ -12,6 +12,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
       - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
@@ -20,6 +21,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
       - '!pyproject.toml'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
