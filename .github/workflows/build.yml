@@ -1,0 +1,69 @@
+name: Build with Boost and Pybind11
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Create build directories
+        run: mkdir _install _build
+        shell: bash
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Detect Conan Profile
+        run: conan profile detect
+
+      - name: Install Dependencies with Conan
+        run: |
+          conan install . --output-folder=build --build=missing
+
+      - name: Find SITE_PACKAGES
+        run: |
+          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Construct CMake command
+        run: |
+          # Construct the cmake command as a variable, so the
+          # Configure step below can execute it, but also so we can store
+          # in in the install_manifest as a debugging reference
+          CMAKE_COMMAND="cmake -B . -S .. \
+                -DCMAKE_INSTALL_PREFIX=../_install \
+                -DBUILD_TESTING=OFF \
+                -DPYTHON=ON \
+                -DPYBIND11=ON \ 
+                -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
+                -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
+                -DCMAKE_VERBOSE_MAKEFILE=ON" \
+                -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake \
+          fi
+          echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
+        working-directory: _build
+        shell: bash
+
+      - name: Configure
+        run: |
+          $CMAKE_COMMAND
+        working-directory: _build
+        shell: bash
+
+      - name: Build
+        run: |
+          cmake --build . --target install --config Release
+        working-directory: _build
+        shell: bash
+
