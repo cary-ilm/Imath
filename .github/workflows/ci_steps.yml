@@ -215,8 +215,9 @@ jobs:
       - name: Test Pybind11
         if: ${{ inputs.pybind11 == 'ON' }}
         run: |
+          set -x
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
-          ls -l "${{ env.SITE_PACKAGES }}"/pybindimath*
+          ls -l ${{ env.SITE_PACKAGES }}"/pybindimath*
           dumpbin /dependents "${{ env.SITE_PACKAGES }}"/pybindimath*
           python src/pybind11/PyBindImathTest/test_import.py
           env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/pybind11/PyBindImathTest/test_import.py
@@ -227,10 +228,9 @@ jobs:
         run: |
           set -x
           echo "SITE_PACKAGES: ${{ env.SITE_PACKAGES }}"
-          ls -l "${{ env.SITE_PACKAGES }}"/imath*
+          ls -l ${{ env.SITE_PACKAGES }}"/imath*
           dumpbin /dependents "${{ env.SITE_PACKAGES }}"/imath*
           python src/python/PyImathTest/test_import.py
-#          env "PYTHONPATH=${{ env.SITE_PACKAGES }}" python src/python/PyImathTest/test_import.py
           fi
         shell: bash
 
