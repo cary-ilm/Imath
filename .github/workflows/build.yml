@@ -41,10 +41,10 @@ jobs:
         run: |
           conan install . --output-folder=build --build=missing
 
-      - name: Find SITE_PACKAGES
-        run: |
-          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
-        shell: bash
+#      - name: Find SITE_PACKAGES
+#        run: |
+#          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
+#        shell: bash
 
       - name: Construct CMake command
         run: |
@@ -59,7 +59,7 @@ jobs:
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
                 -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
-                -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
+#                -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
                 -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
