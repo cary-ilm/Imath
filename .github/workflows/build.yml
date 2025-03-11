@@ -64,7 +64,7 @@ jobs:
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
                 -DCMAKE_PREFIX_PATH=build \
-                -DBoost_ROOT=${{ env.Boost_ROOT }} \
+                -DBoost_ROOT=build \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_STANDARD=17 \
