@@ -64,13 +64,13 @@ jobs:
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
                 -DCMAKE_PREFIX_PATH=build \
+                -DBoost_ROOT=${{ env.Boost_ROOT }} \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_STANDARD=17 \
                 -DBUILD_TESTING=OFF \
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
-                -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
                 -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
