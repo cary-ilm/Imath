@@ -31,15 +31,15 @@ jobs:
         run: mkdir _install _build
         shell: bash
 
-#      - name: Install Python Dependencies
-#        run: python -m pip install --upgrade pip "numpy<2" conan
-#
-#      - name: Detect Conan Profile
-#        run: conan profile detect
-#
-#      - name: Install Dependencies with Conan
-#        run: |
-#          conan install . --output-folder=build --build=missing
+      - name: Install Python Dependencies
+        run: python -m pip install --upgrade pip "numpy<2" conan
+
+      - name: Detect Conan Profile
+        run: conan profile detect
+
+      - name: Install Dependencies with Conan
+        run: |
+          conan install . --output-folder=build --build=missing
 
       - name: Find SITE_PACKAGES
         run: |
@@ -53,6 +53,8 @@ jobs:
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
                 -DCMAKE_INSTALL_PREFIX=../_install \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_CXX_STANDARD=17 \
                 -DBUILD_TESTING=OFF \
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
