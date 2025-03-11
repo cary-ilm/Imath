@@ -47,8 +47,8 @@ jobs:
       - name: Set Boost_ROOT
         run: |
           set -x
-          conan list boost
-          conan info . --paths
+          conan list boost -r=default
+          conan cache path boost
         shell: bash
 
       - name: Find SITE_PACKAGES
