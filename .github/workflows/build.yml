@@ -58,7 +58,6 @@ jobs:
                 -DBUILD_TESTING=OFF \
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
-                -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
                 -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
