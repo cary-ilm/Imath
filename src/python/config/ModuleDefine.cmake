@@ -146,12 +146,14 @@ function(PYIMATH_DEFINE_MODULE modname)
       )
       Python3_add_library(${modname}_python3 MODULE ${PYIMATH_CURMOD_MODSOURCE})
       target_link_libraries(${modname}_python3
-        PRIVATE
+        PRIVATE /MT
           ${libname} ${extraDeps}
           ${PYIMATH_CURMOD_DEPENDENCIES}
           ${PYIMATH_CURMOD_PRIVATE_DEPS}
           $<TARGET_NAME_IF_EXISTS:Boost::${PYIMATH_BOOST_PY_COMPONENT}>
         )
+      message(STATUS "target_link_libraries(${modname}_python3 PRIVATE /MT ${libname} ${extraDeps} ${PYIMATH_CURMOD_DEPENDENCIES} ${PYIMATH_CURMOD_PRIVATE_DEPS} $<TARGET_NAME_IF_EXISTS:Boost::${PYIMATH_BOOST_PY_COMPONENT}> )")
+      
       set_target_properties(${modname}_python3 PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
         LIBRARY_OUTPUT_NAME "${modname}"

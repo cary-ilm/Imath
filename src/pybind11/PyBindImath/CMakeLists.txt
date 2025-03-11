@@ -6,12 +6,6 @@ message(STATUS "Configuring pybindimath module")
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "variable ${_variableName}=${${_variableName}}")
-endforeach()
-
 set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyBindImath_Python3_10.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
 
