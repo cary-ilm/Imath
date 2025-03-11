@@ -33,18 +33,28 @@ jobs:
 
       - name: Install Python Dependencies
         run: python -m pip install --upgrade pip "numpy<2" conan
+        shell: bash
 
       - name: Detect Conan Profile
         run: conan profile detect
+        shell: bash
 
       - name: Install Dependencies with Conan
         run: |
           conan install . --output-folder=build --build=missing
+        shell: bash
 
-#      - name: Find SITE_PACKAGES
-#        run: |
-#          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
-#        shell: bash
+      - name: Set Boost_ROOT
+        run: |
+          set -x
+          conan list boost
+          conan info . --paths
+        shell: bash
+
+      - name: Find SITE_PACKAGES
+        run: |
+          echo "SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')" >> $GITHUB_ENV
+        shell: bash
 
       - name: Construct CMake command
         run: |
@@ -58,6 +68,7 @@ jobs:
                 -DBUILD_TESTING=OFF \
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
+                -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
                 -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
@@ -72,7 +83,22 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build . --target install --config Release
+          sudo cmake --build . --target install --config Release
         working-directory: _build
+        shell: bash
+
+      - name: Test Pybind11
+        if: ${{ inputs.pybind11 == 'ON' }}
+        run: |
+          set -x
+          python src/pybind11/PyBindImathTest/test_import.py
+        shell: bash
+
+      - name: Test Python
+        if: ${{ inputs.python == 'ON' }}
+        run: |
+          set -x
+          python src/python/PyImathTest/test_import.py
+          fi
         shell: bash
 
