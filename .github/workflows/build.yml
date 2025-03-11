@@ -59,7 +59,7 @@ jobs:
                 -DPYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DPYIMATH_OVERRIDE_PYTHON_INSTALL_DIR=${{ env.SITE_PACKAGES }} \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
-                -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake
+                -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           fi
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
         working-directory: _build
