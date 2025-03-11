@@ -2,9 +2,19 @@ name: Build with Boost and Pybind11
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - '**'
+      - '!**.md'
+      - '!pyproject.toml'
+      - '!.github/workflows/**'
+      - '.github/workflows/build.yml'
   pull_request:
+    paths:
+      - '**'
+      - '!**.md'
+      - '!pyproject.toml'
+      - '!.github/workflows/**'
+      - '.github/workflows/build.yml'
 
 jobs:
   build:
