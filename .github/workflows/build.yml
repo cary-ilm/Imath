@@ -47,7 +47,9 @@ jobs:
       - name: Set Boost_ROOT
         run: |
           set -x
-          conan cache path boost
+          ls -d ~/.conan2/p/boost*
+          ls build
+          conan search boost
         shell: bash
 
       - name: Find SITE_PACKAGES
@@ -61,6 +63,7 @@ jobs:
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
+                -DCMAKE_PREFIX_PATH=build \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_STANDARD=17 \
