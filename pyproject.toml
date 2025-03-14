@@ -70,7 +70,7 @@ metadata.version.provider-path = "./share/ci/scripts"
 
 [tool.scikit-build.cmake.define]
 IMATH_INSTALL = 'OFF'
-PYTHON = 'OFF'
+PYTHON = 'ON'
 PYBIND11 = 'ON'
 IMATH_INSTALL_PKG_CONFIG = 'OFF'
 BUILD_TESTING = 'OFF'
@@ -93,3 +93,18 @@ manylinux-aarch64-image = "manylinux2014"
 # Needed for full C++17 support
 [tool.cibuildwheel.macos.environment]
 MACOSX_DEPLOYMENT_TARGET = "10.15"
+
+[tool.cibuildwheel.linux]
+before-all = "apt-get update && apt-get install -y libboost-python-dev"
+
+[tool.cibuildwheel.macos]
+before-all = "brew install boost-python3"
+
+[tool.cibuildwheel.windows]
+before-all = """
+    git clone https://github.com/microsoft/vcpkg.git;
+    cd vcpkg;
+    ./bootstrap-vcpkg.bat;
+    ./vcpkg install boost-python:x64-windows;
+    echo \"BOOST_ROOT=D:/a/vcpkg/installed/x64-windows\" >> $GITHUB_ENV;
+"""

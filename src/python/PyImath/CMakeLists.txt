@@ -3,11 +3,28 @@
 
 message(STATUS "Configuring imath module")
 
-pyimath_define_module(imath
-  LIBNAME PyImath
-  PRIV_EXPORT PYIMATH_BUILD
-  CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
-  LIBSOURCE
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+
+if(Python_FOUND)
+    message(STATUS "Found Python ${Python_VERSION}")
+else()
+    message(FATAL_ERROR "Could not find Python")
+endif()
+
+find_package(Boost REQUIRED COMPONENTS python)
+
+if(Boost_FOUND)
+    message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
+    message(STATUS "Found Boost libraries: ${Boost_LIBRARIES}")
+else()
+    message(FATAL_ERROR "Could not find Boost")
+endif()
+
+
+set(PYIMATH_LIBRARY PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyImath_Python3_10.so
+set(PYIMATH_MODULE imath) # import imath
+
+set(PYIMATH_SOURCES
     PyImath.cpp
     PyImathAutovectorize.cpp
     PyImathBox2Array.cpp
@@ -40,12 +57,38 @@ pyimath_define_module(imath
     PyImathVec4fd.cpp
     PyImathVec4siArray.cpp
     PyImathVec4si.cpp
-  MODSOURCE
-    imathmodule.cpp
-    PyImathFun.cpp
-    PyImathBasicTypes.cpp
-  HEADERS
+)
+
+set(PYIMATH_HEADERS
     PyImath.h
+)
+
+add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
+
+target_include_directories(${PYIMATH_LIBRARY} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Imath::Imath)
+
+set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
+    SOVERSION ${IMATH_LIB_SOVERSION}
+    VERSION ${IMATH_LIB_VERSION}
+    POSITION_INDEPENDENT_CODE ON
+)
+
+add_library(${PYIMATH_MODULE} MODULE
+    imathmodule.cpp
+#    PyImathFun.cpp
+#    PyImathBasicTypes.cpp
+    $<TARGET_OBJECTS:${PYIMATH_LIBRARY}>
+)
+
+set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
+target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_link_libraries(${PYIMATH_MODULE} PRIVATE Boost::boost Boost::python Imath::Imath)
+
+set(PYIMATH_SOURCES2
+)
+
+set(PYIMATH_HEADERS2
     PyImathAPI.h
     PyImathAutovectorize.h
     PyImathBasicTypes.h
@@ -87,6 +130,4 @@ pyimath_define_module(imath
     PyImathVec4ArrayImpl.h
     PyImathVec4Impl.h
     PyImathVecOperators.h
-  DEPENDENCIES
-    Imath
-  )
+)

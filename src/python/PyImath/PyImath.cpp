@@ -10,6 +10,7 @@
 
 namespace PyImath {
 
+#if XXX
 template <> PYIMATH_EXPORT const char * BoolArray::name()         { return "BoolArray"; }
 template <> PYIMATH_EXPORT const char * SignedCharArray::name()   { return "SignedCharArray"; }
 template <> PYIMATH_EXPORT const char * UnsignedCharArray::name() { return "UnsignedCharArray"; }
@@ -23,5 +24,6 @@ template <> PYIMATH_EXPORT const char * VIntArray::name()         { return "VInt
 template <> PYIMATH_EXPORT const char * VFloatArray::name()       { return "VFloatArray"; }
 template <> PYIMATH_EXPORT const char * VV2iArray::name()         { return "VV2iArray"; }
 template <> PYIMATH_EXPORT const char * VV2fArray::name()         { return "VV2fArray"; }
+#endif
 
 }
