@@ -90,17 +90,14 @@ jobs:
         shell: bash
 
       - name: Test Pybind11
-        if: ${{ inputs.pybind11 == 'ON' }}
         run: |
           set -x
           python src/pybind11/PyBindImathTest/test_import.py
         shell: bash
 
       - name: Test Python
-        if: ${{ inputs.python == 'ON' }}
         run: |
           set -x
           python src/python/PyImathTest/test_import.py
-          fi
         shell: bash
 

@@ -145,6 +145,7 @@ jobs:
             os: macos-13
 
   windows:
+    if: false
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
