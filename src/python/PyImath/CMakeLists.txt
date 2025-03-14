@@ -7,11 +7,13 @@ find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 
 if(Python_FOUND)
     message(STATUS "Found Python ${Python_VERSION}")
+    message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
+    message(STATUS "Python_LIBRARY: ${Python_LIBRARY}")
 else()
     message(FATAL_ERROR "Could not find Python")
 endif()
 
-find_package(Boost REQUIRED COMPONENTS python)
+find_package(Boost COMPONENTS python REQUIRED)
 
 if(Boost_FOUND)
     message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
@@ -20,6 +22,11 @@ else()
     message(FATAL_ERROR "Could not find Boost")
 endif()
 
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "variable ${_variableName}=${${_variableName}}")
+endforeach()
 
 set(PYIMATH_LIBRARY PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyImath_Python3_10.so
 set(PYIMATH_MODULE imath) # import imath
@@ -66,7 +73,13 @@ set(PYIMATH_HEADERS
 add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
 
 target_include_directories(${PYIMATH_LIBRARY} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Imath::Imath)
+target_link_libraries(${PYIMATH_LIBRARY}
+    PRIVATE
+        Boost::boost
+        Boost::python
+        Python::Module
+        Imath::Imath
+)
 
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
     SOVERSION ${IMATH_LIB_SOVERSION}
@@ -83,7 +96,13 @@ add_library(${PYIMATH_MODULE} MODULE
 
 set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-target_link_libraries(${PYIMATH_MODULE} PRIVATE Boost::boost Boost::python Imath::Imath)
+target_link_libraries(${PYIMATH_MODULE} PRIVATE
+    PRIVATE
+        Boost::boost
+        Boost::python
+        Python::Module
+        Imath::Imath
+)
 
 set(PYIMATH_SOURCES2
 )

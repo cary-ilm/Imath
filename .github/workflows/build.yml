@@ -85,7 +85,7 @@ jobs:
 
       - name: Build
         run: |
-          sudo cmake --build . --target install --config Release
+          cmake --build . --target install --config Release
         working-directory: _build
         shell: bash
 
