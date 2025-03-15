@@ -18,7 +18,6 @@
 
 namespace PyImath {
 
-#if XXX
 typedef FixedArray<bool> BoolArray;
 typedef FixedArray<signed char> SignedCharArray;
 typedef FixedArray<unsigned char> UnsignedCharArray;
@@ -44,7 +43,6 @@ typedef FixedVArray<int> VIntArray;
 typedef FixedVArray<float> VFloatArray;
 typedef FixedVArray<IMATH_NAMESPACE::Vec2<int> > VV2iArray;
 typedef FixedVArray<IMATH_NAMESPACE::Vec2<float> > VV2fArray;
-#endif
     
 }
 

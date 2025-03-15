@@ -42,7 +42,6 @@ using namespace PyImath;
 
 namespace {
 
-#if XXX
 template <typename T>
 IMATH_NAMESPACE::Box<IMATH_NAMESPACE::Vec3<T> >
 computeBoundingBox(const FixedArray<IMATH_NAMESPACE::Vec3<T> >& position)
@@ -184,7 +183,6 @@ FixedArray2D<int> rangeY(int sizeX, int sizeY)
             f(i,j) = j;
     return f;
 }
-#endif
 
 } // anonymous-namespace
 
@@ -194,7 +192,6 @@ BOOST_PYTHON_MODULE(imath)
     scope().attr("__doc__") = "Imath module";
     scope().attr("__version__") = IMATH_VERSION_STRING;
 
-#if XXX
     register_basicTypes();
 
     class_<IntArray2D> iclass2D = IntArray2D::register_("IntArray2D","Fixed length array of ints");
@@ -651,6 +648,5 @@ BOOST_PYTHON_MODULE(imath)
 
     def("computeBoundingBox", &computeBoundingBox<double>,
         "computeBoundingBox(position) -- computes the bounding box from the position array.");
-#endif
 }
 

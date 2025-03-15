@@ -99,5 +99,6 @@ jobs:
         run: |
           set -x
           python src/python/PyImathTest/test_import.py
+
         shell: bash
 
