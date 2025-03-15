@@ -41,14 +41,14 @@ jobs:
 
       - name: Install Dependencies with Conan
         run: |
-          conan install . --output-folder=build --build=missing
+          conan install . --output-folder=_conan --build=missing
         shell: bash
 
       - name: Set Boost_ROOT
         run: |
           set -x
           ls -d ~/.conan2/p/boost*
-          ls build
+          ls _conan
           conan search boost
         shell: bash
 
@@ -63,8 +63,8 @@ jobs:
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
           CMAKE_COMMAND="cmake -B . -S .. \
-                -DCMAKE_PREFIX_PATH=build \
-                -DBoost_ROOT=build \
+                -DCMAKE_PREFIX_PATH=_conan \
+                -DBoost_ROOT=_conan \
                 -DCMAKE_INSTALL_PREFIX=../_install \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_STANDARD=17 \
@@ -72,7 +72,7 @@ jobs:
                 -DPYTHON=ON \
                 -DPYBIND11=ON \
                 -DCMAKE_VERBOSE_MAKEFILE=ON \
-                -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
+                -DCMAKE_TOOLCHAIN_FILE=_conan/conan_toolchain.cmake"
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
         working-directory: _build
         shell: bash

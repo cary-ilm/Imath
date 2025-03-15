@@ -60,7 +60,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@v3
 
       - name: Create build directories
         run: mkdir _install _build _examples
@@ -79,7 +79,7 @@ jobs:
       - name: Install Dependencies with Conan
         if: inputs.python == 'ON'
         run: |
-          conan install . --output-folder=build --build=missing
+          conan install . --output-folder=_conan --build=missing
         shell: bash
 
       - name: Set Up Environment
