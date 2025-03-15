@@ -75,7 +75,9 @@ jobs:
 
       - name: Install Dependencies with Conan
         run: |
-          conan install . --output-folder=${{ github.workspace }}/_conan --build=missing
+          echo "CONAN_ROOT=${{ github.workspace }}/_conan" >> $GITHUB_ENV
+          conan install . --output-folder=${{ env.CONAN_ROOT }}  --build=missing
+          echo "CMAKE_TOOLCHAIN_FILE=${{ env.CONAN_ROOT }}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
 
 #      - name: Checkout
@@ -105,7 +107,6 @@ jobs:
         if: inputs.python == 'ON'
         run: |
           echo "Boost_ROOT=_conan" >> $GITHUB_ENV
-          echo "CMAKE_TOOLCHAIN_FILE=_conan/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
 
       - name: Install pybind11
