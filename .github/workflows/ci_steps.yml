@@ -75,7 +75,7 @@ jobs:
 
       - name: Install Dependencies with Conan
         run: |
-          conan install . --output-folder=build --build=missing
+          conan install . --output-folder=_conan --build=missing
         shell: bash
 
 #      - name: Checkout

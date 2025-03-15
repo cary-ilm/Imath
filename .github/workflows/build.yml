@@ -23,8 +23,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
-    container:
-      image: aswf/ci-openexr:2024
+#    container:
+#      image: aswf/ci-openexr:2024
       
     env:
       CXX: g++
