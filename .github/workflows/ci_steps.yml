@@ -58,29 +58,49 @@ jobs:
       CC: ${{ inputs.cc-compiler }}
 
     steps:
-
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Create build directories
-        run: mkdir _install _build _examples
+        run: mkdir _install _build
         shell: bash
 
       - name: Install Python Dependencies
-        if: inputs.python == 'ON'
         run: python -m pip install --upgrade pip "numpy<2" conan
         shell: bash
 
       - name: Detect Conan Profile
-        if: inputs.python == 'ON'
         run: conan profile detect
         shell: bash
 
       - name: Install Dependencies with Conan
-        if: inputs.python == 'ON'
         run: |
-          conan install . --output-folder=_conan --build=missing
+          conan install . --output-folder=build --build=missing
         shell: bash
+
+
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Create build directories
+#        run: mkdir _install _build _examples
+#        shell: bash
+#
+#      - name: Install Python Dependencies
+#        if: inputs.python == 'ON'
+#        run: python -m pip install --upgrade pip "numpy<2" conan
+#        shell: bash
+#
+#      - name: Detect Conan Profile
+#        if: inputs.python == 'ON'
+#        run: conan profile detect
+#        shell: bash
+#
+#      - name: Install Dependencies with Conan
+#        if: inputs.python == 'ON'
+#        run: |
+#          conan install . --output-folder=_conan --build=missing
+#        shell: bash
 
       - name: Set Up Environment
         if: inputs.python == 'ON'
