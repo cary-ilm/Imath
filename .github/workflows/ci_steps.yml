@@ -75,9 +75,10 @@ jobs:
 
       - name: Install Dependencies with Conan
         run: |
-          echo "CONAN_ROOT=${{ github.workspace }}/_conan" >> $GITHUB_ENV
-          conan install . --output-folder=${{ env.CONAN_ROOT }}  --build=missing
-          echo "CMAKE_TOOLCHAIN_FILE=${{ env.CONAN_ROOT }}/conan_toolchain.cmake" >> $GITHUB_ENV
+          CONAN_ROOT="${GITHUB_WORKSPACE}/_conan"
+          conan install . --output-folder="${CONAN_ROOT}" --build=missing
+          echo "CONAN_ROOT=${CONAN_ROOT}" >> "$GITHUB_ENV"
+          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> "$GITHUB_ENV"
         shell: bash
 
 #      - name: Checkout
