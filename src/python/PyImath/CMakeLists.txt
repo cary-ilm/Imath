@@ -113,12 +113,13 @@ set(PYIMATH_HEADERS
 
 add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
 
-if(BUILD_SHARED_LIBS)
+#if(BUILD_SHARED_LIBS)
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
     if(WIN32)
+        message(STATUS "setting target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)")
         target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
     endif()
-endif()
+#endif()
 
 target_include_directories(${PYIMATH_LIBRARY} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(${PYIMATH_LIBRARY}
