@@ -62,20 +62,21 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create build directories
-        run: mkdir _install _build _examples
+        run: mkdir _install _build _examples _python
         shell: bash
 
       - name: Install Python Dependencies
-        run: python -m pip install --upgrade pip "numpy<2" conan
-        shell: bash
-
-      - name: Detect Conan Profile
-        run: conan profile detect
-        shell: bash
-
-      - name: Install Dependencies with Conan
+        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
-          CONAN_ROOT="${GITHUB_WORKSPACE}/_conan"
+          python -m pip install --upgrade pip "numpy<2" conan
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Set Up Conan
+        if: inputs.python == 'ON'
+        run: |
+          CONAN_ROOT="${{ github.workspace }}/_conan"
+          conan profile detect
           conan install . --output-folder="${CONAN_ROOT}" --build=missing
           echo "CONAN_ROOT=${CONAN_ROOT}" >> "$GITHUB_ENV"
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> "$GITHUB_ENV"
@@ -108,8 +109,10 @@ jobs:
                 -DBUILD_TESTING=${{ inputs.BUILD_TESTING }} \
                 -DPYTHON=${{ inputs.python }} \
                 -DPYBIND11=${{ inputs.pybind11 }} \
-                -DPYTHON_INSTALL_DIR=_python \
                 -DCMAKE_VERBOSE_MAKEFILE=ON"
+          if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
+              CMAKE_COMMAND="$CMAKE_COMMAND -DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}"
+          fi
           if [ -n "${{ env.pybind_DIR }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -Dpybind11_DIR=${{ env.pybind11_DIR }}"
           fi
@@ -213,15 +216,13 @@ jobs:
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
         run: |
-          set -x
-          env PYTHONPATH=_python python src/pybind11/PyBindImathTest/test_import.py
+          env "PYTHONPATH=${{ env.PYTHON_INSTALL_DIR }}" python src/pybind11/PyBindImathTest/test_import.py
         shell: bash
 
       - name: Test Python
         if: inputs.python == 'ON'
         run: |
-          set -x
-          env PYTHONPATH=_python python src/python/PyImathTest/test_import.py
+          env "PYTHONPATH=${{ env.PYTHON_INSTALL_DIR }}" python src/python/PyImathTest/test_import.py
         shell: bash
 
       - name: Test
