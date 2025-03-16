@@ -11,7 +11,7 @@ def test_import():
     found = False
     for root, _, files in os.walk(os.getcwd()):
         for file in files:
-            if file.startswith("imath.") and file.endswith((".so",".pyd"):
+            if file.startswith("imath.") and file.endswith((".so",".pyd")):
                 print(f"  found: {os.path.join(root, file)}")
                 found = True
     if not found:
