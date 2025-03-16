@@ -137,8 +137,8 @@ set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
 
 add_library(${PYIMATH_MODULE} MODULE
     imathmodule.cpp
-#    PyImathFun.cpp
-#    PyImathBasicTypes.cpp
+    PyImathFun.cpp
+    PyImathBasicTypes.cpp
     $<TARGET_OBJECTS:${PYIMATH_LIBRARY}>
 )
 
@@ -152,8 +152,68 @@ target_link_libraries(${PYIMATH_MODULE} PRIVATE
         Imath::Imath
 )
 
-set(PYIMATH_SOURCES2
-)
+#
+# Installation
+#
 
-set(PYIMATH_HEADERS2
-)
+include(GNUInstallDirs)
+
+if(SKBUILD)
+  message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
+  set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+  set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+
+  install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+else()
+
+  if (NOT DEFINED PYTHON_INSTALL_DIR)
+
+    set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+    message(STATUS "installing ${PYIMATH_MODULE} to ${PYTHON_INSTALL_DIR}")
+
+  else()
+
+    message(STATUS "installing ${PYIMATH_MODULE} to ${PYTHON_INSTALL_DIR} (set externally)")
+  
+  endif()
+  
+  # Install shared library
+  install(TARGETS ${PYIMATH_LIBRARY}
+    EXPORT "${PYIMATH_LIBRARY}Targets"
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+
+  # Install headers
+  install(FILES ${PYIMATH_HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYIMATH_LIBRARY})
+
+  # Install export set for downstream CMake
+  install(EXPORT ${PYIMATH_LIBRARY}Targets
+    FILE ${PYIMATH_LIBRARY}Targets.cmake
+    NAMESPACE ${PYIMATH_LIBRARY}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+  )
+
+  # Install Python module 
+  install(TARGETS ${PYIMATH_MODULE} LIBRARY
+    DESTINATION ${PYTHON_INSTALL_DIR})
+
+  # Config file for find_package()
+  include(CMakePackageConfigHelpers)
+
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+    VERSION 1.0.0
+    COMPATIBILITY AnyNewerVersion
+  )
+
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+  )
+endif()
+
