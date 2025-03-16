@@ -118,6 +118,7 @@ add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
     if(WIN32)
         message(STATUS "setting target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)")
         target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
+        target_compile_definitions(${PYIMATH_LIBRARY} PRIV_EXPORT PYIMATH_BUILD)
     endif()
 #endif()
 
