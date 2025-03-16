@@ -9,11 +9,9 @@ def test_import():
 
     print(f"looking for imath...")
     found = False
-    for directory in site.getsitepackages():
-        pattern = os.path.join(directory, "imath.*")
-        matches = glob.glob(pattern)
-        if matches:
-            for match in matches:
+    for root, _, files in os.walk(os.getcwd()):
+        for file in files:
+            if file.startswith("imath."):
                 print(f"  found: {match}")
                 found = True
     if not found:
