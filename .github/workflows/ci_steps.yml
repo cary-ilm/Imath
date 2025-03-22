@@ -197,7 +197,7 @@ jobs:
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
                 -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }} \
-                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
@@ -219,7 +219,7 @@ jobs:
                 -DCMAKE_PREFIX_PATH=../../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
           cmake --build . --config ${{ inputs.build-type }}
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
