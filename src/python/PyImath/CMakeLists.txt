@@ -5,31 +5,23 @@ message(STATUS "Configuring imath module")
 
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 
-if(Python_FOUND)
-    message(STATUS "Found Python ${Python_VERSION}")
-    message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
-    message(STATUS "Python_LIBRARY: ${Python_LIBRARY}")
-else()
+if(NOT Python_FOUND)
     message(FATAL_ERROR "Could not find Python")
 endif()
 
 find_package(Boost COMPONENTS python REQUIRED)
 
-if(Boost_FOUND)
-    message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Found Boost libraries: ${Boost_LIBRARIES}")
-else()
+if(NOT Boost_FOUND)
     message(FATAL_ERROR "Could not find Boost")
 endif()
 
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "variable ${_variableName}=${${_variableName}}")
-#endforeach()
+#
+# Declare the libPyImath library, identified by PYIMATH_LIBRARY
+#
+# The name has a "_Python3_<minor>" suffix, i.e. libPyImath_Python3_10.so
+#
 
-set(PYIMATH_LIBRARY PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyImath_Python3_10.so
-set(PYIMATH_MODULE imath) # import imath
+set(PYIMATH_LIBRARY PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) 
 
 set(PYIMATH_SOURCES
     PyImath.cpp
@@ -113,23 +105,23 @@ set(PYIMATH_HEADERS
 
 add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
 
-#if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
     if(WIN32)
-        message(STATUS "setting target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)")
         target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
-        target_compile_definitions(${PYIMATH_LIBRARY} PRIV_EXPORT PYIMATH_BUILD)
     endif()
-#endif()
+endif()
 
-target_include_directories(${PYIMATH_LIBRARY} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-target_link_libraries(${PYIMATH_LIBRARY}
-    PRIVATE
-        Boost::boost
-        Boost::python
-        Python::Module
-        Imath::Imath
-)
+target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
+#
+# The PYIMATH_BUILD C++ macro is used by PyImathExport.h to set
+# PYIMATH_EXPORT to either dllexport or dllimport
+#
+target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
+
+target_link_libraries(${PYIMATH_LIBRARY} PUBLIC Imath::Imath)
+target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python::Module)
 
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
     SOVERSION ${IMATH_LIB_SOVERSION}
@@ -137,17 +129,23 @@ set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+#
+# Declare the python module, identified by PYIMATH_MODULE
+#
+
+set(PYIMATH_MODULE imath) 
+
 add_library(${PYIMATH_MODULE} MODULE
     imathmodule.cpp
     PyImathFun.cpp
     PyImathBasicTypes.cpp
-    $<TARGET_OBJECTS:${PYIMATH_LIBRARY}>
 )
 
 set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-target_link_libraries(${PYIMATH_MODULE} PRIVATE
+target_link_libraries(${PYIMATH_MODULE} 
     PRIVATE
+        ${PYIMATH_LIBRARY}
         Boost::boost
         Boost::python
         Python::Module
@@ -158,64 +156,86 @@ target_link_libraries(${PYIMATH_MODULE} PRIVATE
 # Installation
 #
 
-include(GNUInstallDirs)
+if (IMATH_INSTALL)
 
-if(SKBUILD)
-  message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
-  set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
-  set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+  include(GNUInstallDirs)
 
-  install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+  if(SKBUILD)
 
-else()
+    #
+    # scikit-build, for the python wheel. Ignore the library, we only
+    # need the module. 
+    #
+    
+    message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
+    set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+    set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
 
-  if (NOT DEFINED PYTHON_INSTALL_DIR)
-
-    set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
-    message(STATUS "installing ${PYIMATH_MODULE} to ${PYTHON_INSTALL_DIR}")
+    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
   else()
 
-    message(STATUS "installing ${PYIMATH_MODULE} to ${PYTHON_INSTALL_DIR} (set externally)")
+    #
+    # Set the PYTHON_INSTALL_DIR but only if it's not already set,
+    # which allows an externally-set value to take effect.
+    #
+    
+    if (NOT DEFINED PYTHON_INSTALL_DIR)
+
+      set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
+
+    else()
+
+      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
   
+    endif()
+  
+    #
+    # Install the python module 
+    #
+
+    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+    #
+    # Install the library
+    #
+  
+    install(TARGETS ${PYIMATH_LIBRARY}
+      EXPORT "${PYIMATH_LIBRARY}Targets"
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
+    # Install headers
+
+    install(FILES ${PYIMATH_HEADERS}
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYIMATH_LIBRARY})
+
+    # Install export set for downstream CMake
+
+    install(EXPORT ${PYIMATH_LIBRARY}Targets
+      FILE ${PYIMATH_LIBRARY}Targets.cmake
+      NAMESPACE ${PYIMATH_LIBRARY}::
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+    )
+
+    # Config file for find_package()
+    include(CMakePackageConfigHelpers)
+
+    write_basic_package_version_file(
+      "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+      VERSION 1.0.0
+      COMPATIBILITY AnyNewerVersion
+    )
+
+    install(FILES
+      "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+    )
   endif()
-  
-  # Install shared library
-  install(TARGETS ${PYIMATH_LIBRARY}
-    EXPORT "${PYIMATH_LIBRARY}Targets"
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  )
 
-  # Install headers
-  install(FILES ${PYIMATH_HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYIMATH_LIBRARY})
-
-  # Install export set for downstream CMake
-  install(EXPORT ${PYIMATH_LIBRARY}Targets
-    FILE ${PYIMATH_LIBRARY}Targets.cmake
-    NAMESPACE ${PYIMATH_LIBRARY}::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
-  )
-
-  # Install Python module 
-  install(TARGETS ${PYIMATH_MODULE} LIBRARY
-    DESTINATION ${PYTHON_INSTALL_DIR})
-
-  # Config file for find_package()
-  include(CMakePackageConfigHelpers)
-
-  write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
-    VERSION 1.0.0
-    COMPATIBILITY AnyNewerVersion
-  )
-
-  install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
-  )
 endif()
 
