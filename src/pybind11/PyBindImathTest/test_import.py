@@ -4,8 +4,9 @@ import os, sys, site, glob
 
 def test_import():
 
-    print(f"test_import: {sys.path}")
-
+    print(f"test_import: sys.path={sys.path}")
+    print(f"PYTHONPATH: {os.environ['PYTHONPATH']}")
+    print(f"cwd: {os.getcwd()}")
     print(f"looking for pybindimath...")
     found = False
     for root, _, files in os.walk(os.getcwd()):
