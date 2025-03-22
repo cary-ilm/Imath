@@ -70,6 +70,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip "numpy<2" conan
           echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> "$GITHUB_ENV"
+          echo "PYTHONPATH=${{ github.workspace }}/_python" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Set Up Conan
@@ -152,17 +153,16 @@ jobs:
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
-        run: |
-          set -x
-          env PYTHONPATH=${{ github.workspace }}/_python python src/pybind11/PyBindImathTest/test_import.py
+        run: python ${{ github.workspace }}/src/pybind11/PyBindImathTest/test_import.py
         shell: bash
+        working-directory: _python
 
       - name: Test Python
         if: inputs.python == 'ON'
-        run: |
-          set -x
-          env PYTHONPATH=${{ github.workspace }}/_python python src/python/PyImathTest/test_import.py
+        run: python ${{ github.workspace }}/src/python/PyImathTest/test_import.py
         shell: bash
+        working-directory: _python
+
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
         # and remove the path prefix, so the manifest contains only
