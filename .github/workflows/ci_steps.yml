@@ -125,6 +125,10 @@ jobs:
           if [ -n "${{ inputs.namespace }}" ]; then
               CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
           fi
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+          fi
           echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
 
           # Remove the os version from the manifest name, so it only
@@ -146,6 +150,19 @@ jobs:
         working-directory: _build
         shell: bash
 
+      - name: Test Pybind11
+        if: inputs.pybind11 == 'ON'
+        run: |
+          set -x
+          env PYTHONPATH=_python python src/pybind11/PyBindImathTest/test_import.py
+        shell: bash
+
+      - name: Test Python
+        if: inputs.python == 'ON'
+        run: |
+          set -x
+          env PYTHONPATH=_python python src/python/PyImathTest/test_import.py
+        shell: bash
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
         # and remove the path prefix, so the manifest contains only
@@ -179,7 +196,8 @@ jobs:
                 -DCMAKE_PREFIX_PATH=../../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
+                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }} \
+                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
@@ -200,7 +218,8 @@ jobs:
           cmake ../website/examples \
                 -DCMAKE_PREFIX_PATH=../../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
+                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
           cmake --build . --config ${{ inputs.build-type }}
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
@@ -213,17 +232,6 @@ jobs:
         shell: bash
         working-directory: _examples
 
-      - name: Test Pybind11
-        if: inputs.pybind11 == 'ON'
-        run: |
-          env "PYTHONPATH=${{ env.PYTHON_INSTALL_DIR }}" python src/pybind11/PyBindImathTest/test_import.py
-        shell: bash
-
-      - name: Test Python
-        if: inputs.python == 'ON'
-        run: |
-          env "PYTHONPATH=${{ env.PYTHON_INSTALL_DIR }}" python src/python/PyImathTest/test_import.py
-        shell: bash
 
       - name: Test
         run: |
