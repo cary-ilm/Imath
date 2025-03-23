@@ -153,15 +153,13 @@ jobs:
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
-        run: python ${{ github.workspace }}/src/pybind11/PyBindImathTest/test_import.py
+        run: python src/pybind11/PyBindImathTest/test_import.py
         shell: bash
-        working-directory: _python
 
       - name: Test Python
         if: inputs.python == 'ON'
-        run: python ${{ github.workspace }}/src/python/PyImathTest/test_import.py
+        run: python src/python/PyImathTest/test_import.py
         shell: bash
-        working-directory: _python
 
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,

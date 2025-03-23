@@ -141,6 +141,11 @@ add_library(${PYIMATH_MODULE} MODULE
     PyImathBasicTypes.cpp
 )
 
+# Ensure correct module extension on Windows
+if(WIN32)
+    set_target_properties(${PYIMATH_MODULE} PROPERTIES SUFFIX ".pyd")
+endif()
+
 set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(${PYIMATH_MODULE} 
