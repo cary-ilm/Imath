@@ -151,19 +151,13 @@ jobs:
         working-directory: _build
         shell: bash
 
-      - name: Setup MSBuild
+      - name: Install pyinstaller
         if: contains(inputs.os, 'windows')
-        uses: microsoft/setup-msbuild@v1.3.1
+        run: pip install pyinstaller
 
-      - name: Add MSVC tools to PATH
+      - name: Check dependencies with pyinstaller
         if: contains(inputs.os, 'windows')
-        run: |
-          $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\<version>\bin\Hostx64\x64"
-          echo $env:Path
-
-      - name: Diagnose
-        if: contains(inputs.os, 'windows')
-        run: dumpbin /DEPENDENTS _python/imath.pyd
+        run: pyinstaller --debug=all --onefile --distpath ./dist _python/imath.pyd
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'

@@ -100,14 +100,14 @@ MACOSX_DEPLOYMENT_TARGET = "10.15"
 #[tool.cibuildwheel.linux]
 #before-all = "apt-get update && apt-get install -y libboost-python-dev"
 
-[tool.cibuildwheel.macos]
-before-all = "brew install boost-python3"
+#[tool.cibuildwheel.macos]
+#before-all = "brew install boost-python3"
 
-[tool.cibuildwheel.windows]
-before-all = """
-    git clone https://github.com/microsoft/vcpkg.git;
-    cd vcpkg;
-    ./bootstrap-vcpkg.bat;
-    ./vcpkg install boost-python:x64-windows;
-    echo \"BOOST_ROOT=D:/a/vcpkg/installed/x64-windows\" >> $GITHUB_ENV;
-"""
+#[tool.cibuildwheel.windows]
+#before-all = """
+#    git clone https://github.com/microsoft/vcpkg.git;
+#    cd vcpkg;
+#    ./bootstrap-vcpkg.bat;
+#    ./vcpkg install boost-python:x64-windows;
+#    echo \"BOOST_ROOT=D:/a/vcpkg/installed/x64-windows\" >> $GITHUB_ENV;
+#"""
