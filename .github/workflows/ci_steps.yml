@@ -84,7 +84,7 @@ jobs:
         shell: bash
 
       - name: Setup MSBuild
-        if: runner.os == "Windows"
+        if: contains(inputs.os, 'windows')
         uses: microsoft/setup-msbuild@v1.3.1
 
       - name: Set Up Environment
@@ -156,7 +156,7 @@ jobs:
         shell: bash
 
       - name: Diagnose
-        if: runner.os == "Windows"
+        if: contains(inputs.os, 'windows')
         run: dumpbin /DEPENDENTS _python/imath.pyd
 
       - name: Test Pybind11

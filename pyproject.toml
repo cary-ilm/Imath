@@ -78,6 +78,9 @@ BUILD_SHARED_LIBS = 'OFF'
 CMAKE_OSX_DEPLOYMENT_TARGET = '10.15'
 CMAKE_POSITION_INDEPENDENT_CODE = 'ON'
 CMAKE_VERBOSE_MAKEFILE = 'ON'
+CMAKE_TOOLCHAIN_FILE = '_conan/conan_toolchain.cmake'
+Boost_DIR = '_conan'
+CMAKE_POLICY_DEFAULT_CMP0091 = 'NEW'
 
 [tool.cibuildwheel]
 test-command = "pytest -s {project}/src/pybind11/PyBindImathTest/test_import.py"
