@@ -67,9 +67,9 @@ jobs:
       - name: Build wheel
         uses: pypa/cibuildwheel@ee63bf16da6cddfb925f542f2c7b59ad50e93969 # v2.22.0
         env:
-          CIBW_BEFORE_BUILD_LINUX: "pip install conan && conan install . --build=missing -s compiler.libcxx=libstdc++11 --output-folder=_conan"
-          CIBW_BEFORE_BUILD_MACOS: "pip install conan && conan install . --build=missing  --output-folder=_conan"
-          CIBW_BEFORE_BUILD_WINDOWS: "pip install conan && conan install . --build=missing  --output-folder=_conan"
+          CIBW_BEFORE_BUILD_LINUX: "pip install conan && conan profile detect && conan install . --build=missing -s compiler.libcxx=libstdc++11 --output-folder=_conan"
+          CIBW_BEFORE_BUILD_MACOS: "pip install conan && conan profile detect && conan install . --build=missing  --output-folder=_conan"
+          CIBW_BEFORE_BUILD_WINDOWS: "pip install conan && conan profile detect && conan install . --build=missing  --output-folder=_conan"
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           # Build Python 3.8 through 3.12.
           # Skip python 3.7 since scikit-build-core requires 3.8+
