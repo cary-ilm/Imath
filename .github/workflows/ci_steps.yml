@@ -83,6 +83,10 @@ jobs:
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> "$GITHUB_ENV"
         shell: bash
 
+      - name: Setup MSBuild
+        if: runner.os == "Windows"
+        uses: microsoft/setup-msbuild@v1.3.1
+
       - name: Set Up Environment
         if: inputs.python == 'ON'
         run: |
@@ -151,14 +155,18 @@ jobs:
         working-directory: _build
         shell: bash
 
+      - name: Diagnose
+        if: runner.os == "Windows"
+        run: dumpbin /DEPENDENTS _python/imath.pyd
+
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
-        run: python src/pybind11/PyBindImathTest/test_import.py
+        run: python -v src/pybind11/PyBindImathTest/test_import.py
         shell: bash
 
       - name: Test Python
         if: inputs.python == 'ON'
-        run: python src/python/PyImathTest/test_import.py
+        run: python -v src/python/PyImathTest/test_import.py
         shell: bash
 
       - name: Prepare install_manifest
