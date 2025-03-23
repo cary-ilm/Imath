@@ -97,8 +97,8 @@ manylinux-aarch64-image = "manylinux2014"
 [tool.cibuildwheel.macos.environment]
 MACOSX_DEPLOYMENT_TARGET = "10.15"
 
-[tool.cibuildwheel.linux]
-before-all = "apt-get update && apt-get install -y libboost-python-dev"
+#[tool.cibuildwheel.linux]
+#before-all = "apt-get update && apt-get install -y libboost-python-dev"
 
 [tool.cibuildwheel.macos]
 before-all = "brew install boost-python3"

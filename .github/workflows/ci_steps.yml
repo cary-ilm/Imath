@@ -83,10 +83,6 @@ jobs:
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> "$GITHUB_ENV"
         shell: bash
 
-      - name: Setup MSBuild
-        if: contains(inputs.os, 'windows')
-        uses: microsoft/setup-msbuild@v1.3.1
-
       - name: Set Up Environment
         if: inputs.python == 'ON'
         run: |
@@ -154,6 +150,16 @@ jobs:
           cmake --build . --target install --config ${{ inputs.build-type }}
         working-directory: _build
         shell: bash
+
+      - name: Setup MSBuild
+        if: contains(inputs.os, 'windows')
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Add MSVC tools to PATH
+        if: contains(inputs.os, 'windows')
+        run: |
+          $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\<version>\bin\Hostx64\x64"
+          echo $env:Path
 
       - name: Diagnose
         if: contains(inputs.os, 'windows')
