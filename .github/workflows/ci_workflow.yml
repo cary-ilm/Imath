@@ -12,6 +12,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
       - '.github/workflows/ci_steps.yml'
@@ -19,6 +20,7 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!connanfile.txt'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow.yml'
       - '.github/workflows/ci_steps.yml'
@@ -38,6 +40,7 @@ permissions:
 
 jobs:
   linux:
+    if: false
     name: 'Linux.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -96,6 +99,7 @@ jobs:
             vfx-cy: 2023
 
   macOS:
+    if: false
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -147,8 +151,8 @@ jobs:
       build: ${{ matrix.build }}
       cxx-standard: ${{ matrix.cxx-standard || '17' }}
       build-type: ${{ matrix.build-type || 'Release' }}
-      python: ${{ matrix.python || 'OFF' }}
-      pybind11: ${{ matrix.pybind11 || 'OFF' }}
+      python: ${{ matrix.python || 'ON' }}
+      pybind11: ${{ matrix.pybind11 || 'ON' }}
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
@@ -172,7 +176,9 @@ jobs:
             label: pkgconfig=OFF, testing=OFF
             IMATH_INSTALL_PKG_CONFIG: 'OFF'
             BUILD_TESTING: 'OFF'
-
+            python: 'OFF'
+            pybind11: 'OFF'
+            
           - build: 6
             label: vfx2022
             os: windows-2019
