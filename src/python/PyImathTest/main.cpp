@@ -23,7 +23,7 @@
 #include <PyImathVec.h>
 #include <PyImathShear.h>
 
-#include <testStringTable.h>
+#include "testStringTable.h"
 
 using namespace boost::python;
 

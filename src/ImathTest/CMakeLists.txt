@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
+message(STATUS "CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+
 if("${CMAKE_PROJECT_NAME}" STREQUAL "")
   # If the project name is set, this is being configured as a part of
   # Imath.  If there is no project name, it's being configured as a
