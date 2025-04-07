@@ -78,8 +78,10 @@ jobs:
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
           python -m pip install --upgrade pip "numpy<2" conan
-          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> "$GITHUB_ENV"
-          echo "PYTHONPATH=${{ github.workspace }}/_python" >> "$GITHUB_ENV"
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          PYTHON_EXECUTABLE=$(which python)
+          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
 
       - name: Set Up Conan
@@ -88,21 +90,22 @@ jobs:
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan profile detect
           conan install . --output-folder="${CONAN_ROOT}" --build=missing
-          echo "CONAN_ROOT=${CONAN_ROOT}" >> "$GITHUB_ENV"
-          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> "$GITHUB_ENV"
+          echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
 
       - name: Set Up Environment
         if: inputs.python == 'ON'
         run: |
-          echo "Boost_ROOT=_conan" >> $GITHUB_ENV
+          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
         shell: bash
 
       - name: Install pybind11
         if: inputs.pybind11 == 'ON'
         run: |
           pip install pybind11
-          echo "pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')" >> $GITHUB_ENV
+          pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+          echo "pybind11_DIR=${pybind11_DIR}" >> $GITHUB_ENV
         shell: bash
 
       - name: Construct CMake command
@@ -120,13 +123,16 @@ jobs:
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
+          if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
+              cmake_args+=("-DPython_EXECUTABLE="${{ env.PYTHON_EXECUTABLE }}")
+          fi
           if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
           fi
-          if [ -n "${{ env.pybind_DIR }}" ]; then
+          if [ -n "${{ env.pybind11_DIR }}" ]; then
               cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
           fi
-          if [ -n "${{ inputs.Boost_ROOT }}" ]; then
+          if [ -n "${{ env.Boost_ROOT }}" ]; then
               cmake_args+=("-DBoost_ROOT=${{ env.Boost_ROOT }}")
           fi
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
@@ -141,7 +147,7 @@ jobs:
           fi
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          echo "CMAKE_ARGS=$quoted_args" >> "$GITHUB_ENV"
+          echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
 
           # Remove the os version from the manifest name, so it only
           # contains "ubuntu", "macos", or "windows", so the name is,
