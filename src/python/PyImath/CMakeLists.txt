@@ -3,18 +3,6 @@
 
 message(STATUS "Configuring imath module")
 
-find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
-
-if(NOT Python_FOUND)
-    message(FATAL_ERROR "Could not find Python")
-endif()
-
-find_package(Boost COMPONENTS python REQUIRED)
-
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Could not find Boost")
-endif()
-
 #
 # Declare the libPyImath library, identified by PYIMATH_LIBRARY
 #
@@ -105,6 +93,8 @@ set(PYIMATH_HEADERS
 
 add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
 
+add_library(PyImath::PyImath ALIAS ${PYIMATH_LIBRARY})
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
     if(WIN32)
@@ -123,6 +113,11 @@ target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
 target_link_libraries(${PYIMATH_LIBRARY} PUBLIC Imath::Imath)
 target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python::Module)
 
+target_include_directories(${PYIMATH_LIBRARY}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include/${PYIMATH_LIBRARY}>
+)
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
     SOVERSION ${IMATH_LIB_SOVERSION}
     VERSION ${IMATH_LIB_VERSION}
@@ -135,11 +130,13 @@ set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
 
 set(PYIMATH_MODULE imath) 
 
-add_library(${PYIMATH_MODULE} MODULE
+set(PYIMATH_MODULE_SOURCES
     imathmodule.cpp
     PyImathFun.cpp
     PyImathBasicTypes.cpp
 )
+
+add_library(${PYIMATH_MODULE} MODULE ${PYIMATH_MODULE_SOURCES})
 
 # Ensure correct module extension on Windows
 if(WIN32)
@@ -156,6 +153,34 @@ target_link_libraries(${PYIMATH_MODULE}
         Python::Module
         Imath::Imath
 )
+
+add_library(PyImathConfig INTERFACE)
+target_include_directories(PyImathConfig INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+install(TARGETS PyImathConfig EXPORT ${PROJECT_NAME})
+add_library(PyImath::Config ALIAS PyImathConfig)
+
+if(IMATH_INSTALL_PKG_CONFIG)
+  # use a helper function to avoid variable pollution, but pretty simple
+  function(pyimath_pkg_config_help pcinfile)
+    set(prefix ${CMAKE_INSTALL_PREFIX})
+    set(exec_prefix "\${prefix}")
+    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+    set(LIB_SUFFIX_DASH ${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
+    string(REPLACE ".in" "" pcout ${pcinfile})
+    configure_file(${pcinfile} ${CMAKE_CURRENT_BINARY_DIR}/${pcout} @ONLY)
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${pcout}
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    )
+  endfunction()
+  pyimath_pkg_config_help(PyImath.pc.in)
+else()
+  message(STATUS "pkg-config generation disabled")
+endif()
+
 
 #
 # Installation
@@ -243,4 +268,16 @@ if (IMATH_INSTALL)
   endif()
 
 endif()
+
+#
+# disable the self-assig warnings:
+#
+#   warning: explicitly assigning value of variable of type 'boost::python::self_ns::self_t' to itself [-Wself-assign-overloaded]
+#        .def(self ^= self)
+#
+
+set_source_files_properties(
+    ${PYIMATH_MODULE_SOURCES} ${PYIMATH_SOURCES} ${PYIMATH_HEADERS}
+    PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
+)
 

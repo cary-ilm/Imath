@@ -3,52 +3,79 @@
 
 message(STATUS "Configuring imathnumpy module")
 
-if(TARGET Python2::Python AND
-   TARGET Boost::${PYIMATH_BOOST_PY_COMPONENT} AND
-   TARGET Python2::ImathNumPy)
-  set(moddeps_p2 PyImath)
-  list(TRANSFORM moddeps_p2 APPEND ${PYIMATH_LIB_PYTHONVER_ROOT}${Python2_VERSION_MAJOR}_${Python2_VERSION_MINOR})
-  Python2_add_library(imathnumpy_python2 MODULE
-    imathnumpymodule.cpp
-  )
-  target_link_libraries(imathnumpy_python2
-    PRIVATE
-      Imath
-      ${moddeps_p2}
-      Python2::Python
-      Boost::${PYIMATH_BOOST_PY_COMPONENT}
-      Python2::ImathNumPy
-    )
-  set_target_properties(imathnumpy_python2 PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python2_VERSION_MAJOR}_${Python2_VERSION_MINOR}/"
-    LIBRARY_OUTPUT_NAME "imathnumpy"
-    DEBUG_POSTFIX ""
-  )
-  install(TARGETS imathnumpy_python2 DESTINATION ${PyImath_Python2_SITEARCH_REL})
+set(PYIMATHNUMPY_MODULE imathnumpy)
+
+add_library(${PYIMATHNUMPY_MODULE} MODULE imathnumpymodule.cpp)
+
+target_link_libraries(${PYIMATHNUMPY_MODULE}
+      Imath::Config
+      PyImath::PyImath
+      Boost::boost
+      Boost::python
+      Python::Module
+)
+
+set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
+
+execute_process(
+    COMMAND ${Python_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+    OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+target_include_directories(${PYIMATHNUMPY_MODULE}
+  PUBLIC ${NUMPY_INCLUDE_DIR} ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
+if (IMATH_INSTALL)
+
+  include(GNUInstallDirs)
+
+  if(SKBUILD)
+
+    #
+    # scikit-build, for the python wheel. Ignore the library, we only
+    # need the module. 
+    #
+    
+    message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
+    set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
+    set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+
+    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+  else()
+
+    #
+    # Set the PYTHON_INSTALL_DIR but only if it's not already set,
+    # which allows an externally-set value to take effect.
+    #
+    
+    if (NOT DEFINED PYTHON_INSTALL_DIR)
+
+      set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
+
+    else()
+
+      message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
+  
+    endif()
+  
+    install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+  endif()
+
 endif()
 
-if(TARGET Python3::Python AND
-   TARGET Boost::${PYIMATH_BOOST_PY_COMPONENT} AND
-   TARGET Python3::ImathNumPy)
+#
+# disable the self-assig warnings:
+#
+#   warning: explicitly assigning value of variable of type 'boost::python::self_ns::self_t' to itself [-Wself-assign-overloaded]
+#        .def(self ^= self)
+#
 
-  set(moddeps_p3 PyImath)
-  list(TRANSFORM moddeps_p3 APPEND ${PYIMATH_LIB_PYTHONVER_ROOT}${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR})
-
-  Python3_add_library(imathnumpy_python3 MODULE
+set_source_files_properties(
     imathnumpymodule.cpp
-  )
-  target_link_libraries(imathnumpy_python3
-    PRIVATE
-      Imath
-      ${moddeps_p3}
-      Python3::Python
-      Boost::${PYIMATH_BOOST_PY_COMPONENT}
-      Python3::ImathNumPy
-    )
-  set_target_properties(imathnumpy_python3 PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
-    LIBRARY_OUTPUT_NAME "imathnumpy"
-    DEBUG_POSTFIX ""
-  )
-  install(TARGETS imathnumpy_python3 DESTINATION ${PyImath_Python3_SITEARCH_REL})
-endif()
+    PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
+)
+

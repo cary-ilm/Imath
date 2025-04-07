@@ -3,7 +3,18 @@
 
 include(config/PyImathSetup.cmake)
 
-add_subdirectory(config)
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+
+if(NOT Python_FOUND)
+    message(FATAL_ERROR "Could not find Python")
+endif()
+
+find_package(Boost COMPONENTS python REQUIRED)
+
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Could not find Boost")
+endif()
+
 
 add_subdirectory( PyImath )
 add_subdirectory( PyImathNumpy )
