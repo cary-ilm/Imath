@@ -3,13 +3,13 @@
 
 include(config/PyImathSetup.cmake)
 
-find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
-if(NOT Python_FOUND)
+if(NOT Python3_FOUND)
     message(FATAL_ERROR "Could not find Python")
 endif()
 
-find_package(Boost COMPONENTS python REQUIRED)
+find_package(Boost REQUIRED COMPONENTS python)
 
 if(NOT Boost_FOUND)
     message(FATAL_ERROR "Could not find Boost")

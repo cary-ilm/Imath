@@ -12,16 +12,18 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
       PyImath::PyImath
       Boost::boost
       Boost::python
-      Python::Module
+      Python3::Module
 )
 
 set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
 
 execute_process(
-    COMMAND ${Python_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+    COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
     OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
+message(STATUS "NUMPY_INCLUDE_DIR=${NUMPY_INCLUDE_DIR}")
 
 target_include_directories(${PYIMATHNUMPY_MODULE}
   PUBLIC ${NUMPY_INCLUDE_DIR} ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
@@ -74,7 +76,7 @@ endif()
 #        .def(self ^= self)
 #
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set_source_files_properties(
     imathnumpymodule.cpp
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"

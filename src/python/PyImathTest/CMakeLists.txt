@@ -13,11 +13,12 @@ if("${CMAKE_PROJECT_NAME}" STREQUAL "")
 
   add_executable(PyImathTestC ${PYIMATH_TEST_SOURCES})
 
-  target_link_libraries(PyImathTestC
-    PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}
-    Boost::python
-    Boost::boost
-    Python::Python
+  target_link_libraries(PyImathTestC 
+      Imath::Config
+      PyImath::PyImath
+      Boost::boost
+      Boost::python
+      Python3::Python
   )
 
 else()
@@ -36,7 +37,7 @@ else()
       PyImath::PyImath
       Boost::boost
       Boost::python
-      Python::Module
+      Python3::Python
   )
 
 
@@ -59,7 +60,7 @@ set_target_properties(PyImathTestC PROPERTIES
 #        .def(self ^= self)
 #
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set_source_files_properties(
     ${PYIMATH_TEST_SOURCES} 
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"

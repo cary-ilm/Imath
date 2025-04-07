@@ -111,7 +111,7 @@ target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python_INCLUDE_DIRS} ${Bo
 target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
 
 target_link_libraries(${PYIMATH_LIBRARY} PUBLIC Imath::Imath)
-target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python::Module)
+target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python3::Module)
 
 target_include_directories(${PYIMATH_LIBRARY}
     PUBLIC
@@ -150,7 +150,7 @@ target_link_libraries(${PYIMATH_MODULE}
         ${PYIMATH_LIBRARY}
         Boost::boost
         Boost::python
-        Python::Module
+        Python3::Module
         Imath::Imath
 )
 
@@ -276,7 +276,9 @@ endif()
 #        .def(self ^= self)
 #
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+message (STATUS "CMAKE_CXX_COMPILER_ID=$={CMAKE_CXX_COMPILER_ID}")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set_source_files_properties(
     ${PYIMATH_MODULE_SOURCES} ${PYIMATH_SOURCES} ${PYIMATH_HEADERS}
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
