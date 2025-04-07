@@ -37,6 +37,7 @@ permissions:
 
 jobs:
   build_wheels:
+    if: false
     name: Python Wheels - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
