@@ -1,4 +1,4 @@
-v_# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) Contributors to the OpenEXR Project.
 
 # These are the steps for all CI jobs. Linux, macOS, and Windows all
