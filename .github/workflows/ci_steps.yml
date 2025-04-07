@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: BSD-3-Clause
+v_# SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) Contributors to the OpenEXR Project.
 
 # These are the steps for all CI jobs. Linux, macOS, and Windows all
@@ -61,6 +61,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Install MSYS2 ${{ inputs.msystem }}
+        if: inputs.msystem != ''
+        uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
+        with:
+          msystem: ${{ inputs.msystem }}
+          update: true
+          install: git
+          pacboy: cc:p cmake:p
+
       - name: Create build directories
         run: mkdir _install _build _examples _python
         shell: bash
@@ -101,36 +110,38 @@ jobs:
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
-          CMAKE_COMMAND="cmake -B . -S .. \
-                -DCMAKE_INSTALL_PREFIX=../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }} \
-                -DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }} \
-                -DBUILD_TESTING=${{ inputs.BUILD_TESTING }} \
-                -DPYTHON=${{ inputs.python }} \
-                -DPYBIND11=${{ inputs.pybind11 }} \
-                -DCMAKE_VERBOSE_MAKEFILE=ON"
+          cmake_args=("-B" "." "-S" "..")
+          cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
+          cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
+          cmake_args+=("-DBUILD_TESTING=${{ inputs.BUILD_TESTING }}")
+          cmake_args+=("-DPYTHON=${{ inputs.python }}")
+          cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
+          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
           if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}"
+              cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
           fi
           if [ -n "${{ env.pybind_DIR }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -Dpybind11_DIR=${{ env.pybind11_DIR }}"
+              cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
           fi
           if [ -n "${{ inputs.Boost_ROOT }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DBoost_ROOT=${{ env.Boost_ROOT }}"
+              cmake_args+=("-DBoost_ROOT=${{ env.Boost_ROOT }}")
           fi
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}"
-          fi
-          if [ -n "${{ inputs.namespace }}" ]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DIMATH_NAMESPACE=${{ inputs.namespace }}"
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-              CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
           fi
-          echo "CMAKE_COMMAND=$CMAKE_COMMAND" >> $GITHUB_ENV
+          if [ -n "${{ inputs.namespace }}" ]; then
+              cmake_args+=("-DIMATH_NAMESPACE=${{ inputs.namespace }}")
+          fi
+
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          echo "CMAKE_ARGS=$quoted_args" >> "$GITHUB_ENV"
 
           # Remove the os version from the manifest name, so it only
           # contains "ubuntu", "macos", or "windows", so the name is,
@@ -139,25 +150,29 @@ jobs:
         working-directory: _build
         shell: bash
 
-      - name: Configure
+      - name: Configure, Build, Test
+        if: inputs.msystem == ''
         run: |
-          $CMAKE_COMMAND
-        working-directory: _build
-        shell: bash
-
-      - name: Build
-        run: |
+          cmake --version
+          cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
+          if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
+            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+          fi
         working-directory: _build
         shell: bash
 
-      - name: Install pyinstaller
-        if: contains(inputs.os, 'windows')
-        run: pip install pyinstaller
-
-      - name: Check dependencies with pyinstaller
-        if: contains(inputs.os, 'windows')
-        run: pyinstaller --debug=all --onefile --distpath ./dist _python/imath.pyd
+      - name: Configure, Build, Test (msys2) # requires msys2 shell
+        if: inputs.msystem != ''
+        run: |
+          cmake --version
+          cmake ${{ env.CMAKE_ARGS }}
+          cmake --build . --target install --config ${{ inputs.build-type }}
+          if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
+            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+          fi
+        working-directory: _build
+        shell: msys2 {0}
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
@@ -174,7 +189,7 @@ jobs:
         # and remove the path prefix, so the manifest contains only
         # the local filenames.
         run: |
-          echo "# $CMAKE_COMMAND" > "_build/$INSTALL_MANIFEST"
+          echo "# cmake ${{ env.CMAKE_ARGS }}" > "_build/$INSTALL_MANIFEST"
           sort _build/install_manifest.txt | sed -e "s:^.*/_install/::" >> "_build/$INSTALL_MANIFEST"
         shell: bash
 
@@ -193,7 +208,7 @@ jobs:
         shell: bash
 
       - name: Test standalone
-        continue-on-error: true
+        if: inputs.msystem == ''
         run: |
           # Make sure we can build the tests when configured as a
           # standalone application linking against the just-installed
@@ -202,8 +217,7 @@ jobs:
                 -DCMAKE_PREFIX_PATH=../../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }} \
-                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
@@ -217,15 +231,14 @@ jobs:
 
       - name: Examples
         # The example code use the Imath:: namespace explicitly, they won't work with a custom namespace, so skip the test in that case.
-        if: inputs.namespace == ''
+        if: inputs.namespace == '' && inputs.msystem == ''
         run: |
           # Confirm the examples compile and execute
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake ../website/examples \
                 -DCMAKE_PREFIX_PATH=../../_install \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
           cmake --build . --config ${{ inputs.build-type }}
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
@@ -234,13 +247,23 @@ jobs:
             ./bin/imath-intro
             ./bin/imath-examples
           fi
-
         shell: bash
         working-directory: _examples
 
-
-      - name: Test
+      - name: Examples (msys2)
+        # The example code use the Imath:: namespace explicitly, they won't work with a custom namespace, so skip the test in that case.
+        if: inputs.namespace == '' && inputs.msystem != ''
         run: |
-          ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
-        working-directory: _build
-        shell: bash
+          # Confirm the examples compile and execute
+          rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
+          cmake ../website/examples \
+                -DCMAKE_PREFIX_PATH=../../_install \
+                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
+                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+          cmake --build . --config ${{ inputs.build-type }}
+          export PATH="${{ github.workspace }}/_install/bin:$PATH"
+          ./bin/imath-intro.exe
+          ./bin/imath-examples.exe
+        shell: msys2 {0}
+        working-directory: _examples
+

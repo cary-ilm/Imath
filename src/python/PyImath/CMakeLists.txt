@@ -276,8 +276,10 @@ endif()
 #        .def(self ^= self)
 #
 
-set_source_files_properties(
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set_source_files_properties(
     ${PYIMATH_MODULE_SOURCES} ${PYIMATH_SOURCES} ${PYIMATH_HEADERS}
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
-)
+  )
+endif()
 
