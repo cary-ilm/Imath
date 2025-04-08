@@ -16,6 +16,8 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
 )
 
 set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES PREFIX "")
+message(STATUS "Python3_EXECUTABLE=${Python3_EXECUTABLE}")
+message(STATUS "Python_EXECUTABLE=${Python_EXECUTABLE}")
 
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
