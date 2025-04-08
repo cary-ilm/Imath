@@ -69,36 +69,35 @@ jobs:
           - build: 1
             label: Release
 
-#          - build: 2
-#            label: Debug
-#            build-type: Debug
-#
-#          - build: 3
-#            label: static
-#            BUILD_SHARED_LIBS: 'OFF'
-#
-#          - build: 4
-#            label: pkgconfig=OFF, testing=OFF, python=OFF
-#            IMATH_INSTALL_PKG_CONFIG: 'OFF'
-#            BUILD_TESTING: 'OFF'
-#            python: 'OFF'
-#            pybind11: 'OFF'
-#
-#          - build: 5
-#            label: custom namespace
-#            namespace: 'TEST_NAMESPACE'
-#
-#          - build: 6
-#            label: clang
-#            cxx-compiler: clang++
-#            cc-compiler: clang
-#
-#          - build: 7
-#            label: vfx2023
-#            vfx-cy: 2023
+          - build: 2
+            label: Debug
+            build-type: Debug
+
+          - build: 3
+            label: static
+            BUILD_SHARED_LIBS: 'OFF'
+
+          - build: 4
+            label: pkgconfig=OFF, testing=OFF, python=OFF
+            IMATH_INSTALL_PKG_CONFIG: 'OFF'
+            BUILD_TESTING: 'OFF'
+            python: 'OFF'
+            pybind11: 'OFF'
+
+          - build: 5
+            label: custom namespace
+            namespace: 'TEST_NAMESPACE'
+
+          - build: 6
+            label: clang
+            cxx-compiler: clang++
+            cc-compiler: clang
+
+          - build: 7
+            label: vfx2023
+            vfx-cy: 2023
 
   macOS:
-    if: false
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -164,22 +163,22 @@ jobs:
           - build: 1
             label: Release
 
-#          - build: 2
-#            label: Debug
-#            build-type: Debug
-#
-#          - build: 3
-#            label: static
-#            BUILD_SHARED_LIBS: 'OFF'
-#
-#          - build: 5
-#            label: pkgconfig=OFF, testing=OFF
-#            IMATH_INSTALL_PKG_CONFIG: 'OFF'
-#            BUILD_TESTING: 'OFF'
-#            python: 'OFF'
-#            pybind11: 'OFF'
-#
-#          - build: 6
-#            label: vfx2022
-#            os: windows-2019
-#
+          - build: 2
+            label: Debug
+            build-type: Debug
+
+          - build: 3
+            label: static
+            BUILD_SHARED_LIBS: 'OFF'
+
+          - build: 5
+            label: pkgconfig=OFF, testing=OFF
+            IMATH_INSTALL_PKG_CONFIG: 'OFF'
+            BUILD_TESTING: 'OFF'
+            python: 'OFF'
+            pybind11: 'OFF'
+
+          - build: 6
+            label: vfx2022
+            os: windows-2019
+

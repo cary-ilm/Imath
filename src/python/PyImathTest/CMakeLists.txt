@@ -28,6 +28,9 @@ else()
   add_test(PyImath.PyImathTest_Python3
     ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathTest.in
   )
+
+  message (STATUS "PYTHONPATH=${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
+
   set_tests_properties(PyImath.PyImathTest_Python3 PROPERTIES
     ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}"
   )
