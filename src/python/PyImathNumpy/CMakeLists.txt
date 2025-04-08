@@ -15,7 +15,7 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
       Python3::Module
 )
 
-set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
+set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES PREFIX "")
 
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
@@ -24,9 +24,10 @@ execute_process(
 )
 
 message(STATUS "NUMPY_INCLUDE_DIR=${NUMPY_INCLUDE_DIR}")
+message(STATUS "Python3_INCLUDE_DIRS=${Python3_INCLUDE_DIRS}")
 
 target_include_directories(${PYIMATHNUMPY_MODULE}
-  PUBLIC ${NUMPY_INCLUDE_DIR} ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+  PUBLIC ${NUMPY_INCLUDE_DIR} ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 if (IMATH_INSTALL)
 
@@ -43,7 +44,7 @@ if (IMATH_INSTALL)
     set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
     set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
 
-    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+    install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
   else()
 
@@ -54,8 +55,8 @@ if (IMATH_INSTALL)
     
     if (NOT DEFINED PYTHON_INSTALL_DIR)
 
-      set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
-      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
+      set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+      message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR}")
 
     else()
 

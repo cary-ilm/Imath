@@ -9,7 +9,7 @@ message(STATUS "Configuring imath module")
 # The name has a "_Python3_<minor>" suffix, i.e. libPyImath_Python3_10.so
 #
 
-set(PYIMATH_LIBRARY PyImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) 
+set(PYIMATH_LIBRARY PyImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) 
 
 set(PYIMATH_SOURCES
     PyImath.cpp
@@ -102,7 +102,7 @@ if(BUILD_SHARED_LIBS)
     endif()
 endif()
 
-target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 #
 # The PYIMATH_BUILD C++ macro is used by PyImathExport.h to set
@@ -144,7 +144,7 @@ if(WIN32)
 endif()
 
 set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
-target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(${PYIMATH_MODULE} 
     PRIVATE
         ${PYIMATH_LIBRARY}
@@ -212,7 +212,7 @@ if (IMATH_INSTALL)
     
     if (NOT DEFINED PYTHON_INSTALL_DIR)
 
-      set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+      set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
       message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
 
     else()
@@ -276,7 +276,7 @@ endif()
 #        .def(self ^= self)
 #
 
-message (STATUS "CMAKE_CXX_COMPILER_ID=$={CMAKE_CXX_COMPILER_ID}")
+message (STATUS "CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID}")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set_source_files_properties(

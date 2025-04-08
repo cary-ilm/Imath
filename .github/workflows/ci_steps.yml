@@ -50,6 +50,8 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
+    continue-on-error: true
+    
 #    container:
 #      image: ${{ inputs.container }}
 

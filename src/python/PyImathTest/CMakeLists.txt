@@ -45,12 +45,12 @@ else()
 
 
   add_test(NAME Imath.PyImathTestC COMMAND $<TARGET_FILE:PyImathTestC>)
-  set(PYTHONPATH ${CMAKE_BINARY_DIR}/python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR})
+  set(PYTHONPATH ${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR})
   set_tests_properties(Imath.PyImathTestC PROPERTIES ENVIRONMENT PYTHONPATH=${PYTHONPATH})
 
 endif()
 
-target_include_directories(PyImathTestC PUBLIC ${Python_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(PyImathTestC PUBLIC ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 set_target_properties(PyImathTestC PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
