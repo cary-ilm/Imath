@@ -3,11 +3,19 @@
 
 include(config/PyImathSetup.cmake)
 
+if(POLICY CMP0177)
+  cmake_policy(SET CMP0177 NEW)
+endif()
+
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 if(NOT Python3_FOUND)
     message(FATAL_ERROR "Could not find Python")
 endif()
+
+#if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    set(Boost_USE_DEBUG_RUNTIME ON)
+#endif()
 
 find_package(Boost REQUIRED COMPONENTS python)
 

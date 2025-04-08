@@ -85,3 +85,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
   )
 endif()
+
+set_source_files_properties(
+  ${PYIMATH_MODULE_SOURCES} ${PYIMATH_SOURCES} ${PYIMATH_HEADERS}
+  PROPERTIES COMPILE_FLAGS "-Wdeprecated-declarations"
+)

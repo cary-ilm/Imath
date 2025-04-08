@@ -91,7 +91,7 @@ jobs:
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan profile detect
-          conan install . --output-folder="${CONAN_ROOT}" --build=missing
+          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
@@ -221,11 +221,16 @@ jobs:
           # Make sure we can build the tests when configured as a
           # standalone application linking against the just-installed
           # Imath library.
-          cmake ../src/ImathTest \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
-                -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
+          cmake_args=("../src/ImathTest")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
