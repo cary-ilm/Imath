@@ -245,7 +245,7 @@ jobs:
         shell: bash
         working-directory: _examples
 
-      - name: Examples
+z      - name: Examples
         # The example code use the Imath:: namespace explicitly, they won't work with a custom namespace, so skip the test in that case.
         if: inputs.namespace == '' && inputs.msystem == ''
         run: |
@@ -253,8 +253,8 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake_args=("../website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
-          cmake_args=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
-          cmake_args=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
@@ -284,8 +284,8 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake_args=("../website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
-          cmake_args=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
-          cmake_args=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
