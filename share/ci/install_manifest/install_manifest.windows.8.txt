@@ -1,4 +1,5 @@
-# cmake -B . -S ..       -DCMAKE_INSTALL_PREFIX=../_install       -DCMAKE_BUILD_TYPE=Release       -DCMAKE_CXX_STANDARD=17       -DBUILD_SHARED_LIBS=OFF       -DIMATH_INSTALL_PKG_CONFIG=ON       -DBUILD_TESTING=OFF       -DPYTHON=OFF       -DPYBIND11=OFF       -DCMAKE_VERBOSE_MAKEFILE=ON
+# cmake -B . -S ..       -DCMAKE_INSTALL_PREFIX=../_install       -DCMAKE_BUILD_TYPE=Release       -DCMAKE_CXX_STANDARD=17       -DBUILD_SHARED_LIBS=ON       -DIMATH_INSTALL_PKG_CONFIG=ON       -DBUILD_TESTING=ON       -DPYTHON=OFF       -DPYBIND11=OFF       -DCMAKE_VERBOSE_MAKEFILE=ON
+bin/libImath-$MAJOR_$MINOR.dll
 include/Imath/ImathBox.h
 include/Imath/ImathBoxAlgo.h
 include/Imath/ImathColor.h
@@ -38,5 +39,5 @@ lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
 lib/cmake/Imath/ImathTargets-release.cmake
 lib/cmake/Imath/ImathTargets.cmake
-lib/libImath-$MAJOR_$MINOR.a
+lib/libImath-$MAJOR_$MINOR.dll.a
 lib/pkgconfig/Imath.pc

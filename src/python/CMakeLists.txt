@@ -7,6 +7,8 @@ if(POLICY CMP0177)
   cmake_policy(SET CMP0177 NEW)
 endif()
 
+set(Python3_USE_DEBUG_PATH FALSE)
+
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 if(NOT Python3_FOUND)

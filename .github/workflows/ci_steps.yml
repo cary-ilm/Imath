@@ -251,11 +251,21 @@ jobs:
         run: |
           # Confirm the examples compile and execute
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
-          cmake ../website/examples \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+          cmake_args=("../website/examples")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . --config ${{ inputs.build-type }}
+
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
             ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
@@ -272,10 +282,19 @@ jobs:
         run: |
           # Confirm the examples compile and execute
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
-          cmake ../website/examples \
-                -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
-                -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
+          cmake_args=("../website/examples")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
+          cmake_args=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          cmake $quoted_args
           cmake --build . --config ${{ inputs.build-type }}
           export PATH="${{ github.workspace }}/_install/bin:$PATH"
           ./bin/imath-intro.exe
