@@ -245,7 +245,7 @@ jobs:
         shell: bash
         working-directory: _examples
 
-z      - name: Examples
+      - name: Examples
         # The example code use the Imath:: namespace explicitly, they won't work with a custom namespace, so skip the test in that case.
         if: inputs.namespace == '' && inputs.msystem == ''
         run: |
