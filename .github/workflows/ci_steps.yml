@@ -226,6 +226,9 @@ jobs:
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          fi
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi

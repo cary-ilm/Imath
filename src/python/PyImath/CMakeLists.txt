@@ -290,4 +290,7 @@ elseif(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   )
 endif()
 
+if (MSVC)
+    target_compile_options(${PYIMATH_LIBRARY} PRIVATE /bigobj)
+endif()
 
