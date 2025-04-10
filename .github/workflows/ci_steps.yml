@@ -148,7 +148,7 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
               if [ "${{ inputs.python }}" == "ON" ]; then
-                  PYTHON_DIR=$(dirname $(dirname ${{ env.PYTHON_EXECUTABLE }}))
+                  PYTHON_DIR=$(dirname ${{ env.PYTHON_EXECUTABLE }})
                   cmake_args+=("-DPython3_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
               fi
           fi
