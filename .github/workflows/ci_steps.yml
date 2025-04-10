@@ -150,6 +150,7 @@ jobs:
               if [ "${{ inputs.python }}" == "ON" ]; then
                   PYTHON_DIR=$(dirname ${{ env.PYTHON_EXECUTABLE }})
                   cmake_args+=("-DPython3_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
+                  cmake_args+=("-DPython3_DEBUG_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
               fi
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
