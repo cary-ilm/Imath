@@ -7,7 +7,7 @@ if(POLICY CMP0177)
   cmake_policy(SET CMP0177 NEW)
 endif()
 
-set(Python3_USE_DEBUG_PATH FALSE)
+#set(Python3_USE_DEBUG_PATH FALSE)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
@@ -15,8 +15,8 @@ if(NOT Python3_FOUND)
     message(FATAL_ERROR "Could not find Python")
 endif()
 
-#if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#    set(Boost_USE_DEBUG_RUNTIME ON)
+#if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    set(PYTHON_LIBRARY_DEBUG "${PYTHON_LIBRARY_RELEASE}")
 #endif()
 
 find_package(Boost REQUIRED COMPONENTS python)

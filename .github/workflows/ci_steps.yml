@@ -84,6 +84,9 @@ jobs:
           echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
+          PYVER=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          echo "PYVER=${PYVER}" >> $GITHUB_ENV
+
         shell: bash
 
       - name: Set Up Conan
@@ -144,6 +147,9 @@ jobs:
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+              if [ -n "${{ env.PYVER }}" ]; then
+                  cmake_args+=("-DPython_LIBRARY=${{ env.pythonLocation }}/libs/python${{ env.PYVER }}.lib")
+              fi
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
               cmake_args+=("-DIMATH_NAMESPACE=${{ inputs.namespace }}")
