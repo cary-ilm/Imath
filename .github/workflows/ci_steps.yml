@@ -124,6 +124,7 @@ jobs:
           cmake_args+=("-DBUILD_TESTING=${{ inputs.BUILD_TESTING }}")
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
+          cmake_args+=("-DPython_FIND_DEBUG=OFF")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")

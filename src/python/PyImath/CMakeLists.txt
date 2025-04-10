@@ -91,16 +91,18 @@ set(PYIMATH_HEADERS
     PyImathVecOperators.h
 )
 
-add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
-
-add_library(PyImath::PyImath ALIAS ${PYIMATH_LIBRARY})
 
 if(BUILD_SHARED_LIBS)
+    add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
     if(WIN32)
         target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
     endif()
+else()
+   add_library(${PYIMATH_LIBRARY} STATIC ${PYIMATH_SOURCES})
 endif()
+
+add_library(PyImath::PyImath ALIAS ${PYIMATH_LIBRARY})
 
 target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
