@@ -151,6 +151,8 @@ jobs:
                   PYTHON_DIR=$(dirname ${{ env.PYTHON_EXECUTABLE }})
                   cmake_args+=("-DPython3_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
                   cmake_args+=("-DPython3_DEBUG_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
+                  cmake_args+=("-DPython3_USE_DEBUG=OFF")
+                  cmake_args+=("-DCMAKE_FIND_DEBUG_MODE=ON")
               fi
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
