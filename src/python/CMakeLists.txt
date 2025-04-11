@@ -15,6 +15,15 @@ if(NOT Python3_FOUND)
     message(FATAL_ERROR "Could not find Python")
 endif()
 
+message(STATUS "Python3_LIBRARIES=${Python3_LIBRARIES}")
+
+if(Python3_LIBRARIES MATCHES "_d\\.lib$")
+  message(STATUS "Overriding Debug Python library with non-debug version")
+  string(REGEX REPLACE "_d\\.lib$" ".lib" PYTHON3_NON_DEBUG_LIB "${Python3_LIBRARIES}")
+  set(Python3_LIBRARIES "${PYTHON3_NON_DEBUG_LIB}")
+  message(STATUS "Using Python library: ${Python3_LIBRARIES}")
+endif()
+
 #if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 #    set(PYTHON_LIBRARY_DEBUG "${PYTHON_LIBRARY_RELEASE}")
 #endif()
