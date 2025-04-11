@@ -89,7 +89,7 @@ jobs:
         shell: bash
 
       - name: Create symlink for Windows python debug lib
-        if: inputs.python == 'ON' && inputs.build_type == 'Debug' && contains(inputs.os, 'windows')
+        if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
         run: |
           root="/c/hostedtoolcache/windows/Python"
           lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
@@ -106,7 +106,7 @@ jobs:
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan profile detect
-          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
+          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build-type=${{ inputs.build-type }}
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
@@ -132,7 +132,7 @@ jobs:
           # in in the install_manifest as a debugging reference
           cmake_args=("-B" "." "-S" "..")
           cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_BUILD-TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
           cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
@@ -249,7 +249,7 @@ jobs:
           # Imath library.
           cmake_args=("../src/ImathTest")
           cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_BUILD-TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
           if [[ "$RUNNER_OS" == "Windows" ]]; then
@@ -279,7 +279,7 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake_args=("../website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_BUILD-TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
@@ -310,7 +310,7 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake_args=("../website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=../../_install")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_BUILD-TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           # On Windows, Conan requires CMP0091, which controls how CMAKE_MSVC_RUNTIME_LIBRARY is set
           if [[ "$RUNNER_OS" == "Windows" ]]; then
