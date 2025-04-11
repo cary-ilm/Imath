@@ -84,9 +84,10 @@ jobs:
           echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-          PYTHON_LIB=$(python -c "import sysconfig; dir=sysconfig.get_config_var('LIBDIR'); lib=sysconfig.get_config_var('LIBRARY'); print(f'{dir}/{lib}')")
+          PYTHON_LIB=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}.lib'))")
           echo "PYTHON_LIB=${PYTHON_LIB}" >> $GITHUB_ENV
           echo "PYTHON_LIB=${PYTHON_LIB}"
+          ls -l ${PYTHON_LIB}
         shell: bash
 
       - name: Create symlink for Windows python debug lib
