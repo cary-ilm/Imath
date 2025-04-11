@@ -89,6 +89,19 @@ jobs:
 
         shell: bash
 
+      - name: Create symlink for Windows python debug lib
+        if: inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows')
+        run: |
+          root="/c/hostedtoolcache/windows/Python"
+          lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
+          if [ -n "$lib" ]; then
+            ln -s "$lib" "${lib/_d/}"
+            echo "Symlink created: $lib {$lib/_d/}
+          else
+            echo "No python debug lib found"
+          fi
+        shell: bash
+
       - name: Set Up Conan
         if: inputs.python == 'ON'
         run: |
@@ -149,7 +162,7 @@ jobs:
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
               if [ "${{ inputs.python }}" == "ON" ]; then
                   PYTHON_DIR=$(dirname ${{ env.PYTHON_EXECUTABLE }})
-                  cmake_args+=("-DCMAKE_FIND_DEBUG_MODE=ON")
+#                  cmake_args+=("-DCMAKE_FIND_DEBUG_MODE=ON")
                   cmake_args+=("-DPython3_LIBRARY=C:/hostedtoolcache/windows/Python/3.9.13/x64/libs/python39.lib")
                   cmake_args+=("-DPython3_INCLUDE_DIR=C:/hostedtoolcache/windows/Python/3.9.13/x64/include")
                   cmake_args+=("-DPython3_EXECUTABLE=C:/hostedtoolcache/windows/Python/3.9.13/x64/python.exe")
