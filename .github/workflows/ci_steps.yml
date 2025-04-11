@@ -91,8 +91,8 @@ jobs:
       - name: Create symlink for Windows python debug lib
         if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
         run: |
-          lib=$(echo "/c/hostedtoolcache/windows/Python/*/x64/libs/python*.lib")
-          dlib=$(echo $lib | sed -e 's/\.lib/_d.lib/')
+          lib=$(echo "/c/hostedtoolcache/windows/Python/${{ env.PYVER }}.*/x64/libs/python${{ env.PYVER }}.lib")
+          dlib=$(echo $lib | sed -e 's/python${{ env.PYVER }}.lib/python${{ env.PYVER }}_d.lib/')
           echo ln -s "$lib" "$dlib"
           ln -s "$lib" "$dlib"
         shell: bash
