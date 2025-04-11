@@ -89,7 +89,7 @@ jobs:
         shell: bash
 
       - name: Create symlink for Windows python debug lib
-        if: inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows')
+        if: inputs.python == 'ON' && inputs.build_type == 'Debug' && contains(inputs.os, 'windows')
         run: |
           root="/c/hostedtoolcache/windows/Python"
           lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
