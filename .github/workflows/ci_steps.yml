@@ -149,10 +149,15 @@ jobs:
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
               if [ "${{ inputs.python }}" == "ON" ]; then
                   PYTHON_DIR=$(dirname ${{ env.PYTHON_EXECUTABLE }})
-                  cmake_args+=("-DPython3_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
-                  cmake_args+=("-DPython3_DEBUG_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
-                  cmake_args+=("-DPython3_USE_DEBUG=OFF")
+#                  cmake_args+=("-DPython3_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
+#                  cmake_args+=("-DPython3_DEBUG_LIBRARY=$PYTHON_DIR/libs/python${{ env.PYVER }}.lib")
+#                  cmake_args+=("-DPython3_USE_DEBUG=OFF")
                   cmake_args+=("-DCMAKE_FIND_DEBUG_MODE=ON")
+                  cmake_args+=("-DPython3_LIBRARY="C:/hostedtoolcache/windows/Python/3.9.13/x64/libs/python39.lib")
+                  cmake_args+=("-DPython3_INCLUDE_DIR="C:/hostedtoolcache/windows/Python/3.9.13/x64/include")
+                  cmake_args+=("-DPython3_EXECUTABLE="C:/hostedtoolcache/windows/Python/3.9.13/x64/python.exe")
+                  cmake_args+=("-DPython3_DEBUG_LIBRARY="C:/hostedtoolcache/windows/Python/3.9.13/x64/libs/python39.lib")
+                  cmake_args+=("-DPython3_USE_DEBUG=O)
               fi
           fi
           if [ -n "${{ inputs.namespace }}" ]; then
