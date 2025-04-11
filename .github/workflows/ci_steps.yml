@@ -95,7 +95,7 @@ jobs:
           lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
           if [ -n "$lib" ]; then
             ln -s "$lib" "${lib/_d/}"
-            echo "Symlink created: $lib {$lib/_d/}"
+            echo "Symlink created: $lib ${lib/_d/}"
           else
             echo "No python debug lib found"
           fi
