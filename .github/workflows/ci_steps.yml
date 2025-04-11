@@ -94,7 +94,8 @@ jobs:
           root="/c/hostedtoolcache/windows/Python"
           lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
           if [ -n "$lib" ]; then
-            ln -s "$lib" "${lib/_d/}"
+
+ln -s "$lib" "${lib/_d/}"
             echo "Symlink created: $lib ${lib/_d/}"
           else
             echo "No python debug lib found"
@@ -106,7 +107,7 @@ jobs:
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan profile detect
-          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build-type=${{ inputs.build-type }}
+          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
