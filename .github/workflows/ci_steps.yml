@@ -86,7 +86,6 @@ jobs:
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
           PYVER=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
           echo "PYVER=${PYVER}" >> $GITHUB_ENV
-
         shell: bash
 
       - name: Create symlink for Windows python debug lib
@@ -96,7 +95,7 @@ jobs:
           lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
           if [ -n "$lib" ]; then
             ln -s "$lib" "${lib/_d/}"
-            echo "Symlink created: $lib {$lib/_d/}
+            echo "Symlink created: $lib {$lib/_d/}"
           else
             echo "No python debug lib found"
           fi
