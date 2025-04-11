@@ -166,7 +166,7 @@ jobs:
 #            label: Release
 
           - build: 2
-            label: Debug
+            label: RelWithDebInfo # Debug
             build-type: Debug
 
 #          - build: 3
