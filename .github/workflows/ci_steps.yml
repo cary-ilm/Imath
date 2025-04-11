@@ -92,11 +92,11 @@ jobs:
         if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
         run: |
           root="/c/hostedtoolcache/windows/Python"
-          lib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
+          dlib=$(find "$root" -type f -name "python*_d.lib" | head -n 1)
           if [ -n "$lib" ]; then
-
-ln -s "$lib" "${lib/_d/}"
-            echo "Symlink created: $lib ${lib/_d/}"
+            lib=$(echo "$dlib" | sed 's/_d\.lib$/.lib/')
+            ln -s "$dlib" "$lib"
+            echo "Symlink created: $lib $link"
           else
             echo "No python debug lib found"
           fi
