@@ -84,19 +84,15 @@ jobs:
           echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-          PYTHON_LIB=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}.lib'))")
-          echo "PYTHON_LIB=${PYTHON_LIB}" >> $GITHUB_ENV
-          echo "PYTHON_LIB=${PYTHON_LIB}"
-          ls -l ${PYTHON_LIB}
+          PYTHON_LIB_BASE=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}'))")
+          echo "PYTHON_LIB_BASE=${PYTHON_LIB_BASE}" >> $GITHUB_ENV
         shell: bash
 
       - name: Create symlink for Windows python debug lib
         if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
         run: |
-          echo "PYTHON_LIB=${{ env.PYTHON_LIB }}"
-          dlib=$(echo ${{ env.PYTHON_LIB }} | sed -e 's/\.lib$/_d.lib/')
-          echo "ln -s ${{ env.PYTHON_LIB }} $dlib"
-          ln -s ${{ env.PYTHON_LIB }} $dlib
+          echo ln -s ${{ env.PYTHON_LIB_BASE }}.lib ${{ env.PYTHON_LIB_BASE }}_d.lib
+          ln -s ${{ env.PYTHON_LIB_BASE }}.lib ${{ env.PYTHON_LIB_BASE }}_d.lib
         shell: bash
 
       - name: Set Up Conan
