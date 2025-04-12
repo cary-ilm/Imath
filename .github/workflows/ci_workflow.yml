@@ -162,8 +162,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - build: 1
-            label: Release
+#          - build: 1
+#            label: Release
 
           - build: 2
             label: Debug

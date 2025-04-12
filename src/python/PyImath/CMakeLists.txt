@@ -91,6 +91,13 @@ set(PYIMATH_HEADERS
     PyImathVecOperators.h
 )
 
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))"
+    OUTPUT_VARIABLE PYTHON_LIB_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+link_directories(${PYTHON_LIB_DIR})
+message(STATUS "PYTHON_LIB_DIR=${PYTHON_LIB_DIR}")
 
 if(BUILD_SHARED_LIBS)
     add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
@@ -111,14 +118,6 @@ target_include_directories(${PYIMATH_LIBRARY} PUBLIC ${Python3_INCLUDE_DIRS} ${B
 # PYIMATH_EXPORT to either dllexport or dllimport
 #
 target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
-
-
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))"
-    OUTPUT_VARIABLE PYTHON_LIB_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-link_directories(${PYTHON_LIB_DIR})
 
 target_link_libraries(${PYIMATH_LIBRARY} PUBLIC Imath::Imath)
 target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python3::Module)
