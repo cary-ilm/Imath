@@ -94,9 +94,21 @@ jobs:
       - name: Set Up Conan
         if: inputs.python == 'ON'
         run: |
-          CONAN_ROOT="${{ github.workspace }}/_conan"
-          conan profile detect
-          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
+          CONAN_ROOT="${PWD}/_conan"
+          TOOLCHAIN_CONF="tools.cmake.cmaketoolchain:generator=Ninja"
+
+          conan profile detect --force
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            if [[ "$CC" == "cl" || "$CXX" == "cl" || "${compiler}" == "msvc" ]]; then
+              TOOLCHAIN_CONF=""
+            fi
+          fi
+          conan install . \
+            --output-folder="${CONAN_ROOT}" \
+            --build=missing \
+            --settings build_type=${{ inputs.build-type }} \
+            ${TOOLCHAIN_CONF:+-c ${TOOLCHAIN_CONF}}
+
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
