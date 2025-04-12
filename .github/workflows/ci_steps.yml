@@ -77,6 +77,9 @@ jobs:
         run: mkdir _install _build _examples _python
         shell: bash
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+
       - name: Install Python Dependencies
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
@@ -152,6 +155,11 @@ jobs:
           if [ -n "${{ inputs.namespace }}" ]; then
               cmake_args+=("-DIMATH_NAMESPACE=${{ inputs.namespace }}")
           fi
+
+          cmake_args+=("-DPython_FIND_REGISTRY=NEVER")
+          cmake_args+=("-DPython_ROOT_DIR=${{ env.pythonLocation }}")
+          cmake_args+=("-DPython_USE_STATIC_LIBS=ON")
+          cmake_args+=("-DPython_FIND_STRATEGIES=LOCATION")
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
