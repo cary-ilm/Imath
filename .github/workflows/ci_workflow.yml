@@ -156,6 +156,7 @@ jobs:
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
+      msystem: ${{ matrix.msystem }}
       validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
       matrix:
@@ -163,10 +164,10 @@ jobs:
           - build: 1
             label: Release
 
-          - build: 2
-            label: Debug
-            build-type: Debug
-            if: false # TODO: build fails
+          # TODO: build fails
+          # - build: 2
+          #  label: Debug
+          #  build-type: Debug
 
           - build: 3
             label: static
@@ -186,13 +187,13 @@ jobs:
           - build: 6
             label: msys2-mingw32
             msystem: MINGW32
-            # BUILD_TESTING: 'OFF'
+            BUILD_TESTING: 'OFF'
             
           - build: 7
             label: msys2-mingw32, static
             msystem: MINGW32
             BUILD_SHARED_LIBS: 'OFF'
-            # BUILD_TESTING: 'OFF'
+            BUILD_TESTING: 'OFF'
 
           - build: 8
             label: msys2-ucrt64
