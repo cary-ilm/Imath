@@ -91,12 +91,6 @@ set(PYIMATH_HEADERS
     PyImathVecOperators.h
 )
 
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_vars())"
-    OUTPUT_VARIABLE CONFIG_VARS
-)
-message(STATUS "CONFIG_VARS: ${CONFIG_VARS}")
-
 if(BUILD_SHARED_LIBS)
     add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
