@@ -126,7 +126,6 @@ target_include_directories(${PYIMATH_LIBRARY}
         $<INSTALL_INTERFACE:include/${PYIMATH_LIBRARY}>
 )
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
     SOVERSION ${IMATH_LIB_SOVERSION}
     VERSION ${IMATH_LIB_VERSION}
     POSITION_INDEPENDENT_CODE ON
@@ -151,7 +150,11 @@ if(WIN32)
     set_target_properties(${PYIMATH_MODULE} PROPERTIES SUFFIX ".pyd")
 endif()
 
-set_target_properties(${PYIMATH_MODULE} PROPERTIES PREFIX "")
+set_target_properties(${PYIMATH_MODULE} PROPERTIES
+    PREFIX ""
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
+)
+
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(${PYIMATH_MODULE} 
     PRIVATE

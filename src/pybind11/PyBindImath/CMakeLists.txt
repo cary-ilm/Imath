@@ -65,6 +65,11 @@ else()
 
   target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 
+  set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
+    PREFIX ""
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
+)
+
 endif()
 
 #

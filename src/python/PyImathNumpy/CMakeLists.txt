@@ -15,9 +15,10 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
       Python3::Module
 )
 
-set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES PREFIX "")
-message(STATUS "Python3_EXECUTABLE=${Python3_EXECUTABLE}")
-message(STATUS "Python_EXECUTABLE=${Python_EXECUTABLE}")
+set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES
+    PREFIX ""
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
+)
 
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
