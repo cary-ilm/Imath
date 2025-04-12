@@ -97,18 +97,6 @@ execute_process(
 )
 message(STATUS "CONFIG_VARS: ${CONFIG_VARS}")
 
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))"
-    OUTPUT_VARIABLE PYTHON_LIB_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-link_directories("C:\\hostedtoolcache\\windows\\Python\\3.9.13\\x64\\libs"
-"C:\\hostedtoolcache\\windows\\Python\\3.9.13\\x64\\Lib"
-${PYTHON_LIB_DIR})
-
-message(STATUS "PYTHON_LIB_DIR=${PYTHON_LIB_DIR}")
-
 if(BUILD_SHARED_LIBS)
     add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
     target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
@@ -138,6 +126,7 @@ target_include_directories(${PYIMATH_LIBRARY}
         $<INSTALL_INTERFACE:include/${PYIMATH_LIBRARY}>
 )
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
     SOVERSION ${IMATH_LIB_SOVERSION}
     VERSION ${IMATH_LIB_VERSION}
     POSITION_INDEPENDENT_CODE ON
