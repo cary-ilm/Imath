@@ -73,6 +73,7 @@ jobs:
           pacboy: cc:p cmake:p
 
       - name: Create build directories
+      
         run: mkdir _install _build _examples _python
         shell: bash
 
@@ -126,7 +127,7 @@ jobs:
           # in in the install_manifest as a debugging reference
           cmake_args=("-B" "." "-S" "..")
           cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
-          cmake_args+=("-DCMAKE_BUILD-TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
           cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
