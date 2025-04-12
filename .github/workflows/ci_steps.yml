@@ -90,8 +90,9 @@ jobs:
         if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
         run: |
           PYTHON_LIB_BASE=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}'))")
-          echo ln -s ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
-          ln -s ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+          echo cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+          cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+          ls -l ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
         shell: bash
 
       - name: Set Up Conan
