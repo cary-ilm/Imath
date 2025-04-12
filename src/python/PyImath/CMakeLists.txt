@@ -103,7 +103,10 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-link_directories("C:\hostedtoolcache\windows\Python\3.9.13\x64\libs" ${PYTHON_LIB_DIR})
+link_directories("C:\\hostedtoolcache\\windows\\Python\\3.9.13\\x64\\libs"
+"C:\\hostedtoolcache\\windows\\Python\\3.9.13\\x64\\Lib"
+${PYTHON_LIB_DIR})
+
 message(STATUS "PYTHON_LIB_DIR=${PYTHON_LIB_DIR}")
 
 if(BUILD_SHARED_LIBS)
