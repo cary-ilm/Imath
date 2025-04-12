@@ -98,16 +98,23 @@ jobs:
           TOOLCHAIN_CONF="tools.cmake.cmaketoolchain:generator=Ninja"
 
           conan profile detect --force
+
+          conan_args=("."
+                      "--output-folder="${CONAN_ROOT}""
+                      "--build=missing"
+                      "${TOOLCHAIN_CONF:+-c ${TOOLCHAIN_CONF}}"
+                      "--settings build_type=${{ inputs.build-type }}")
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             if [[ "$CC" == "cl" || "$CXX" == "cl" || "${compiler}" == "msvc" ]]; then
               TOOLCHAIN_CONF=""
             fi
+            if [[ "${{ inputs.msystem }}" == "MINGW32" ]]; then
+              conan_args+=("--settings compiler=gcc"
+                           "--settings compiler.version=13"
+                           "--settings compiler.libcxx=libstdc++11")
+            fi
           fi
-          conan install . \
-            --output-folder="${CONAN_ROOT}" \
-            --build=missing \
-            --settings build_type=${{ inputs.build-type }} \
-            ${TOOLCHAIN_CONF:+-c ${TOOLCHAIN_CONF}}
+          conan install "${conan_args[@]}" 
 
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
