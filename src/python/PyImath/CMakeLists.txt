@@ -92,11 +92,18 @@ set(PYIMATH_HEADERS
 )
 
 execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_vars())"
+    OUTPUT_VARIABLE CONFIG_VARS
+)
+message(STATUS "CONFIG_VARS: ${CONFIG_VARS}")
+
+execute_process(
     COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))"
     OUTPUT_VARIABLE PYTHON_LIB_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-link_directories(${PYTHON_LIB_DIR})
+
+link_directories("C:\hostedtoolcache\windows\Python\3.9.13\x64\libs" ${PYTHON_LIB_DIR})
 message(STATUS "PYTHON_LIB_DIR=${PYTHON_LIB_DIR}")
 
 if(BUILD_SHARED_LIBS)
