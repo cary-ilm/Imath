@@ -87,14 +87,14 @@ jobs:
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Create symlink for Windows python debug lib
-        if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
-        run: |
-          PYTHON_LIB_BASE=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}'))")
-          echo cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
-          cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
-          ls -l ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
-        shell: bash
+#      - name: Create symlink for Windows python debug lib
+#        if: ${{ inputs.python == 'ON' && inputs.build-type == 'Debug' && contains(inputs.os, 'windows') }}
+#        run: |
+#          PYTHON_LIB_BASE=$(python -c "import os, sys; ver=f'{sys.version_info.major}{sys.version_info.minor}'; print(os.path.join(sys.exec_prefix, 'libs', f'python{ver}'))")
+#          echo cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+#          cp ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+#          ls -l ${PYTHON_LIB_BASE}.lib ${PYTHON_LIB_BASE}_d.lib
+#        shell: bash
 
       - name: Set Up Conan
         if: inputs.python == 'ON'
