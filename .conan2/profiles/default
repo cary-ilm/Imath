@@ -1,0 +1,13 @@
+[settings]
+arch=x86
+build_type=Release
+compiler=gcc
+compiler.version=11
+compiler.libcxx=libstdc++11
+os=Windows
+
+[options]
+boost:with_python=True
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
