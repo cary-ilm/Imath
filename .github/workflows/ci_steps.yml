@@ -107,8 +107,10 @@ jobs:
           #  fi
           if [[ "${{ inputs.msystem }}" == "MINGW32" || "${{ inputs.msystem }}" == "UCRT64" ]]; then
               conan_args+=("-c" "tools.cmake.cmaketoolchain:generator=Ninja")
-              conan_args+=("--settings" "arch=")
+              conan_args+=("--settings" "arch=x86_64")
               conan_args+=("--settings" "compiler=gcc")
+              export CC=gcc
+              export CXX=g++
           fi
           #else
           #  conan_args+=("${TOOLCHAIN_CONF:+-c ${TOOLCHAIN_CONF}}")
