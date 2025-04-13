@@ -1,0 +1,82 @@
+name: Build with MinGW32
+
+on:
+  push:
+    paths:
+      - '**'
+      - '!**.md'
+      - '!connanfile.txt'
+      - '!.github/workflows/**'
+      - '.github/workflows/ci_mingw.yml'
+  pull_request:
+    paths:
+      - '**'
+      - '!**.md'
+      - '!connanfile.txt'
+      - '!.github/workflows/**'
+      - '.github/workflows/ci_mingw.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+        update: true
+        install: >-
+          mingw-w64-i686-gcc
+          mingw-w64-i686-cmake
+          mingw-w64-i686-ninja
+          mingw-w64-i686-python
+          mingw-w64-i686-python-pip
+          mingw-w64-i686-boost
+    
+    - name: Install Conan
+      run: |
+        pip install conan
+        conan profile detect
+        conan profile update settings.compiler=gcc "default"
+        conan profile update settings.compiler.version=11 "default"
+        conan profile update settings.compiler.libcxx=libstdc++11 "default"
+        
+    - name: Configure Python paths
+      run: |
+        PYTHON_ROOT=/mingw32
+        PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+        echo "PYTHON_INCLUDE=$PYTHON_ROOT/include/python$PYTHON_VERSION" >> $GITHUB_ENV
+        echo "PYTHON_LIB=$PYTHON_ROOT/lib/libpython$PYTHON_VERSION.dll.a" >> $GITHUB_ENV
+        echo "PYTHON_EXECUTABLE=$PYTHON_ROOT/bin/python.exe" >> $GITHUB_ENV
+        
+    - name: Install with Conan and build
+      run: |
+        mkdir _build && cd _build
+        conan install .. \
+          --build=missing \
+          -s build_type=Release \
+          -s compiler=gcc \
+          -s compiler.version=11 \
+          -s compiler.libcxx=libstdc++11 \
+          -o boost:with_python=True \
+          -o boost:python_executable=${{ env.PYTHON_EXECUTABLE }}
+          
+        cmake .. \
+          -DPYTHON=ON \
+          -DPYBIND11=ON \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }} \
+          -DPython3_INCLUDE_DIR=${{ env.PYTHON_INCLUDE }} \
+          -DPython3_LIBRARY=${{ env.PYTHON_LIB }}
+          
+        cmake --build .
