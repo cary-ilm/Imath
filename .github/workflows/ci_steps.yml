@@ -76,10 +76,8 @@ jobs:
           pacboy: cc:p cmake:p
 
       - name: Create build directories
-      
         run: mkdir _install _build _examples _python
         shell: bash
-
 
       - name: Install Python Dependencies
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
@@ -94,31 +92,9 @@ jobs:
       - name: Set Up Conan
         if: inputs.python == 'ON'
         run: |
-          CONAN_ROOT="${PWD}/_conan"
-          TOOLCHAIN_CONF="tools.cmake.cmaketoolchain:generator=Ninja"
-          conan profile detect --force
-          conan_args=("."
-                      "--output-folder="${CONAN_ROOT}""
-                      "--build=missing"
-                      "--settings" "build_type=${{ inputs.build-type }}")
-          #if [[ "$RUNNER_OS" == "Windows" ]]; then
-          #  if [[ "$CC" == "cl" || "$CXX" == "cl" || "${compiler}" == "msvc" ]]; then
-          #    TOOLCHAIN_CONF=""
-          #  fi
-          if [[ "${{ inputs.msystem }}" == "MINGW32" || "${{ inputs.msystem }}" == "UCRT64" ]]; then
-              conan_args+=("-c" "tools.cmake.cmaketoolchain:generator=Ninja")
-              conan_args+=("--settings" "arch=x86_64")
-              conan_args+=("--settings" "compiler=gcc")
-              conan_args+=("--settings" "compiler.version=11")
-              conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-              export CC=gcc
-              export CXX=g++
-          fi
-          #else
-          #  conan_args+=("${TOOLCHAIN_CONF:+-c ${TOOLCHAIN_CONF}}")
-          #fi
-          echo conan install "${conan_args[@]}" 
-          conan install "${conan_args[@]}" 
+          CONAN_ROOT="${{ github.workspace }}/_conan"
+          conan profile detect
+          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
@@ -174,10 +150,7 @@ jobs:
           if [ -n "${{ inputs.namespace }}" ]; then
               cmake_args+=("-DIMATH_NAMESPACE=${{ inputs.namespace }}")
           fi
-          if [[ "${{ inputs.msystem }}" == "MINGW32" || "${{ inputs.msystem }}" == "UCRT64" ]]; then
-              cmake_args+=("-DCMAKE_C_COMPILER=gcc")
-              cmake_args+=("-DCMAKE_CXX_COMPILER=g++")
-          fi
+
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
 

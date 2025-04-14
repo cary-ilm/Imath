@@ -3,12 +3,13 @@ boost/1.82.0
 pybind11/2.11.1
 
 [options]
-boost*/:shared=True
-boost*/:with_python=True
+boost/*:header_only=False
+boost/*:without_python=False
+boost/*:without_format=False
+boost/*:shared=True
 
 [generators]
 CMakeDeps
 CMakeToolchain
 
-[layout]
-cmake_layout
+
