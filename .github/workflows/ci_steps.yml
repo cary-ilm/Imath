@@ -87,16 +87,6 @@ jobs:
         run: mkdir _install _build _examples _python
         shell: bash
 
-      - name: Install Python Dependencies
-        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
-        run: |
-          python -m pip install --upgrade pip "numpy<2" conan
-          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
-          echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
-          PYTHON_EXECUTABLE=$(which python)
-          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-        shell: bash
-
       - name: Set Up Conan
         if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32' )
         run: |
@@ -135,6 +125,20 @@ jobs:
           echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Install Python Dependencies
+        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
+        run: |
+          python -m pip install --upgrade pip "numpy<2" conan
+          if [[ "${{ inputs.pybind11 }} == "ON" ]]; then
+              pip install pybind11
+              pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+          fi
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          PYTHON_EXECUTABLE=$(which python)
+          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
+        shell: bash
+
       - name: Construct CMake command
         run: |
           # Construct the cmake command as a variable, so the
@@ -157,7 +161,6 @@ jobs:
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
           fi
           if [ "${{ inputs.pybind11 }}" == "ON" ]; then
-              pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
               cmake_args+=("-Dpybind11_DIR=$pybind11_DIR")
           fi
           if [ -n "${{ env.Boost_ROOT }}" ]; then
