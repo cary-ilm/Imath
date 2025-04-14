@@ -83,14 +83,6 @@ jobs:
         run: pacboy -S python:p pybind11:p --noconfirm
         shell: msys2 {0}
 
-      - name: Install MSYS2 ${{ inputs.msystem }}
-        if: inputs.msystem != ''
-        uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
-        with:
-          msystem: ${{ inputs.msystem }}
-          update: true
-          install: git
-          pacboy: cc:p cmake:p
 
       - name: Create build directories
         run: mkdir _install _build _examples _python
@@ -207,7 +199,7 @@ jobs:
             echo ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
-        shell: msys2 {0}
+        shell: bash
 
       - name: Configure, Build, Test (msys2) # requires msys2 shell
         if: inputs.msystem != ''
