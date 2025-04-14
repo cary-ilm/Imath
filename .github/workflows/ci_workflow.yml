@@ -166,10 +166,10 @@ jobs:
           - build: 1
             label: Release
 
-          # TODO: build fails
-          # - build: 2
-          #  label: Debug
-          #  build-type: Debug
+          - build: 2
+            label: Debug
+            build-type: Debug
+            python: 'OFF'
 
           - build: 3
             label: static

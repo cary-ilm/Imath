@@ -3,10 +3,10 @@
 
 message(STATUS "Configuring pybindimath module")
 
-find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
-set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python_VERSION_MAJOR}_${Python_VERSION_MINOR}) # libPyBindImath_Python3_10.so
+set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3_10.so
 set(PYBINDIMATH_MODULE  pybindimath) # import pybindimath
 
 set(PYBINDIMATH_SOURCES
@@ -89,7 +89,7 @@ else()
 
   if (NOT DEFINED PYTHON_INSTALL_DIR)
 
-    set(PYTHON_INSTALL_DIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+    set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
     message(STATUS "installing ${PYBINDIMATH_MODULE} to ${PYTHON_INSTALL_DIR}")
 
   else()
