@@ -74,9 +74,16 @@ jobs:
           install: git
           pacboy: cc:p cmake:p 
 
+      - name: Set up Python
+        if: inputs.msystem == 'MINGW32'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          architecture: 'x86'
+      
       - name: Install pybind11 for UCRT64
         if: inputs.msystem == 'UCRT64'
-        run: pacboy -S python:p pybind11:p
+        run: pacboy -S python:p pybind11:p --no-confirm
         shell: msys2 {0}
 
       - name: Create build directories
