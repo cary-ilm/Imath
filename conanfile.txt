@@ -3,8 +3,8 @@ boost/1.82.0
 pybind11/2.11.1
 
 [options]
-boost:shared=True
-boost:with_python=True
+boost*/:shared=True
+boost*/:with_python=True
 
 [generators]
 CMakeDeps
