@@ -43,6 +43,11 @@ jobs:
             mingw-w64-i686-python-pip
             mingw-w64-i686-boost
       
+      - name: Install Python dependencies
+        run: |
+          # Install NumPy in the MSYS2 Python environment
+          /mingw32/bin/pip install numpy
+
       - name: Install Conan
         run: |
           pip install conan
