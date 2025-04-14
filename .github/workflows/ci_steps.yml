@@ -92,16 +92,24 @@ jobs:
       - name: Set Up Conan
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
-          CONAN_ROOT="${{ github.workspace }}/_conan"
-          if [[ "${{ inputs.python }}" != 'ON' ]]; then
-              echo "[requires]" > conanfile.txt
-              echo "pybind11/2.11.1" >> conanfile.txt
-              echo "[generators]" >> conanfile.txt
-              echo "CMakeDeps" >> conanfile.txt
-              echo "CMakeToolchain" >> conanfile.txt
+          conan_args=(".")
+          conan_args+=("--output-folder=${CONAN_ROOT}")
+          conan_args+=("--build=missing")
+          conan_args+=("--generators" "CMakeDeps" "CMakeToolchain")
+          conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
+          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
+            conan_args+=("--requires=pybind11/2.11.1")
+          fi
+          if [[ "${{ inputs.python }}" == "ON" ]]; then
+            conan_args+=("--requires=boost/1.82.0")
+            conan_args+=("-o" "boost/*:header_only=False")
+            conan_args+=("-o" "boost/*:without_python=False")
+            conan_args+=("-o" "boost/*:without_format=False")
+            conan_args+=("-o" "boost/*:shared=True")
           fi
           conan profile detect
-          conan install . --output-folder="${CONAN_ROOT}" --build=missing --settings build_type=${{ inputs.build-type }}
+          conan install "${conan_args[@]}"
+          CONAN_ROOT="${{ github.workspace }}/_conan"
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
