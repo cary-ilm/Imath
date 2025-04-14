@@ -94,7 +94,7 @@ jobs:
         shell: bash
 
       - name: Set Up Conan
-        if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == "MINGW32" )
+        if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32' )
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
