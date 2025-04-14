@@ -54,9 +54,6 @@ jobs:
 
     continue-on-error: true
     
-#    container:
-#      image: ${{ inputs.container }}
-
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
@@ -74,7 +71,7 @@ jobs:
           install: git
           pacboy: cc:p cmake:p 
 
-      - name: Set up Python
+      - name: Set up Python for MINGW32
         if: inputs.msystem == 'MINGW32'
         uses: actions/setup-python@v4
         with:
@@ -83,7 +80,7 @@ jobs:
       
       - name: Install pybind11 for UCRT64
         if: inputs.msystem == 'UCRT64'
-        run: pacboy -S python:p pybind11:p --noconfirm
+        run: pacboy -S python:p pybind11:p --noNUUPconfirm
         shell: msys2 {0}
 
       - name: Create build directories
@@ -135,20 +132,7 @@ jobs:
           conan "${conan_args[@]}"
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Set Up Environment
-        if: inputs.python == 'ON'
-        run: |
           echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Install pybind11
-        if: inputs.pybind11 == 'ON'
-        run: |
-          pip install pybind11
-          pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
-          echo "pybind11_DIR=${pybind11_DIR}" >> $GITHUB_ENV
         shell: bash
 
       - name: Construct CMake command
@@ -166,18 +150,15 @@ jobs:
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
-          #if [ -n "${{ inputs.msystem}}" ]; then
-          #    cmake_args+=("-DCMAKE_C_COMPILER=/mingw32/bin/gcc")
-          #    cmake_args+=("-DCMAKE_CXX_COMPILER=/mingw32/bin/gcc")
-          #fi
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
           if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
           fi
-          if [ -n "${{ env.pybind11_DIR }}" ]; then
-              cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
+          if [ "${{ inputs.pybind11 }}" == "ON" ]; then
+              pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+              cmake_args+=("-Dpybind11_DIR=$pybind11_DIR")
           fi
           if [ -n "${{ env.Boost_ROOT }}" ]; then
               cmake_args+=("-DBoost_ROOT=${{ env.Boost_ROOT }}")
