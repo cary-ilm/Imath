@@ -58,9 +58,9 @@ jobs:
       - name: Install dependencies with Conan
         run: |
           mkdir -p /c/Users/runneradmin/.conan2/profiles/
-          cp .conan2/profiles/default /c/Users/runneradmin/.conan2/profiles/
+          cp .conan2/profiles/default /c/Users/runneradmin/.conan2/profiles/default
           ls -l /c/Users/runneradmin/.conan2/profiles/
-          cat /c/Users/runneradmin/.conan2/profiles/
+          cat /c/Users/runneradmin/.conan2/profiles/default
 
           mkdir _build && cd _build
           # Use your existing default profile
