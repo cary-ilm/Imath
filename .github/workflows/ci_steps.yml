@@ -129,7 +129,7 @@ jobs:
       - name: Install Python Dependencies
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
-          if [[ "${{ inputs.pybind11 }} == "ON" ]]; then
+          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
               pip install pybind11
               pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
           fi
