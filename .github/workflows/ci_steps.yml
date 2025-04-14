@@ -72,11 +72,11 @@ jobs:
           msystem: ${{ inputs.msystem }}
           update: true
           install: git
-          pacboy: cc:p cmake:p # python:p 
+          pacboy: cc:p cmake:p 
 
       - name: Install pybind11 for UCRT64
         if: inputs.msystem == 'UCRT64'
-        run: pacboy -S pybind11:p
+        run: pacboy -S python:p pybind11:p
         shell: msys2 {0}
 
       - name: Create build directories
@@ -94,7 +94,7 @@ jobs:
         shell: bash
 
       - name: Set Up Conan
-        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
+        if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == "MINGW32" )
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
@@ -117,7 +117,11 @@ jobs:
             conan_args+=("--settings" "compiler=gcc")
             conan_args+=("--settings" "compiler.version=14")
             conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-            conan_args+=("--settings" "arch=x86_64")
+            if [[ "${{ inputs.msystem }}" == "UCRT64" ]]; then
+              conan_args+=("--settings" "arch=x86_64")
+            else
+              conan_args+=("--settings" "arch=x86")
+            fi
           fi
           conan profile detect
           echo conan "${conan_args[@]}"
