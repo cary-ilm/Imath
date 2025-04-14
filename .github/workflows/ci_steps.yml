@@ -72,7 +72,12 @@ jobs:
           msystem: ${{ inputs.msystem }}
           update: true
           install: git
-          pacboy: cc:p cmake:p python:p pybind11:p
+          pacboy: cc:p cmake:p # python:p 
+
+      - name: Install pybind11 for UCRT64
+        if: inputs.msystem == 'UCRT64'
+        run: pacboy -S pybind11:p
+        shell: msys2 {0}
 
       - name: Create build directories
         run: mkdir _install _build _examples _python
@@ -98,7 +103,7 @@ jobs:
           conan_args+=("--generator" "CMakeDeps")
           conan_args+=("--generator" "CMakeToolchain")
           conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
-          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
+          if [[ "${{ inputs.pybind11 }}" == "ON" && "${{ inputs.msystem }}" == "MINGW32" ]]; then
             conan_args+=("--requires=pybind11/2.11.1")
           fi
           if [[ "${{ inputs.python }}" == "ON" ]]; then
