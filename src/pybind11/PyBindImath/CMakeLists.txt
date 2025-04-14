@@ -155,5 +155,5 @@ if(IMATH_BUILD_APPLE_FRAMEWORKS)
 endif()
 
 if (MSVC)
-    target_compile_options(${PYIMATH_LIBRARY} PRIVATE /bigobj)
+    target_compile_options(${PYBINDIMATH_LIBRARY} PRIVATE /bigobj)
 endif()
