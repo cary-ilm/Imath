@@ -80,7 +80,7 @@ jobs:
       
       - name: Install pybind11 for UCRT64
         if: inputs.msystem == 'UCRT64'
-        run: pacboy -S python:p pybind11:p --noNUUPconfirm
+        run: pacboy -S python:p pybind11:p --noconfirm
         shell: msys2 {0}
 
       - name: Create build directories
@@ -132,6 +132,7 @@ jobs:
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
               pip install pybind11
               pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+              echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
           fi
           echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
           echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
@@ -160,8 +161,8 @@ jobs:
           if [ -n "${{ env.PYTHON_INSTALL_DIR }}" ]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
           fi
-          if [ "${{ inputs.pybind11 }}" == "ON" ]; then
-              cmake_args+=("-Dpybind11_DIR=$pybind11_DIR")
+          if [ -n "${{ env.pybind11_DIR }}" ]; then
+              cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
           fi
           if [ -n "${{ env.Boost_ROOT }}" ]; then
               cmake_args+=("-DBoost_ROOT=${{ env.Boost_ROOT }}")
