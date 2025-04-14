@@ -31,7 +31,6 @@ on:
         type: string
       build-type:
         type: string
-
       msystem:
         type: string
       python:
@@ -109,6 +108,11 @@ jobs:
             conan_args+=("--options" "boost/*:without_format=False")
             conan_args+=("--options" "boost/*:shared=True")
           fi
+          if [[ "${{ inputs.msystem }}" != "" ]]; then
+            conan_args+=("--settings" "compiler=gcc")
+            conan_args+=("--settings" "compiler.libcxx=libstdc++11")
+            conan_args+=("--settings" "arch=x86")
+          fi
           conan profile detect
           echo conan "${conan_args[@]}"
           conan "${conan_args[@]}"
@@ -145,10 +149,10 @@ jobs:
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
-          if [ -n "${{ inputs.msystem}}" ]; then
-              cmake_args+=("-DCMAKE_C_COMPILER=gcc")
-              cmake_args+=("-DCMAKE_CXX_COMPILER=g++")
-          fi
+#          if [ -n "${{ inputs.msystem}}" ]; then
+#              cmake_args+=("-DCMAKE_C_COMPILER=gcc")
+#              cmake_args+=("-DCMAKE_CXX_COMPILER=g++")
+#          fi
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
