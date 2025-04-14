@@ -72,7 +72,7 @@ jobs:
           msystem: ${{ inputs.msystem }}
           update: true
           install: git
-          pacboy: cc:p cmake:p
+          pacboy: cc:p cmake:p python:p pybind11:p
 
       - name: Create build directories
         run: mkdir _install _build _examples _python
@@ -110,8 +110,9 @@ jobs:
           fi
           if [[ "${{ inputs.msystem }}" != "" ]]; then
             conan_args+=("--settings" "compiler=gcc")
+            conan_args+=("--settings" "compiler.version=14")
             conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-            conan_args+=("--settings" "arch=x86")
+            conan_args+=("--settings" "arch=x86_64")
           fi
           conan profile detect
           echo conan "${conan_args[@]}"
@@ -149,6 +150,10 @@ jobs:
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
+          #if [ -n "${{ inputs.msystem}}" ]; then
+          #    cmake_args+=("-DCMAKE_C_COMPILER=/mingw32/bin/gcc")
+          #    cmake_args+=("-DCMAKE_CXX_COMPILER=/mingw32/bin/gcc")
+          #fi
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
