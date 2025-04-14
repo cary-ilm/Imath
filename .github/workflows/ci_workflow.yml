@@ -189,19 +189,21 @@ jobs:
           - build: 6
             label: msys2-mingw32
             msystem: MINGW32
-            BUILD_TESTING: 'OFF'
+            python: 'OFF'
             
           - build: 7
             label: msys2-mingw32, static
             msystem: MINGW32
             BUILD_SHARED_LIBS: 'OFF'
-            BUILD_TESTING: 'OFF'
+            python: 'OFF'
 
           - build: 8
             label: msys2-ucrt64
             msystem: UCRT64
+            python: 'OFF'
 
           - build: 9
             label: msys2-ucrt64, static
             msystem: UCRT64
             BUILD_SHARED_LIBS: 'OFF'
+            python: 'OFF'

@@ -75,7 +75,7 @@ jobs:
             -o boost/*:python_executable=${{ env.PYTHON_EXECUTABLE }} \
             -o boost/*:without_fiber=False \
             -o boost/*:without_coroutine=False \
-            --log-level=debug
+            -v debug
             
       - name: Build project
         run: |
