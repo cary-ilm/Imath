@@ -92,6 +92,7 @@ jobs:
       - name: Set Up Conan
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
+          CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
           conan_args+=("--output-folder=${CONAN_ROOT}")
           conan_args+=("--build=missing")
@@ -109,8 +110,8 @@ jobs:
             conan_args+=("--options" "boost/*:shared=True")
           fi
           conan profile detect
+          echo conan "${conan_args[@]}"
           conan "${conan_args[@]}"
-          CONAN_ROOT="${{ github.workspace }}/_conan"
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
         shell: bash
