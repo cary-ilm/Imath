@@ -42,7 +42,6 @@ jobs:
             mingw-w64-i686-python
             mingw-w64-i686-python-pip
             mingw-w64-i686-boost
-            mingw-w64-i686-boost-build
       
       - name: Install Python dependencies
         run: |
@@ -75,7 +74,8 @@ jobs:
             -o boost/*:with_python=True \
             -o boost/*:python_executable=${{ env.PYTHON_EXECUTABLE }} \
             -o boost/*:without_fiber=False \
-            -o boost/*:without_coroutine=False
+            -o boost/*:without_coroutine=False \
+            --log-level=debug
             
       - name: Build project
         run: |
