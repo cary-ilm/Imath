@@ -57,9 +57,12 @@ jobs:
           
       - name: Install dependencies with Conan
         run: |
+          ls -l .conan2/profiles/default
+          cat .conan2/profiles/default
           mkdir _build && cd _build
           # Use your existing default profile
           conan install .. \
+            --profile:build=${{ github.workspace }}/.conan2/profiles/default
             --build=missing \
             -o boost:with_python=True \
             -o boost:python_executable=${{ env.PYTHON_EXECUTABLE }}
