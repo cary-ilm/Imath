@@ -95,17 +95,18 @@ jobs:
           conan_args=(".")
           conan_args+=("--output-folder=${CONAN_ROOT}")
           conan_args+=("--build=missing")
-          conan_args+=("--generators" "CMakeDeps" "CMakeToolchain")
+          conan_args+=("--generator" "CMakeDeps")
+          conan_args+=("--generator" "CMakeToolchain")
           conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
             conan_args+=("--requires=pybind11/2.11.1")
           fi
           if [[ "${{ inputs.python }}" == "ON" ]]; then
             conan_args+=("--requires=boost/1.82.0")
-            conan_args+=("-o" "boost/*:header_only=False")
-            conan_args+=("-o" "boost/*:without_python=False")
-            conan_args+=("-o" "boost/*:without_format=False")
-            conan_args+=("-o" "boost/*:shared=True")
+            conan_args+=("--options" "boost/*:header_only=False")
+            conan_args+=("--options" "boost/*:without_python=False")
+            conan_args+=("--options" "boost/*:without_format=False")
+            conan_args+=("--options" "boost/*:shared=True")
           fi
           conan profile detect
           conan install "${conan_args[@]}"
