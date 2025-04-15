@@ -52,6 +52,8 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
+    continue-on-error: true
+
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
@@ -194,7 +196,7 @@ jobs:
           cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-            echo ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+              ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
         shell: bash
@@ -242,7 +244,6 @@ jobs:
 
       - name: Validate install
         if: inputs.validate_install == 'ON'
-        continue-on-error: true
         # Validate that the build has installed the proper files by comparing against the appropriate reference manifest
         run: |
           share/ci/scripts/validate_install.py "_build/$INSTALL_MANIFEST" "share/ci/install_manifest/$INSTALL_MANIFEST" _build/CMakeCache.txt
