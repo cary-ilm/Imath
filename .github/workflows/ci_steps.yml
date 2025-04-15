@@ -208,10 +208,16 @@ jobs:
           cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-            echo ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
         shell: msys2 {0}
+
+      - name: Test
+        if: inputs.BUILD_TESTING == 'ON'
+        run: |
+          ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+        working-directory: _build
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
