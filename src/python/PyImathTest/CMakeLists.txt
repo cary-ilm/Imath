@@ -27,12 +27,10 @@ else()
 
   add_executable(PyImathTestC ${PYIMATH_TEST_SOURCES})
 
-  add_test(PyImath.PyImathTest
-    ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathTest.in
-  )
-
-  set_tests_properties(PyImath.PyImathTest PROPERTIES
-    ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}"
+  set(PYIMATH_MODULE imath)
+  add_test(NAME PyImath.PyImathTest
+    COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=$<TARGET_FILE_DIR:${PYIMATH_MODULE}>"
+            ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathTest.in
   )
 
   target_link_libraries(PyImathTestC 
@@ -45,8 +43,7 @@ else()
 
 
   add_test(NAME PyImath.PyImathTestC COMMAND $<TARGET_FILE:PyImathTestC>)
-  set(PYTHONPATH ${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR})
-  set_tests_properties(PyImath.PyImathTestC PROPERTIES ENVIRONMENT PYTHONPATH=${PYTHONPATH})
+  set_tests_properties(PyImath.PyImathTestC PROPERTIES ENVIRONMENT PYTHONPATH=$<TARGET_FILE_DIR:${PYIMATH_MODULE}>)
 
 endif()
 

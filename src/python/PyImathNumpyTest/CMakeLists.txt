@@ -3,11 +3,8 @@
 
 message (STATUS "Configuring PyImathNumpyTest")
 
-add_test(PyImath.PyImathNumpyTest
-  ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathNumpyTest.in
+set(PYIMATHNUMPY_MODULE imathnumpy)
+add_test(NAME PyImath.PyImathNumpyTest
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=$<TARGET_FILE_DIR:${PYIMATHNUMPY_MODULE}>"
+          ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathNumpyTest.in
 )
-
-set_tests_properties(PyImath.PyImathNumpyTest PROPERTIES
-  ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}"
-)
-

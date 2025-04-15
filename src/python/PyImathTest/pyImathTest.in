@@ -5,6 +5,9 @@
 # Copyright Contributors to the OpenEXR Project.
 #
 
+import os
+print(f"os.environ[PYTHONPATH]: ${os.environ['PYTHONPATH']}")
+
 from imath import *
 from math import sqrt, pi, sin, cos
 import math

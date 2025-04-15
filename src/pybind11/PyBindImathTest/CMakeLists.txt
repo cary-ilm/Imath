@@ -9,11 +9,10 @@ if(NOT Python3_Interpreter_FOUND)
     message(FATAL_ERROR "Cannot find Python3 interpreter")
 endif()
 
-add_test(PyBindImath.PyBindImathTest 
-  ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyBindImathTest
+set(PYBINDIMATH_MODULE pybindimath)
+add_test(NAME PyBindImath.PyBindImathTest 
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=$<TARGET_FILE_DIR:${PYBINDIMATH_MODULE}>"
+          ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyBindImathTest
 )
 
-set_tests_properties(PyBindImath.PyBindImathTest PROPERTIES
-    ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}"
-)
 

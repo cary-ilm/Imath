@@ -17,6 +17,11 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
       Python3::Module
 )
 
+# Ensure correct module extension on Windows
+if(WIN32)
+    set_target_properties(${PYIMATH_MODULE} PROPERTIES SUFFIX ".pyd")
+endif()
+
 set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES
     PREFIX ""
     OUTPUT_NAME ${PYIMATHNUMPY_MODULE} # override the _d suffix for Debug builds
