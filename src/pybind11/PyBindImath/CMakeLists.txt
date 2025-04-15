@@ -25,7 +25,7 @@ set(PYBINDIMATH_HEADERS
 # Shared Library
 #
 
-set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) # libPyBindImath_Python3_10.so
+set(PYBINDIMATH_LIBRARY PyBindImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}${IMATH_LIB_SUFFIX}) # libPyBindImath_Python3_10-3_2.so
 
 add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
 
@@ -57,6 +57,7 @@ target_link_libraries(${PYBINDIMATH_MODULE} PRIVATE Imath::Imath)
 
 set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
     PREFIX ""
+    DEBUG_POSTFIX ""
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
 )
 

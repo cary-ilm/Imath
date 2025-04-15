@@ -6,10 +6,10 @@ message(STATUS "Configuring imath module")
 #
 # Declare the libPyImath library, identified by PYIMATH_LIBRARY
 #
-# The name has a "_Python3_<minor>" suffix, i.e. libPyImath_Python3_10.so
+# The name has a "_Python3_<minor>" suffix, i.e. libPyImath_Python3_10-3_2.so
 #
 
-set(PYIMATH_LIBRARY PyImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}) 
+set(PYIMATH_LIBRARY PyImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}${IMATH_LIB_SUFFIX}) 
 
 set(PYIMATH_SOURCES
     PyImath.cpp
@@ -129,6 +129,8 @@ set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
 # Declare the python module, identified by PYIMATH_MODULE
 #
 
+set(CMAKE_DEBUG_POSTFIX "")
+
 set(PYIMATH_MODULE imath) 
 
 set(PYIMATH_MODULE_SOURCES
@@ -146,6 +148,7 @@ endif()
 
 set_target_properties(${PYIMATH_MODULE} PROPERTIES
     PREFIX ""
+    OUTPUT_NAME ${PYIMATH_MODULE} # override the _d suffix for Debug builds
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
 )
 
@@ -195,82 +198,67 @@ if (IMATH_INSTALL)
 
   include(GNUInstallDirs)
 
-  if(SKBUILD)
 
-    #
-    # scikit-build, for the python wheel. Ignore the library, we only
-    # need the module. 
-    #
-    
-    message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
-    set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
-    set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
+  #
+  # Set the PYTHON_INSTALL_DIR but only if it's not already set,
+  # which allows an externally-set value to take effect.
+  #
+  
+  if (NOT DEFINED PYTHON_INSTALL_DIR)
 
-    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+    set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+    message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
 
   else()
 
-    #
-    # Set the PYTHON_INSTALL_DIR but only if it's not already set,
-    # which allows an externally-set value to take effect.
-    #
-    
-    if (NOT DEFINED PYTHON_INSTALL_DIR)
-
-      set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
-
-    else()
-
-      message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
+    message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
   
-    endif()
-  
-    #
-    # Install the python module 
-    #
-
-    install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
-
-    #
-    # Install the library
-    #
-  
-    install(TARGETS ${PYIMATH_LIBRARY}
-      EXPORT "${PYIMATH_LIBRARY}Targets"
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
-
-    # Install headers
-
-    install(FILES ${PYIMATH_HEADERS}
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYIMATH_LIBRARY})
-
-    # Install export set for downstream CMake
-
-    install(EXPORT ${PYIMATH_LIBRARY}Targets
-      FILE ${PYIMATH_LIBRARY}Targets.cmake
-      NAMESPACE ${PYIMATH_LIBRARY}::
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
-    )
-
-    # Config file for find_package()
-    include(CMakePackageConfigHelpers)
-
-    write_basic_package_version_file(
-      "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
-      VERSION 1.0.0
-      COMPATIBILITY AnyNewerVersion
-    )
-
-    install(FILES
-      "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
-    )
   endif()
+  
+  #
+  # Install the python module 
+  #
+
+  install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+
+  #
+  # Install the library
+  #
+  
+  install(TARGETS ${PYIMATH_LIBRARY}
+    EXPORT "${PYIMATH_LIBRARY}Targets"
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+
+  # Install headers
+
+  install(FILES ${PYIMATH_HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PYIMATH_LIBRARY})
+
+  # Install export set for downstream CMake
+
+  install(EXPORT ${PYIMATH_LIBRARY}Targets
+    FILE ${PYIMATH_LIBRARY}Targets.cmake
+    NAMESPACE ${PYIMATH_LIBRARY}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+  )
+
+  # Config file for find_package()
+  include(CMakePackageConfigHelpers)
+
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+    VERSION 1.0.0
+    COMPATIBILITY AnyNewerVersion
+  )
+
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PYIMATH_LIBRARY}ConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PYIMATH_LIBRARY}
+  )
 
 endif()
 
@@ -297,3 +285,10 @@ if (MSVC)
     target_compile_options(${PYIMATH_LIBRARY} PRIVATE /bigobj)
 endif()
 
+#
+# Suppress boost's pragma messages about deprecated headers:
+#    include/boost/detail/iterator.hpp:13:1: note: ‘#pragma message: This header is deprecated. Use <iterator> instead.’
+#    BOOST_HEADER_DEPRECATED("<iterator>")
+#
+
+target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE BOOST_ALLOW_DEPRECATED_HEADERS BOOST_BIND_GLOBAL_PLACEHOLDERS)

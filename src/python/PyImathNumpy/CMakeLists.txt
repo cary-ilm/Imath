@@ -5,6 +5,8 @@ message(STATUS "Configuring imathnumpy module")
 
 set(PYIMATHNUMPY_MODULE imathnumpy)
 
+set(CMAKE_DEBUG_POSTFIX "")
+
 add_library(${PYIMATHNUMPY_MODULE} MODULE imathnumpymodule.cpp)
 
 target_link_libraries(${PYIMATHNUMPY_MODULE}
@@ -17,6 +19,7 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
 
 set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES
     PREFIX ""
+    OUTPUT_NAME ${PYIMATHNUMPY_MODULE} # override the _d suffix for Debug builds
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
 )
 
@@ -33,40 +36,23 @@ if (IMATH_INSTALL)
 
   include(GNUInstallDirs)
 
-  if(SKBUILD)
+  #
+  # Set the PYTHON_INSTALL_DIR but only if it's not already set,
+  # which allows an externally-set value to take effect.
+  #
+  
+  if (NOT DEFINED PYTHON_INSTALL_DIR)
 
-    #
-    # scikit-build, for the python wheel. Ignore the library, we only
-    # need the module. 
-    #
-    
-    message(STATUS "setting PYTHON_INSTALL_DIR to skbuild: ${SKBUILD_PLATLIB_DIR}")
-    set(PYTHON_INSTALL_DIR ${SKBUILD_PLATLIB_DIR})
-    set(CMAKE_BINARY_DIR ${SKBUILD_PLATLIB_DIR})
-
-    install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+    set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+    message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR}")
 
   else()
 
-    #
-    # Set the PYTHON_INSTALL_DIR but only if it's not already set,
-    # which allows an externally-set value to take effect.
-    #
-    
-    if (NOT DEFINED PYTHON_INSTALL_DIR)
-
-      set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-      message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR}")
-
-    else()
-
-      message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
+    message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
   
-    endif()
-  
-    install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
-
   endif()
+  
+  install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
 
 endif()
 
@@ -88,3 +74,5 @@ elseif(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     PROPERTIES COMPILE_FLAGS "-Wdeprecated-declarations"
   )
 endif()
+
+target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE BOOST_ALLOW_DEPRECATED_HEADERS BOOST_BIND_GLOBAL_PLACEHOLDERS)
