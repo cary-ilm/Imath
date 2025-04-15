@@ -275,13 +275,11 @@ if (IMATH_INSTALL)
 endif()
 
 #
-# disable the self-assig warnings:
+# disable the self-assign warnings:
 #
 #   warning: explicitly assigning value of variable of type 'boost::python::self_ns::self_t' to itself [-Wself-assign-overloaded]
 #        .def(self ^= self)
 #
-
-message (STATUS "CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID}")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set_source_files_properties(

@@ -52,8 +52,6 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
-    continue-on-error: true
-    
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
@@ -135,7 +133,7 @@ jobs:
               pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
               echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
           fi
-          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
           echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
@@ -244,6 +242,7 @@ jobs:
 
       - name: Validate install
         if: inputs.validate_install == 'ON'
+        continue-on-error: true
         # Validate that the build has installed the proper files by comparing against the appropriate reference manifest
         run: |
           share/ci/scripts/validate_install.py "_build/$INSTALL_MANIFEST" "share/ci/install_manifest/$INSTALL_MANIFEST" _build/CMakeCache.txt

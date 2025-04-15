@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
+message (STATUS "Configuring PyImathNumpyTest")
+
 add_test(PyImath.PyImathNumpyTest
   ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathNumpyTest.in
 )
