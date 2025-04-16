@@ -75,7 +75,6 @@ jobs:
           pip install pybind11
           pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
           echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
-
           echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
           echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
@@ -89,7 +88,6 @@ jobs:
           cmake_args+=("-DCMAKE_BUILD_TYPE=Release")
           cmake_args+=("-DCMAKE_CXX_STANDARD=17")
           cmake_args+=("-DBUILD_SHARED_LIBS=ON")
-          cmake_args+=("-DPYTHON=ON")
           cmake_args+=("-DPYBIND11=ON")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
           cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
