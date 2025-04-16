@@ -136,7 +136,7 @@ jobs:
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
         env:
-          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86/libs;${{ env.PATH }}"
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}"
           PYTHONPATH: "${{ github.workspace }}/_install/python"
           
       - name: Test
@@ -145,6 +145,6 @@ jobs:
         shell: msys2 {0}
         working-directory: _build
         env:
-          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86/libs;${{ env.PATH }}"
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}"
           PYTHONPATH: "${{ github.workspace }}/_install/python"
           
