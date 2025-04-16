@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys, site, glob
+from pathlib import Path
 
 print(f"{__file__}: PYTHONPATH={os.environ['PYTHONPATH']}")
 pythonpath = os.environ.get('PYTHONPATH')
