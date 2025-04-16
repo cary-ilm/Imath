@@ -39,78 +39,100 @@ jobs:
           pacboy: cc:p cmake:p python:p
 
       - name: Set Up Conan
+        shell: bash
         run: |
+          set -e
+      
           VENV_DIR="${{ github.workspace }}/venv"
           echo "VENV_DIR=${VENV_DIR}" >> $GITHUB_ENV
-
+      
           python -m venv "$VENV_DIR"
-          source "$VENV_DIR/Scripts/activate"
-
-          python -m ensurepip
-          python -m pip install --upgrade pip "numpy<2" conan
-
+      
+          # Use python.exe directly from the venv (avoids activation issues on Windows)
+          PYTHON_EXE="$VENV_DIR/Scripts/python.exe"
+          "$PYTHON_EXE" -m ensurepip
+          "$PYTHON_EXE" -m pip install --upgrade pip "numpy<2" conan
+      
+          # Prepare Conan install
           CONAN_ROOT="${{ github.workspace }}/_conan"
-          conan_args=("install")
-          conan_args+=("--output-folder=${CONAN_ROOT}")
-          conan_args+=("--build=missing")
-          conan_args+=("--generator" "CMakeDeps")
-          conan_args+=("--generator" "CMakeToolchain")
-          conan_args+=("--settings" "build_type=Release")
-          conan_args+=("--requires=pybind11/2.11.1")
-          conan_args+=("--settings" "compiler=gcc")
-          conan_args+=("--settings" "compiler.version=14")
-          conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-          conan_args+=("--settings" "arch=x86")
-
-          conan profile detect
-          echo conan "${conan_args[@]}"
-          conan "${conan_args[@]}"
-
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-
-        shell: msys2 {0}
+      
+          # Detect Conan profile and install dependencies
+          "$PYTHON_EXE" -m conan profile detect
+          "$PYTHON_EXE" -m conan install . \
+            --output-folder="${CONAN_ROOT}" \
+            --build=missing \
+            --generator CMakeDeps \
+            --generator CMakeToolchain \
+            --settings build_type=Release \
+            --requires=pybind11/2.11.1 \
+            --settings compiler=gcc \
+            --settings compiler.version=14 \
+            --settings compiler.libcxx=libstdc++11 \
+            --settings arch=x86
 
       - name: Install Python Dependencies
+        shell: bash
         run: |
-
-          source "${{ env.VENV_DIR }}/Scripts/activate"
-          
-          pip install pybind11
-          pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
-          echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
+          set -e
+      
+          VENV_DIR="${{ env.VENV_DIR }}"
+          PYTHON_EXE="$VENV_DIR/Scripts/python.exe"
+      
+          "$PYTHON_EXE" -m pip install pybind11
+      
+          PYBIND11_DIR=$("$PYTHON_EXE" -c "import pybind11; print(pybind11.get_cmake_dir())")
+          echo "pybind11_DIR=$PYBIND11_DIR" >> $GITHUB_ENV
+      
           echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
           echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          PYTHON_EXECUTABLE=$(which python)
-          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-        shell: msys2 {0}
+          echo "PYTHON_EXECUTABLE=$PYTHON_EXE" >> $GITHUB_ENV
       
       - name: Build project
+        shell: bash
         run: |
-
-          source "${{ env.VENV_DIR }}/Scripts/activate"
-
+          set -e
+      
+          PYTHON_EXE="${{ env.VENV_DIR }}/Scripts/python.exe"
+      
           cd _build
           cmake .. \
             -DPYTHON=ON \
             -DPYBIND11=ON \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }} \
+            -DCMAKE_TOOLCHAIN_FILE="${{ env.CMAKE_TOOLCHAIN_FILE }}" \
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-            
+      
           cmake --build .
-        shell: msys2 {0}
-
+      
+      
       - name: Test Pybind11
+        shell: bash
         run: |
-          source "${{ env.VENV_DIR }}/Scripts/activate"
-          python src/pybind11/PyBindImathTest/test_import_pybindimath.py
-        shell: msys2 {0}
+          set -e
+      
+          export PATH="${{ github.workspace }}/_install/lib:$PATH"
+          export PYTHONPATH="${{ github.workspace }}/_install/python"
+      
+          echo "PATH=$PATH"
+          echo "PYTHONPATH=$PYTHONPATH"
 
+          PYTHON_EXE="${{ env.VENV_DIR }}/Scripts/python.exe"
+          "$PYTHON_EXE" src/pybind11/PyBindImathTest/test_import_pybindimath.py
+      
       - name: Test
-        run: |
-          source "${{ env.VENV_DIR }}/Scripts/activate"
-          ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
+        shell: bash
         working-directory: _build
-        shell: msys2 {0}
+        run: |
+          set -e
+      
+          export PATH="${{ github.workspace }}/_install/lib:$PATH"
+          export PYTHONPATH="${{ github.workspace }}/_install/python"
+      
+          echo "PATH=$PATH"
+          echo "PYTHONPATH=$PYTHONPATH"
+    
+          ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
+      
