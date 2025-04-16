@@ -209,7 +209,9 @@ jobs:
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
-        run: python -v src/pybind11/PyBindImathTest/test_import_pybindimath.py
+        run: |
+          export PATH=D:/a/Imath/Imath/_install/lib:$PATH
+          python -v src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
       - name: Test Python
@@ -226,7 +228,7 @@ jobs:
 
       - name: objdump pybind11
         if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
-        run: objdump -x /d/a/Imath/Imath/_build/python3_9/Release/pybindimath.cp39-win32.pyd
+        run: objdump -x /d/a/Imath/Imath/_build/python3_9/pybindimath.cp39-win32.pyd
         shell: msys2 {0}
 
       - name: Test
