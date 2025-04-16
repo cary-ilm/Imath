@@ -44,6 +44,23 @@ jobs:
           python-version: '3.9'
           architecture: 'x86'
       
+      - name: Locate Python and python39.dll
+        run: |
+          set -x
+          
+          # Print out Python executable path
+          python -c "import sys; print('Python executable:', sys.executable)"
+          
+          # Print the PATH to check for the Python directory
+          python -c "import os; print('PATH:', os.environ.get('PATH'))"
+          
+          # Optionally, you can try to locate python39.dll using 'where' command on Windows
+          where python39.dll || echo "python39.dll not found"
+
+          python -c "import sysconfig; print(sysconfig.get_paths())"
+          
+        shell: bash
+
       - name: Create build directories
         run: mkdir _install _build _examples _python
         shell: bash
@@ -119,7 +136,7 @@ jobs:
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
         env:
-          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.PATH }}"
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86/libs;${{ env.PATH }}"
           PYTHONPATH: "${{ github.workspace }}/_install/python"
           
       - name: Test
@@ -128,6 +145,6 @@ jobs:
         shell: msys2 {0}
         working-directory: _build
         env:
-          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.PATH }}"
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86/libs;${{ env.PATH }}"
           PYTHONPATH: "${{ github.workspace }}/_install/python"
           
