@@ -2,7 +2,7 @@
 
 import os, sys, site, glob
 from pathlib import Path
-f
+
 print(f"{__file__}: PYTHONPATH={os.environ['PYTHONPATH']}")
 pythonpath = os.environ.get('PYTHONPATH')
 if pythonpath:
