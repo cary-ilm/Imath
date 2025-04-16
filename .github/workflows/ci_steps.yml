@@ -211,24 +211,24 @@ jobs:
         if: inputs.pybind11 == 'ON'
         run: |
           export PATH=D:/a/Imath/Imath/_install/lib:$PATH
-          python -v src/pybind11/PyBindImathTest/test_import_pybindimath.py
+          python src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
       - name: Test Python
         if: inputs.python == 'ON'
         run: |
-          python -v src/python/PyImathTest/test_import_imath.py
-          python -v src/python/PyImathNumpyTest/test_import_imathnumpy.py
+          python src/python/PyImathTest/test_import_imath.py
+          python src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
 
       - name: objdump python
         if: inputs.python == 'ON'
-        run: objdump -x /d/a/Imath/Imath/_build/python3_9/Release/imath.pyd
+        run: objdump -p /d/a/Imath/Imath/_build/python3_9/Release/imath.pyd | grep 'DLL Name'
         shell: msys2 {0}
 
       - name: objdump pybind11
         if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
-        run: objdump -x /d/a/Imath/Imath/_build/python3_9/pybindimath.cp39-win32.pyd
+        run: objdump -p /d/a/Imath/Imath/_build/python3_9/pybindimath.cp39-win32.pyd | grep 'DLL Name'
         shell: msys2 {0}
 
       - name: Test
