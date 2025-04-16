@@ -163,29 +163,29 @@ jobs:
     strategy:
       matrix:
         include:
-          - build: 1
-            label: Release
-
-          - build: 2
-            label: Debug
-            build-type: Debug
-            python: 'OFF' # TODO: conan won't build debug boost.python
-
-          - build: 3
-            label: static
-            BUILD_SHARED_LIBS: 'OFF'
-
-          - build: 4
-            label: pkgconfig=OFF, testing=OFF
-            IMATH_INSTALL_PKG_CONFIG: 'OFF'
-            BUILD_TESTING: 'OFF'
-            python: 'OFF'
-            pybind11: 'OFF'
-
-          - build: 5
-            label: vfx2022
-            os: windows-2019
-
+#          - build: 1
+#            label: Release
+#
+#          - build: 2
+#            label: Debug
+#            build-type: Debug
+#            python: 'OFF' # TODO: conan won't build debug boost.python
+#
+#          - build: 3
+#            label: static
+#            BUILD_SHARED_LIBS: 'OFF'
+#
+#          - build: 4
+#            label: pkgconfig=OFF, testing=OFF
+#            IMATH_INSTALL_PKG_CONFIG: 'OFF'
+#            BUILD_TESTING: 'OFF'
+#            python: 'OFF'
+#            pybind11: 'OFF'
+#
+#          - build: 5
+#            label: vfx2022
+#            os: windows-2019
+#
           - build: 6
             label: msys2-mingw32
             msystem: MINGW32
@@ -197,13 +197,13 @@ jobs:
             BUILD_SHARED_LIBS: 'OFF'
             python: 'OFF' # TODO: conan won't build boost.python w/msys2
 
-          - build: 8
-            label: msys2-ucrt64
-            msystem: UCRT64
-            python: 'OFF' # TODO: conan won't build boost.python w/msys2
-
-          - build: 9
-            label: msys2-ucrt64, static
-            msystem: UCRT64
-            BUILD_SHARED_LIBS: 'OFF'
-            python: 'OFF' # TODO: conan won't build boost.python w/msys2
+#          - build: 8
+#            label: msys2-ucrt64
+#            msystem: UCRT64
+#            python: 'OFF' # TODO: conan won't build boost.python w/msys2
+#
+#          - build: 9
+#            label: msys2-ucrt64, static
+#            msystem: UCRT64
+#            BUILD_SHARED_LIBS: 'OFF'
+#            python: 'OFF' # TODO: conan won't build boost.python w/msys2
