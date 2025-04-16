@@ -68,7 +68,6 @@ jobs:
           conan "${conan_args[@]}"
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
         shell: bash
 
       - name: Install Python Dependencies
@@ -83,29 +82,42 @@ jobs:
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Build project
+      - name: Construct CMake command
         run: |
-          set -e
-          cd _build
-          cmake .. \
-            -DPYTHON=ON \
-            -DPYBIND11=ON \
-            -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE="${{ env.CMAKE_TOOLCHAIN_FILE }}" \
-            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-          cmake --build .
+          cmake_args=("-B" "." "-S" "..")
+          cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=Release")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=17")
+          cmake_args+=("-DBUILD_SHARED_LIBS=ON")
+          cmake_args+=("-DPYTHON=ON")
+          cmake_args+=("-DPYBIND11=ON")
+          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
+          cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
+          cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
+          cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
+          cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
+        working-directory: _build
         shell: bash
-      
+
+      - name: Configure & Build (msys2) # requires msys2 shell
+        run: |
+          cmake --version
+          cmake ${{ env.CMAKE_ARGS }}
+          cmake --build . --target install --config Release
+        working-directory: _build
+        shell: msys2 {0}
+
       - name: Test Pybind11
         run: |
-          set -e
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
-        shell: bash
+        shell: msys2 {0}
 
       - name: Test
         working-directory: _build
         run: |
-          set -e
           ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
-        shell: bash
+        shell: msys2 {0}
