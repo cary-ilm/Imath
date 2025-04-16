@@ -40,6 +40,15 @@ jobs:
 
       - name: Set Up Conan
         run: |
+          VENV_DIR="${{ github.workspace }}/venv"
+          echo "VENV_DIR=${VENV_DIR}" >> $GITHUB_ENV
+
+          python -m venv "$VENV_DIR"
+          source "$VENV_DIR/Scripts/activate"
+
+          python -m ensurepip
+          python -m pip install --upgrade pip "numpy<2" conan
+
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
           conan_args+=("--output-folder=${CONAN_ROOT}")
@@ -52,21 +61,21 @@ jobs:
           conan_args+=("--settings" "compiler.version=14")
           conan_args+=("--settings" "compiler.libcxx=libstdc++11")
           conan_args+=("--settings" "arch=x86")
- 
-          python -m ensurepip
-          python -m pip install --upgrade pip
-    
-          python -m pip install --upgrade pip "numpy<2" conan
+
           conan profile detect
           echo conan "${conan_args[@]}"
           conan "${conan_args[@]}"
+
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+
         shell: msys2 {0}
 
       - name: Install Python Dependencies
         run: |
+
+          source "${{ env.VENV_DIR }}/Scripts/activate"
+          
           pip install pybind11
           pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
           echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
@@ -78,6 +87,9 @@ jobs:
       
       - name: Build project
         run: |
+
+          source "${{ env.VENV_DIR }}/Scripts/activate"
+
           cd _build
           cmake .. \
             -DPYTHON=ON \
@@ -92,11 +104,13 @@ jobs:
 
       - name: Test Pybind11
         run: |
+          source "${{ env.VENV_DIR }}/Scripts/activate"
           python src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
 
       - name: Test
         run: |
+          source "${{ env.VENV_DIR }}/Scripts/activate"
           ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
         working-directory: _build
         shell: msys2 {0}
