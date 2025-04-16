@@ -216,7 +216,7 @@ jobs:
         if: inputs.python == 'ON'
         run: |
           python src/python/PyImathTest/test_import_imath.py
-          python 1src/python/PyImathNumpyTest/test_import_imathnumpy.py
+          python src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
 
       - name: Test

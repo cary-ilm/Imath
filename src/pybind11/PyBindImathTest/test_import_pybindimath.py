@@ -3,43 +3,35 @@
 import os, sys, site, glob
 from pathlib import Path
 
-print(f"{__file__}: PYTHONPATH={os.environ['PYTHONPATH']}")
-pythonpath = os.environ.get('PYTHONPATH')
-if pythonpath:
-    # Use os.pathsep which is ':' on Unix/macOS and ';' on Windows
-    paths = pythonpath.split(os.pathsep)
-    for path in paths:
-        if not path:
+def list_files_in_path(var):
+    path_env = os.environ.get(var, '')
+    path_dirs = path_env.split(os.pathsep)
+    all_files = []
+    for directory in path_dirs:
+        if not directory:
             continue
-        resolved_path = Path(path).expanduser().resolve()
-        print(f"Contents of: {resolved_path}")
-        if resolved_path.is_dir():
-            for root, dirs, files in os.walk(resolved_path):
-                for f in files:
-                    file_path = Path(root) / f
-                    print(f"  {file_path}")
-        else:
-            print(f"  [Not a directory or does not exist]")
-        print()
-PATH = os.environ.get('PATH')
-if PATH:
-    print(f"PATH={PATH}")
-    # Use os.pathsep which is ':' on Unix/macOS and ';' on Windows
-    paths = PATH.split(os.pathsep)
-    for path in paths:
-        if not path:
-            continue
-        resolved_path = Path(path).expanduser().resolve()
-        print(f"Contents of: {resolved_path}")
-        if resolved_path.is_dir():
-            for root, dirs, files in os.walk(resolved_path):
-                for f in files:
-                    file_path = Path(root) / f
-                    print(f"  {file_path}")
-        else:
-            print(f"  [Not a directory or does not exist]")
-        print()
+        directory = os.path.normpath(directory)
+        if os.path.isdir(directory):
+            try:
+                for entry in os.listdir(directory):
+                    full_path = os.path.join(directory, entry)
+                    if os.path.isfile(full_path):
+                        all_files.append(full_path)
+            except PermissionError:
+                print(f"Permission denied accessing: {directory}")
+            except OSError as e:
+                print(f"Error accessing {directory}: {e}")
+    
+    return path_env, all_files
 
+path_env, path_files = list_files_in_path('PATH')
+print(f"{__file__}: PATH={path_env}")
+for f in path_files:
+    print(f"  {f}")
+pythonpath_env, pythonpath_files = list_files_in_path('PYTHONPATH')
+print(f"PYTHONPATH={pythonpath_env}")
+for f in pythonpath_files:
+    print(f"  {f}")
 
 def test_import():
 
