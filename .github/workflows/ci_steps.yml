@@ -219,9 +219,14 @@ jobs:
           python -v src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
 
-      - name: objdump
+      - name: objdump python
         if: inputs.python == 'ON'
         run: objdump -x /d/a/Imath/Imath/_build/python3_9/Release/imath.pyd
+        shell: msys2 {0}
+
+      - name: objdump pybind11
+        if: inputs.pybind11 == 'ON'
+        run: objdump -x /d/a/Imath/Imath/_build/python3_9/Release/pybindimath.cp39-win_amd64.pyd
         shell: msys2 {0}
 
       - name: Test

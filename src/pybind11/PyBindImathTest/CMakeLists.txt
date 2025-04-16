@@ -10,10 +10,11 @@ if(NOT Python3_Interpreter_FOUND)
 endif()
 
 set(PYBINDIMATH_MODULE pybindimath)
+set(IMATH_LIBRARY Imath)
 add_test(NAME PyBindImath.PyBindImathTest 
   COMMAND ${CMAKE_COMMAND} -E env
           "PYTHONPATH=$<TARGET_FILE_DIR:${PYBINDIMATH_MODULE}>"
-          "PATH=$<TARGET_FILE_DIR:${PYBINDIMATH_MODULE}>;$ENV{PATH}"
+          "PATH=$<TARGET_FILE_DIR:${IMATH_LIBRARY}>;$ENV{PATH}"
           ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyBindImathTest
 )
 
