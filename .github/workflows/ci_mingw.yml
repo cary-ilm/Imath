@@ -60,7 +60,7 @@ jobs:
       
           # Detect Conan profile and install dependencies
           "$PYTHON_EXE" -m conan profile detect
-          "$PYTHON_EXE" -m conan install . \
+          conan install . \
             --output-folder="${CONAN_ROOT}" \
             --build=missing \
             --generator CMakeDeps \
