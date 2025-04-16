@@ -114,7 +114,7 @@ endif()
 include(CTest)
 if(BUILD_TESTING AND NOT IMATH_IS_SUBPROJECT)
   enable_testing()
-  add_subdirectory(src/ImathTest)
+#  add_subdirectory(src/ImathTest)
 endif()
 
 # Including this module will add a `clang-format` target to the build

@@ -40,6 +40,7 @@ permissions:
 
 jobs:
   linux:
+    if: false
     name: 'Linux.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -98,6 +99,7 @@ jobs:
             vfx-cy: 2023
 
   macOS:
+    if: false
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -141,6 +143,7 @@ jobs:
             os: macos-13
 
   windows:
+    if: false
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:

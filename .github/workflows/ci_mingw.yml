@@ -29,54 +29,56 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
-      
-      - name: Setup MSYS2
-        uses: msys2/setup-msys2@v2
+
+      - name: Install MSYS2 
+        uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
         with:
           msystem: MINGW32
           update: true
-          install: >-
-            mingw-w64-i686-gcc
-            mingw-w64-i686-cmake
-            mingw-w64-i686-ninja
-            mingw-w64-i686-python
-            mingw-w64-i686-python-pip
-            mingw-w64-i686-boost
+          install: git
+          pacboy: cc:p cmake:p 
+
+      - name: Set up Python for MINGW32
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          architecture: 'x86'
+
+      - name: Set Up Conan
+        run: |
+          CONAN_ROOT="${{ github.workspace }}/_conan"
+          conan_args=("install")
+          conan_args+=("--output-folder=${CONAN_ROOT}")
+          conan_args+=("--build=missing")
+          conan_args+=("--generator" "CMakeDeps")
+          conan_args+=("--generator" "CMakeToolchain")
+          conan_args+=("--settings" "build_type=Release")
+          conan_args+=("--requires=pybind11/2.11.1")
+          conan_args+=("--settings" "compiler=gcc")
+          conan_args+=("--settings" "compiler.version=14")
+          conan_args+=("--settings" "compiler.libcxx=libstdc++11")
+          conan_args+=("--settings" "arch=x86")
+ 
+          python -m pip install --upgrade pip "numpy<2" conan
+          conan profile detect
+          echo conan "${conan_args[@]}"
+          conan "${conan_args[@]}"
+          echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
+          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+        shell: msys2 {0}
+
+      - name: Install Python Dependencies
+        run: |
+          pip install pybind11
+          pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+          echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
+          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
+          PYTHON_EXECUTABLE=$(which python)
+          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
+        shell: msys2 {0}
       
-      - name: Install Python dependencies
-        run: |
-          # Install NumPy in the MSYS2 Python environment
-          /mingw32/bin/pip install numpy
-
-      - name: Install Conan
-        run: |
-          pip install conan
-          
-      - name: Configure Python paths
-        run: |
-          PYTHON_ROOT=/mingw32
-          PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-          echo "PYTHON_INCLUDE=$PYTHON_ROOT/include/python$PYTHON_VERSION" >> $GITHUB_ENV
-          echo "PYTHON_LIB=$PYTHON_ROOT/lib/libpython$PYTHON_VERSION.dll.a" >> $GITHUB_ENV
-          echo "PYTHON_EXECUTABLE=$PYTHON_ROOT/bin/python.exe" >> $GITHUB_ENV
-          
-      - name: Install dependencies with Conan
-        run: |
-          mkdir -p /c/Users/runneradmin/.conan2/profiles/
-          cp .conan2/profiles/default /c/Users/runneradmin/.conan2/profiles/default
-          ls -l /c/Users/runneradmin/.conan2/profiles/
-          cat /c/Users/runneradmin/.conan2/profiles/default
-
-          mkdir _build && cd _build
-          # Use your existing default profile
-          conan install .. \
-            --build=missing \
-            -o boost/*:with_python=True \
-            -o boost/*:python_executable=${{ env.PYTHON_EXECUTABLE }} \
-            -o boost/*:without_fiber=False \
-            -o boost/*:without_coroutine=False \
-            -v debug
-            
       - name: Build project
         run: |
           cd _build
@@ -85,8 +87,19 @@ jobs:
             -DPYBIND11=ON \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }} \
-            -DPython3_INCLUDE_DIR=${{ env.PYTHON_INCLUDE }} \
-            -DPython3_LIBRARY=${{ env.PYTHON_LIB }}
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }} \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
             
           cmake --build .
+        shell: msys2 {0}
+
+      - name: Test Pybind11
+        run: |
+          python src/pybind11/PyBindImathTest/test_import_pybindimath.py
+        shell: msys2 {0}
+
+      - name: Test
+        run: |
+          ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
+        working-directory: _build
+        shell: msys2 {0}
