@@ -136,7 +136,7 @@ jobs:
               echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
           fi
           echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          echo "PYTHONPATH=${{ github.workspace }}/_python" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
           PYTHON_EXECUTABLE=$(which python)
           echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
@@ -196,7 +196,7 @@ jobs:
           cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-              ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+              # ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
         shell: bash
@@ -208,16 +208,10 @@ jobs:
           cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
           if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
-            ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+            # ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
         shell: msys2 {0}
-
-      - name: Test
-        if: inputs.BUILD_TESTING == 'ON'
-        run: |
-          ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
-        working-directory: _build
 
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
@@ -230,6 +224,12 @@ jobs:
           python -v src/python/PyImathTest/test_import_imath.py
           python -v src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
+
+      - name: Test
+        if: inputs.BUILD_TESTING == 'ON'
+        run: |
+          ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
+        working-directory: _build
 
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
