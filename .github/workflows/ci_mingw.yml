@@ -115,7 +115,8 @@ jobs:
         shell: msys2 {0}
 
       - name: Test
-        working-directory: _build
         run: |
-          ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
+          cmake --build . --target test --config Release
+          #ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
         shell: msys2 {0}
+        working-directory: _build
