@@ -29,7 +29,9 @@ else()
 
   set(PYIMATH_MODULE imath)
   add_test(NAME PyImath.PyImathTest
-    COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=$<TARGET_FILE_DIR:${PYIMATH_MODULE}>"
+    COMMAND ${CMAKE_COMMAND} -E env
+            "PYTHONPATH=$<TARGET_FILE_DIR:${PYIMATH_MODULE}>"
+            "PATH=$<TARGET_FILE_DIR:${PYIMATH_MODULE}>;$ENV{PATH}"
             ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyImathTest.in
   )
 

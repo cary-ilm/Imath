@@ -1,6 +1,6 @@
-# cmake -B . -S .. -DCMAKE_INSTALL_PREFIX=../_install -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=17 -DBUILD_SHARED_LIBS=ON -DIMATH_INSTALL_PKG_CONFIG=ON -DBUILD_TESTING=ON -DPYTHON=OFF -DPYBIND11=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DPython3_EXECUTABLE=/c/hostedtoolcache/windows/Python/3.9.13/x64/python -DPYTHON_INSTALL_DIR=D:\a\Imath\Imath/_python -Dpybind11_DIR=C:\hostedtoolcache\windows\Python\3.9.13\x64\lib\site-packages\pybind11\share\cmake\pybind11 -DCMAKE_POLICY_DEFAULT_CMP0091=NEW 
+# cmake -B . -S .. -DCMAKE_INSTALL_PREFIX=../_install -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=17 -DBUILD_SHARED_LIBS=ON -DIMATH_INSTALL_PKG_CONFIG=ON -DBUILD_TESTING=ON -DPYTHON=OFF -DPYBIND11=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DPython3_EXECUTABLE=/c/hostedtoolcache/windows/Python/3.9.13/x64/python -DPYTHON_INSTALL_DIR=D:\a\Imath\Imath/_install/python -Dpybind11_DIR=C:\hostedtoolcache\windows\Python\3.9.13\x64\lib\site-packages\pybind11\share\cmake\pybind11 -DCMAKE_POLICY_DEFAULT_CMP0091=NEW 
 bin/Imath-$MAJOR_$MINOR_d.dll
-bin/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR_d.dll
+bin/PyBindImath_Python3_9-$MAJOR_$MINOR_d.dll
 include/Imath/ImathBox.h
 include/Imath/ImathBoxAlgo.h
 include/Imath/ImathColor.h
@@ -36,17 +36,17 @@ include/Imath/ImathVecAlgo.h
 include/Imath/half.h
 include/Imath/halfFunction.h
 include/Imath/halfLimits.h
-include/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR/PyBindImath.h
-include/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR/PyBindImathExport.h
+include/PyBindImath_Python3_9-$MAJOR_$MINOR/PyBindImath.h
+include/PyBindImath_Python3_9-$MAJOR_$MINOR/PyBindImathExport.h
 lib/Imath-$MAJOR_$MINOR_d.lib
-lib/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR_d.lib
+lib/PyBindImath_Python3_9-$MAJOR_$MINOR_d.lib
 lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
 lib/cmake/Imath/ImathTargets-debug.cmake
 lib/cmake/Imath/ImathTargets.cmake
-lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINORConfigVersion.cmake
-lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINORTargets-debug.cmake
-lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINORTargets.cmake
+lib/cmake/PyBindImath_Python3_9-$MAJOR_$MINOR/PyBindImath_Python3_9-$MAJOR_$MINORConfigVersion.cmake
+lib/cmake/PyBindImath_Python3_9-$MAJOR_$MINOR/PyBindImath_Python3_9-$MAJOR_$MINORTargets-debug.cmake
+lib/cmake/PyBindImath_Python3_9-$MAJOR_$MINOR/PyBindImath_Python3_9-$MAJOR_$MINORTargets.cmake
 lib/pkgconfig/Imath.pc
 lib/pkgconfig/PyBindImath.pc
-python/pybindimath.cp$PYTHONMAJOR$PYTHONMINOR-win_amd64.pyd
+python/pybindimath.cp39-win_amd64.pyd

@@ -19,7 +19,7 @@ target_link_libraries(${PYIMATHNUMPY_MODULE}
 
 # Ensure correct module extension on Windows
 if(WIN32)
-    set_target_properties(${PYIMATH_MODULE} PROPERTIES SUFFIX ".pyd")
+    set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES SUFFIX ".pyd")
 endif()
 
 set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES
