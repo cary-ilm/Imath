@@ -210,15 +210,16 @@ jobs:
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
         run: |
-          export PATH=D:/a/Imath/Imath/_install/lib:$PATH
+          export PATH="/d/a/Imath/Imath/_install/lib:$PATH"
           python src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
       - name: Test Python
         if: inputs.python == 'ON'
         run: |
+          export PATH="/d/a/Imath/Imath/_install/lib:$PATH"
           python src/python/PyImathTest/test_import_imath.py
-          python src/python/PyImathNumpyTest/test_import_imathnumpy.py
+          python 1src/python/PyImathNumpyTest/test_import_imathnumpy.py
         shell: bash
 
       - name: objdump python

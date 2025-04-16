@@ -2,7 +2,7 @@
 
 import os, sys, site, glob
 from pathlib import Path
-
+f
 print(f"{__file__}: PYTHONPATH={os.environ['PYTHONPATH']}")
 pythonpath = os.environ.get('PYTHONPATH')
 if pythonpath:
@@ -23,7 +23,7 @@ if pythonpath:
         print()
 PATH = os.environ.get('PATH')
 if PATH:
-    print("PATH={PATH}")
+    print(f"PATH={PATH}")
     # Use os.pathsep which is ':' on Unix/macOS and ';' on Windows
     paths = PATH.split(os.pathsep)
     for path in paths:
