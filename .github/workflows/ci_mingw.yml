@@ -59,6 +59,10 @@ jobs:
 
           python -c "import sysconfig; print(sysconfig.get_paths())"
           
+          PYTHON_DLL=$(python -c "import sysconfig; print(sysconfig.get_paths()['stdlib'])")
+          DLL_PATH=$(dirname $PYTHON_DLL)
+          echo "DLL_PATH=$DLL_PATH" >> $GITHUB_ENV
+          
         shell: bash
 
       - name: Create build directories
@@ -133,16 +137,18 @@ jobs:
         
       - name: Test Pybind11
         run: |
-          export PATH="${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}"
-          export PYTHONPATH="${{ github.workspace }}/_install/python"
+          export XPATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.DLL_PATH }};${{ env.PATH }}
+
+          export PATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}
+          export PYTHONPATH=${{ github.workspace }}/_install/python
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
           
       - name: Test
         run: |
-          export PATH="${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}"
-          export PYTHONPATH="${{ github.workspace }}/_install/python"
+          export PATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}
+          export PYTHONPATH=${{ github.workspace }}/_install/python
           cmake --build . --target test --config Release
-        shell: msys2 {0}
+        shell: bash
         working-directory: _build
           
