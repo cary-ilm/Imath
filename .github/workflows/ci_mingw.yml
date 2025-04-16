@@ -109,14 +109,25 @@ jobs:
         working-directory: _build
         shell: msys2 {0}
 
+      - name: objdump
+        run: |
+          objdump -x "/d/a/Imath/Imath/_install/python/pybindimath.cp39-win32.pyd" | grep "DLL Name"
+        shell: msys2 {0}
+        
       - name: Test Pybind11
         run: |
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
-
+        env:
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.PATH }}"
+          PYTHONPATH: "${{ github.workspace }}/_install/python"
+          
       - name: Test
         run: |
           cmake --build . --target test --config Release
-          #ctest -T Test -C Release --timeout 7200 --output-on-failure -VV
         shell: msys2 {0}
         working-directory: _build
+        env:
+          PATH: "${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.PATH }}"
+          PYTHONPATH: "${{ github.workspace }}/_install/python"
+          
