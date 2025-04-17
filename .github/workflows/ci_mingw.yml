@@ -68,8 +68,8 @@ jobs:
           $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
 
           export BIN_DIR="$($PYTHON_EXECUTABLE -m site --user-base)/Scripts"
-          export CMAKE_BIN="$BIN_DIR/cmake.exe"
-          export CONAN_BIN="$BIN_DIR/conan.exe"
+          export CMAKE_BIN="$BIN_DIR/cmake"
+          export CONAN_BIN="$BIN_DIR/conan"
 
           export PATH="$BIN_DIR/Scripts:$PATH"
           
