@@ -130,16 +130,12 @@ jobs:
         working-directory: _build
         shell: msys2 {0}
 
-      - name: objdump
-        run: |
-          objdump -x "/d/a/Imath/Imath/_install/python/pybindimath.cp39-win32.pyd" | grep "DLL Name"
-        shell: msys2 {0}
-        
       - name: Test Pybind11
         run: |
           set -x
-          export XPATH="${GITHUB_WORKSPACE}/_install/lib:${GITHUB_WORKSPACE}/_install/bin:${DLL_PATH}:${PATH}"
-          export PATH="${GITHUB_WORKSPACE}/_install/lib:${GITHUB_WORKSPACE}/_install/bin:C:/hostedtoolcache/windows/Python/3.9.13/x86:${PATH}"
+          export XPATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
+          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${PATH}"
+          python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
           export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
           "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
