@@ -68,18 +68,21 @@ jobs:
           
         shell: bash
 
-      - name: Test PATH
-        run: |
-          set -x
-          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
-          "${PYTHON_EXECUTABLE}" python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
-          export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
-          "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
-        shell: msys2 {0}
-
       - name: Create build directories
         run: mkdir _install _build _examples _python
         shell: bash
+
+      - name: Test PATH
+        run: |
+          set -x
+
+          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
+          "${PYTHON_EXECUTABLE}" -c "import os; print('PATH:'); [print('  ', p) for p in os.environ['PATH'].split(os.pathsep)]"
+
+          export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
+          "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
+
+        shell: msys2 {0}
 
       - name: Set Up Conan
         run: |
