@@ -63,7 +63,19 @@ jobs:
           DLL_PATH=$(dirname $PYTHON_DLL)
           echo "DLL_PATH=$DLL_PATH" >> $GITHUB_ENV
           
+          PYTHON_EXECUTABLE=$(which python)
+          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
+          
         shell: bash
+
+      - name: Test PATH
+        run: |
+          set -x
+          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
+          "${PYTHON_EXECUTABLE}" python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
+          export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
+          "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
+        shell: msys2 {0}
 
       - name: Create build directories
         run: mkdir _install _build _examples _python
@@ -135,7 +147,7 @@ jobs:
           set -x
           export XPATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
           export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${PATH}"
-          python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
+          "${PYTHON_EXECUTABLE}" python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
           export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
           "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
