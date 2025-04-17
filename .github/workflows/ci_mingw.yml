@@ -67,11 +67,15 @@ jobs:
 
           $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
 
-          export BIN_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -m site --user-base)/Scripts")
-          export CMAKE_BIN="$BIN_DIR/cmake"
-          export CONAN_BIN="$BIN_DIR/conan"
+          where conan
+          where cmake
+          
+          export USER_BASE=$(cygpath -u "$($PYTHON_EXECUTABLE -m site --user-base)")
+          export BIN_DIR="$USER_BASE/Scripts"
+          export CMAKE_BIN="$BIN_DIR/cmake.exe"
+          export CONAN_BIN="$BIN_DIR/conan.exe"
 
-          export PATH="$BIN_DIR/Scripts:$PATH"
+          export PATH="$BIN_DIR:$PATH"
           
           $CONAN_BIN profile detect
           $CONAN_BIN install \
