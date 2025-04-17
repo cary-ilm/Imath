@@ -30,9 +30,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Create build directories
-        run: mkdir _install _build _examples _python
-
       - name: Install MSYS2 
         uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
         with:
@@ -47,6 +44,9 @@ jobs:
           python-version: '3.9'
           architecture: 'x86'
       
+      - name: Create build directories
+        run: mkdir _install _build _examples _python
+
       - name: Add Python to PATH
         run: |
           set -x
