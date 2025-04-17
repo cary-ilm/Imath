@@ -57,15 +57,16 @@ jobs:
           export PYTHON_EXECUTABLE="$PYTHON_DIR/python.exe"
           echo "PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE" >> $GITHUB_ENV
 
-          echo "PYTHON_INSTALL_DIR=$GITHUB_WORKSPACE/_install/python" >> $GITHUB_ENV
+          echo "PYTHON_INSTALL_DIR=$(cygwin -u $GITHUB_WORKSPACE)/_install/python" >> $GITHUB_ENV
 
       - name: Set Up Conan
         run: |
           set -x
 
-          CONAN_ROOT=$(cygpath -u "$GITHUB_WORKSPACE/_conan")
+          CONAN_ROOT=$(cygpath -u "$GITHUB_WORKSPACE)")/_conan
 
-          python -m pip install --upgrade pip "numpy<2" conan pybind11
+          $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
+
           conan profile detect
           conan install \
             --output-folder=$CONAN_ROOT \
@@ -78,8 +79,6 @@ jobs:
             --settings compiler.version=14 \
             --settings compiler.libcxx=libstdc++11 \
             --settings arch=x86
-
-          export PATH="$PYTHON_DIR:$PATH"
 
           echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=$CONAN_ROOT/conan_toolchain.cmake" >> $GITHUB_ENV
