@@ -30,6 +30,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Create build directories
+        run: mkdir _install _build _examples _python
+
       - name: Install MSYS2 
         uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
         with:
@@ -44,191 +47,75 @@ jobs:
           python-version: '3.9'
           architecture: 'x86'
       
-      - name: Locate Python and python39.dll (powershell)
-        run: |
-          Write-Host "### Python executable path"
-          python -c "import sys; print('Python executable:', sys.executable)"
-      
-          Write-Host "### PATH environment variable"
-          python -c "import os; print('PATH:', os.environ.get('PATH'))"
-      
-          Write-Host "### Locate python39.dll (if present)"
-          $dllPath = & where.exe python39.dll 2>$null
-          if ($dllPath) {
-            Write-Host "Found python39.dll at: $dllPath"
-          } else {
-            Write-Host "python39.dll not found"
-          }
-      
-          Write-Host "### sysconfig paths"
-          python -c "import sysconfig; print(sysconfig.get_paths())"
-      
-          Write-Host "### Extract DLL_PATH from stdlib path"
-          $stdlibPath = python -c "import sysconfig; print(sysconfig.get_paths()['stdlib'])"
-          $dllDir = Split-Path $stdlibPath -Parent
-          Write-Host "DLL_PATH=$dllDir"
-          Add-Content -Path $env:GITHUB_ENV -Value "DLL_PATH=$dllDir"
-      
-          Write-Host "### Locate Python executable"
-          $pythonExe = Get-Command python | Select-Object -ExpandProperty Source
-          Write-Host "PYTHON_EXECUTABLE=$pythonExe"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXECUTABLE=$pythonExe"
-        shell: pwsh
-
-      - name: Test PATH
-        shell: pwsh
-        run: |
-          Write-Host "### Set up PATH"
-          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
-      
-          Write-Host "### Print PATH entries"
-          $env:PATH -split ';' | ForEach-Object { Write-Host "  $_" }
-      
-          Write-Host "### Set up PYTHONPATH"
-          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
-      
-          Write-Host "### Run Python test"
-          & "$env:PYTHON_EXECUTABLE" "$env:GITHUB_WORKSPACE\src\pybind11\PyBindImathTest\test_import_pybindimath.py"
-
-      - name: Locate Python and python39.dll
-        run: |
-          set -x
-          
-          # Print out Python executable path
-          python -c "import sys; print('Python executable:', sys.executable)"
-          
-          # Print the PATH to check for the Python directory
-          python -c "import os; print('PATH:', os.environ.get('PATH'))"
-          
-          # Optionally, you can try to locate python39.dll using 'where' command on Windows
-          where python39.dll || echo "python39.dll not found"
-
-          python -c "import sysconfig; print(sysconfig.get_paths())"
-          
-          PYTHON_DLL=$(python -c "import sysconfig; print(sysconfig.get_paths()['stdlib'])")
-          DLL_PATH=$(dirname $PYTHON_DLL)
-          echo "DLL_PATH=$DLL_PATH" >> $GITHUB_ENV
-          
-          PYTHON_EXECUTABLE=$(which python)
-          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-          
-        shell: bash
-
-      - name: Create build directories
-        run: mkdir _install _build _examples _python
-        shell: bash
-
-      - name: Test PATH
+      - name: Add Python to PATH
         run: |
           set -x
 
-          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
-          "${PYTHON_EXECUTABLE}" -c "import os; print('PATH:'); [print('  ', p) for p in os.environ['PATH'].split(os.pathsep)]"
+          export PYTHON_DIR=$(cygpath -u "$pythonLocation")
+          echo "PYTHON_DIR=$PYTHON_DIR" >> "$GITHUB_ENV"
 
-          export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
-          "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
+          export PYTHON_EXECUTABLE="$PYTHON_DIR/python.exe"
+          echo "PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE" >> $GITHUB_ENV
 
-        shell: msys2 {0}
+          echo "PYTHON_INSTALL_DIR=$GITHUB_WORKSPACE/_install/python" >> $GITHUB_ENV
 
       - name: Set Up Conan
         run: |
-          CONAN_ROOT="${{ github.workspace }}/_conan"
-          conan_args=("install")
-          conan_args+=("--output-folder=${CONAN_ROOT}")
-          conan_args+=("--build=missing")
-          conan_args+=("--generator" "CMakeDeps")
-          conan_args+=("--generator" "CMakeToolchain")
-          conan_args+=("--settings" "build_type=Release")
-          conan_args+=("--requires=pybind11/2.11.1")
-          conan_args+=("--settings" "compiler=gcc")
-          conan_args+=("--settings" "compiler.version=14")
-          conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-          conan_args+=("--settings" "arch=x86")
-          python -m pip install --upgrade pip "numpy<2" conan
+          set -x
+
+          CONAN_ROOT=$(cygpath -u "$GITHUB_WORKSPACE/_conan")
+
+          python -m pip install --upgrade pip "numpy<2" conan pybind11
           conan profile detect
-          echo conan "${conan_args[@]}"
-          conan "${conan_args[@]}"
-          echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
-          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-        shell: bash
+          conan install \
+            --output-folder=$CONAN_ROOT \
+            --build=missing \
+            --generator CMakeDeps \
+            --generator CMakeToolchain \
+            --settings build_type=Release \
+            --requires=pybind11/2.11.1 \
+            --settings compiler=gcc \
+            --settings compiler.version=14 \
+            --settings compiler.libcxx=libstdc++11 \
+            --settings arch=x86
 
-      - name: Install Python Dependencies
-        run: |
-          pip install pybind11
-          pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
+          export PATH="$PYTHON_DIR:$PATH"
+
+          echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=$CONAN_ROOT/conan_toolchain.cmake" >> $GITHUB_ENV
+          export pybind11_DIR=$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')
           echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
-          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          PYTHON_EXECUTABLE=$(which python)
-          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
-        shell: bash
 
-      - name: Construct CMake command
+      - name: Configure
         run: |
-          cmake_args=("-B" "." "-S" "..")
-          cmake_args+=("-DCMAKE_INSTALL_PREFIX=../_install")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=Release")
-          cmake_args+=("-DCMAKE_CXX_STANDARD=17")
-          cmake_args+=("-DBUILD_SHARED_LIBS=ON")
-          cmake_args+=("-DPYBIND11=ON")
-          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
-          cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
-          cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
-          cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
-          cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
-          cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
+          cmake -B . -S .. \
+            -DCMAKE_INSTALL_PREFIX=../_install \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DPYBIND11=ON \
+            -DCMAKE_VERBOSE_MAKEFILE=ON \
+            -DPYTHON_INSTALL_DIR="$PYTHON_INSTALL_DIR" \
+            -Dpybind11_DIR=$pybind11_DIR \
+            -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 
-          quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
-        working-directory: _build
-        shell: bash
-
-      - name: Configure & Build (msys2) # requires msys2 shell
+      - name: Build
         run: |
-          cmake --version
-          cmake ${{ env.CMAKE_ARGS }}
-          cmake --build . --target install --config Release
-        working-directory: _build
-        shell: msys2 {0}
-
-      - name: Test Pybind11  (pwsh)
-        shell: pwsh
-        run: |
-          Write-Host "### Set up PATH"
-          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
-      
-          Write-Host "### Set up PYTHONPATH"
-          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
-      
-          Write-Host "### Run PyBindImathTest"
-          & "$env:PYTHON_EXECUTABLE" "$env:GITHUB_WORKSPACE\src\pybind11\PyBindImathTest\test_import_pybindimath.py"
-      
-      - name: Test (pwsh)
-        shell: pwsh
-        working-directory: _build
-        run: |
-          Write-Host "### Set up PATH"
-          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
-      
-          Write-Host "### Set up PYTHONPATH"
-          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
-      
-          Write-Host "### Run cmake build target test"
-          cmake --build . --target test --config Release
+          cmake --build _build --target install --config Release
 
       - name: Test Pybind11
         run: |
           set -x
-          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
-          export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
-          "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
-        shell: msys2 {0}
+          export PATH=$PYTHON_DIR:$PATH
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
+          $PYTHON_EXECUTABLE src/pybind11/PyBindImathTest/test_import_pybindimath.py
           
       - name: Test
         run: |
-          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
-          export PYTHONPATH="${{ github.workspace }}/_install/python"
+          set -x
+          export PATH=$PYTHON_DIR:$PATH
+          export PYTHONPATH=$GITHUB_WORKSPACE/_install/python
           cmake --build . --target test --config Release
-        shell: bash
         working-directory: _build
           
