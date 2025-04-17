@@ -67,9 +67,6 @@ jobs:
 
           $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
 
-          where conan
-          where cmake
-          
           export USER_BASE=$(cygpath -u "$($PYTHON_EXECUTABLE -m site --user-base)")
           export BIN_DIR="$USER_BASE/Scripts"
           export CMAKE_BIN="$BIN_DIR/cmake.exe"
