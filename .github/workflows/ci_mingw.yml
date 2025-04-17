@@ -44,6 +44,52 @@ jobs:
           python-version: '3.9'
           architecture: 'x86'
       
+      - name: Locate Python and python39.dll (powershell)
+        run: |
+          Write-Host "### Python executable path"
+          python -c "import sys; print('Python executable:', sys.executable)"
+      
+          Write-Host "### PATH environment variable"
+          python -c "import os; print('PATH:', os.environ.get('PATH'))"
+      
+          Write-Host "### Locate python39.dll (if present)"
+          $dllPath = & where.exe python39.dll 2>$null
+          if ($dllPath) {
+            Write-Host "Found python39.dll at: $dllPath"
+          } else {
+            Write-Host "python39.dll not found"
+          }
+      
+          Write-Host "### sysconfig paths"
+          python -c "import sysconfig; print(sysconfig.get_paths())"
+      
+          Write-Host "### Extract DLL_PATH from stdlib path"
+          $stdlibPath = python -c "import sysconfig; print(sysconfig.get_paths()['stdlib'])"
+          $dllDir = Split-Path $stdlibPath -Parent
+          Write-Host "DLL_PATH=$dllDir"
+          Add-Content -Path $env:GITHUB_ENV -Value "DLL_PATH=$dllDir"
+      
+          Write-Host "### Locate Python executable"
+          $pythonExe = Get-Command python | Select-Object -ExpandProperty Source
+          Write-Host "PYTHON_EXECUTABLE=$pythonExe"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXECUTABLE=$pythonExe"
+        shell: pwsh
+
+      - name: Test PATH
+        shell: pwsh
+        run: |
+          Write-Host "### Set up PATH"
+          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
+      
+          Write-Host "### Print PATH entries"
+          $env:PATH -split ';' | ForEach-Object { Write-Host "  $_" }
+      
+          Write-Host "### Set up PYTHONPATH"
+          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
+      
+          Write-Host "### Run Python test"
+          & "$env:PYTHON_EXECUTABLE" "$env:GITHUB_WORKSPACE\src\pybind11\PyBindImathTest\test_import_pybindimath.py"
+
       - name: Locate Python and python39.dll
         run: |
           set -x
