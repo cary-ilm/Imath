@@ -137,17 +137,17 @@ jobs:
         
       - name: Test Pybind11
         run: |
-          export XPATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;${{ env.DLL_PATH }};${{ env.PATH }}
-
-          export PATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}
-          export PYTHONPATH=${{ github.workspace }}/_install/python
+          set -x
+          export XPATH="${{ github.workspace }}/_install/lib:${{ github.workspace }}/_install/bin:${{ env.DLL_PATH }}:${{ env.PATH }}"
+          export PATH="${{ github.workspace }}/_install/lib:${{ github.workspace }}/_install/bin:C:/hostedtoolcache/windows/Python/3.9.13/x86:${{ env.PATH }}"
+          export PYTHONPATH="${{ github.workspace }}/_install/python"
           "${{ env.PYTHON_EXECUTABLE }}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
           
       - name: Test
         run: |
-          export PATH=${{ github.workspace }}/_install/lib;${{ github.workspace }}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${{ env.PATH }}
-          export PYTHONPATH=${{ github.workspace }}/_install/python
+          export PATH="${{ github.workspace }}/_install/lib:${{ github.workspace }}/_install/bin:C:/hostedtoolcache/windows/Python/3.9.13/x86:${{ env.PATH }}"
+          export PYTHONPATH="${{ github.workspace }}/_install/python"
           cmake --build . --target test --config Release
         shell: bash
         working-directory: _build
