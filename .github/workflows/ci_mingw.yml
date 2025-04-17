@@ -191,19 +191,42 @@ jobs:
         working-directory: _build
         shell: msys2 {0}
 
+      - name: Test Pybind11  (pwsh)
+        shell: pwsh
+        run: |
+          Write-Host "### Set up PATH"
+          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
+      
+          Write-Host "### Set up PYTHONPATH"
+          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
+      
+          Write-Host "### Run PyBindImathTest"
+          & "$env:PYTHON_EXECUTABLE" "$env:GITHUB_WORKSPACE\src\pybind11\PyBindImathTest\test_import_pybindimath.py"
+      
+      - name: Test (pwsh)
+        shell: pwsh
+        working-directory: _build
+        run: |
+          Write-Host "### Set up PATH"
+          $env:PATH = "$env:GITHUB_WORKSPACE\_install\lib;$env:GITHUB_WORKSPACE\_install\bin;$env:DLL_PATH;$env:PATH"
+      
+          Write-Host "### Set up PYTHONPATH"
+          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\_install\python"
+      
+          Write-Host "### Run cmake build target test"
+          cmake --build . --target test --config Release
+
       - name: Test Pybind11
         run: |
           set -x
-          export XPATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
-          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;C:/hostedtoolcache/windows/Python/3.9.13/x86;${PATH}"
-          "${PYTHON_EXECUTABLE}" python -c "import os; print('XPATH=', os.environ['XPATH'].split(os.pathsep))"
+          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
           export PYTHONPATH="${GITHUB_WORKSPACE}/_install/python"
           "${PYTHON_EXECUTABLE}" src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: msys2 {0}
           
       - name: Test
         run: |
-          export PATH="${{ github.workspace }}/_install/lib:${{ github.workspace }}/_install/bin:C:/hostedtoolcache/windows/Python/3.9.13/x86:${{ env.PATH }}"
+          export PATH="${GITHUB_WORKSPACE}/_install/lib;${GITHUB_WORKSPACE}/_install/bin;${DLL_PATH}:${PATH}"
           export PYTHONPATH="${{ github.workspace }}/_install/python"
           cmake --build . --target test --config Release
         shell: bash
