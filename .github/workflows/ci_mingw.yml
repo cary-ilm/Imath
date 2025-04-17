@@ -63,12 +63,18 @@ jobs:
         run: |
           set -x
 
-          CONAN_ROOT=$(cygpath -u "$GITHUB_WORKSPACE)")/_conan
+          CONAN_ROOT="$(cygpath -u '$GITHUB_WORKSPACE')/_conan"
 
           $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
 
-          conan profile detect
-          conan install \
+          export BIN_DIR="$($PYTHON_EXECUTABLE -m site --user-base)/Scripts"
+          export CMAKE_BIN="$BIN_DIR/cmake.exe"
+          export CONAN_BIN="$BIN_DIR/conan.exe"
+
+          export PATH="$BIN_DIR/Scripts:$PATH"
+          
+          $CONAN_BIN profile detect
+          $CONAN_BIN install \
             --output-folder=$CONAN_ROOT \
             --build=missing \
             --generator CMakeDeps \
@@ -82,12 +88,13 @@ jobs:
 
           echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=$CONAN_ROOT/conan_toolchain.cmake" >> $GITHUB_ENV
+
           export pybind11_DIR=$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')
           echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
 
       - name: Configure
         run: |
-          cmake -B . -S .. \
+          $CMAKE_BIN -B . -S .. \
             -DCMAKE_INSTALL_PREFIX=../_install \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_CXX_STANDARD=17 \
@@ -101,7 +108,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build _build --target install --config Release
+          $CMAKE_BIN --build _build --target install --config Release
 
       - name: Test Pybind11
         run: |
@@ -115,6 +122,6 @@ jobs:
           set -x
           export PATH=$PYTHON_DIR:$PATH
           export PYTHONPATH=$GITHUB_WORKSPACE/_install/python
-          cmake --build . --target test --config Release
+          $CMAKE_BIN --build . --target test --config Release
         working-directory: _build
           
