@@ -63,10 +63,11 @@ jobs:
         run: |
           set -x
 
-          CONAN_ROOT="$(cygpath -u '$GITHUB_WORKSPACE')/_conan"
-
           $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
 
+          CONAN_ROOT="$(cygpath -u $GITHUB_WORKSPACE)/_conan"
+          echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
+ 
           export USER_BASE=$(cygpath -u "$($PYTHON_EXECUTABLE -m site --user-base)")
           export BIN_DIR="$USER_BASE/Scripts"
           export CMAKE_BIN="$BIN_DIR/cmake.exe"
@@ -89,10 +90,9 @@ jobs:
             --settings compiler.libcxx=libstdc++11 \
             --settings arch=x86
 
-          echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=$CONAN_ROOT/conan_toolchain.cmake" >> $GITHUB_ENV
 
-          export pybind11_DIR=$(cygpath -u "$(PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
           echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
 
       - name: Configure
