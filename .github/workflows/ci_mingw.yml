@@ -129,6 +129,7 @@ jobs:
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
           export PYTHONPATH=$PYTHON_INSTALL_DIR
+          cd $PYTHONPATH
           $PYTHON_EXECUTABLE src/pybind11/PyBindImathTest/test_import_pybindimath.py
           
       - name: Test
