@@ -121,7 +121,7 @@ jobs:
           set -x
           $CMAKE_BIN --build _build --target install --config Release
 
-          objdump -p "$INSTALL_DIR/python/pybindimath.cp39-win32.pyd" | grep 'DLL Name'
+          objdump -p "$PYTHON_INSTALL_DIR/pybindimath.cp39-win32.pyd" | grep 'DLL Name'
 
 
       - name: Test Pybind11
