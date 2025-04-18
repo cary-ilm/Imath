@@ -59,38 +59,7 @@ jobs:
 
           echo "PYTHON_INSTALL_DIR=$(cygwin -u $GITHUB_WORKSPACE)/_install/python" >> $GITHUB_ENV
 
-      - name: Set Up Conan
-        run: |
-          set -x
-
-          $PYTHON_EXECUTABLE -m pip install --upgrade --user pip "numpy<2" conan pybind11
-
-          CONAN_ROOT="$(cygpath -u $GITHUB_WORKSPACE)/_conan"
-          echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
- 
-          export BIN_DIR=$($PYTHON_EXECUTABLE -c "import site, os; print(os.path.join(os.path.dirname(site.USER_SITE), 'Scripts'))")
-          export CONAN_BIN="$BIN_DIR/conan.exe"
-          
-          export PATH="$BIN_DIR:$PATH"
-          
-          
-          $CONAN_BIN profile detect
-          $CONAN_BIN install \
-            --output-folder=$CONAN_ROOT \
-            --build=missing \
-            --generator CMakeDeps \
-            --generator CMakeToolchain \
-            --settings build_type=Release \
-            --requires=pybind11/2.11.1 \
-            --settings compiler=gcc \
-            --settings compiler.version=14 \
-            --settings compiler.libcxx=libstdc++11 \
-            --settings arch=x86
-
-          echo "CMAKE_TOOLCHAIN_FILE=$CONAN_ROOT/conan_toolchain.cmake" >> $GITHUB_ENV
-
-          export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
-          echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
+          $PYTHON_EXECUTABLE -m pip install --upgrade --user pip "numpy<2" pybind11
 
       - name: Configure
         run: |
@@ -112,9 +81,7 @@ jobs:
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DPYTHON_INSTALL_DIR="$PYTHON_INSTALL_DIR" \
             -Dpybind11_DIR=$pybind11_DIR \
-            -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE \
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-
 
       - name: Build
         run: |
