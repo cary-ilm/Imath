@@ -68,14 +68,12 @@ jobs:
           CONAN_ROOT="$(cygpath -u $GITHUB_WORKSPACE)/_conan"
           echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
  
-          export USER_BASE=$(cygpath -u "$($PYTHON_EXECUTABLE -m site --user-base)")
-          export BIN_DIR="$USER_BASE/Scripts"
-          export CMAKE_BIN="$BIN_DIR/cmake.exe"
+          export BIN_DIR=$($PYTHON_EXECUTABLE -c "import site, os; print(os.path.join(os.path.dirname(site.USER_SITE), 'Scripts'))")
           export CONAN_BIN="$BIN_DIR/conan.exe"
-
+          
           export PATH="$BIN_DIR:$PATH"
           
-          find $USER_BASE
+          export CMAKE_BIN="cmake.exe"
           
           $CONAN_BIN profile detect
           $CONAN_BIN install \
