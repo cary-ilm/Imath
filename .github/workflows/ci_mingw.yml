@@ -61,6 +61,9 @@ jobs:
 
           $PYTHON_EXECUTABLE -m pip install --upgrade --user pip "numpy<2" pybind11
 
+          export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
+
       - name: Configure
         run: |
           set -x
