@@ -63,7 +63,7 @@ jobs:
         run: |
           set -x
 
-          $PYTHON_EXECUTABLE -m pip install --upgrade pip "numpy<2" conan pybind11
+          $PYTHON_EXECUTABLE -m pip install --upgrade --user pip "numpy<2" conan pybind11
 
           CONAN_ROOT="$(cygpath -u $GITHUB_WORKSPACE)/_conan"
           echo "CONAN_ROOT=$CONAN_ROOT" >> $GITHUB_ENV
