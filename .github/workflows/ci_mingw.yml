@@ -73,7 +73,6 @@ jobs:
           
           export PATH="$BIN_DIR:$PATH"
           
-          export CMAKE_BIN="cmake.exe"
           
           $CONAN_BIN profile detect
           $CONAN_BIN install \
@@ -95,6 +94,12 @@ jobs:
 
       - name: Configure
         run: |
+          set -x
+          
+          which cmake
+          export CMAKE_BIN="cmake.exe"
+          echo "CMAKE_BIN=$CMAKE_BIN" >> $GITHUB_ENV
+
           $CMAKE_BIN -B . -S .. \
             -DCMAKE_INSTALL_PREFIX=../_install \
             -DCMAKE_BUILD_TYPE=Release \
@@ -109,6 +114,7 @@ jobs:
 
       - name: Build
         run: |
+          set -x
           $CMAKE_BIN --build _build --target install --config Release
 
       - name: Test Pybind11
