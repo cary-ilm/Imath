@@ -100,8 +100,11 @@ jobs:
           export CMAKE_BIN="cmake.exe"
           echo "CMAKE_BIN=$CMAKE_BIN" >> $GITHUB_ENV
 
+          export INSTALL_DIR=$(cygpath -u $GITHUB_WORKSPACE)/_install
+          echo "INSTALL_DIR=$INSTALL_DIR" >> GITHUB_ENV
+          
           $CMAKE_BIN -B _build -S . \
-            -DCMAKE_INSTALL_PREFIX=_install \
+            -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_CXX_STANDARD=17 \
             -DBUILD_SHARED_LIBS=ON \
@@ -112,15 +115,19 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE \
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 
+
       - name: Build
         run: |
           set -x
           $CMAKE_BIN --build _build --target install --config Release
 
+          objdump -p $INSTALL_DIR/python/pybindimath.cp39-win32.pyd | grep 'DLL Name'
+
+
       - name: Test Pybind11
         run: |
           set -x
-          export PATH=$PYTHON_DIR:$PATH
+          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           $PYTHON_EXECUTABLE src/pybind11/PyBindImathTest/test_import_pybindimath.py
           
