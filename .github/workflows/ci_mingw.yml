@@ -100,8 +100,8 @@ jobs:
           export CMAKE_BIN="cmake.exe"
           echo "CMAKE_BIN=$CMAKE_BIN" >> $GITHUB_ENV
 
-          $CMAKE_BIN -B . -S .. \
-            -DCMAKE_INSTALL_PREFIX=../_install \
+          $CMAKE_BIN -B _build -S . \
+            -DCMAKE_INSTALL_PREFIX=_install \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_CXX_STANDARD=17 \
             -DBUILD_SHARED_LIBS=ON \
