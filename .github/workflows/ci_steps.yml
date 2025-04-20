@@ -103,7 +103,7 @@ jobs:
         shell: bash
 
       - name: Set Up Conan
-        if: ( inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && inputs.msystem == '' )
+        if: ( inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && inputs.msystem == '' 
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
