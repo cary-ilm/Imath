@@ -94,7 +94,7 @@ jobs:
           export PYTHON_EXECUTABLE="$PYTHON_DIR/python.exe"
           echo "PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE" >> $GITHUB_ENV
 
-          $PYTHON_EXECUTABLE -m pip install --upgrade pip pybind11 numpy            
+          $PYTHON_EXECUTABLE -m pip install --upgrade pip pybind11 "numpy<2"            
         
           export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
           echo pybind11_DIR="$pybind11_DIR" >> $GITHUB_ENV
@@ -182,7 +182,7 @@ jobs:
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
-          if [ "${{ inputs.python }}" == 'ON' || "${{ inputs.pybind11 }}" == 'ON' ]; then
+          if [[ "${{ inputs.python }}" == "ON" || "${{ inputs.pybind11 }}" == "ON" ]]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
               NUMPY_INCLUDE=$($PYTHON_EXECUTABLE -c "import numpy; print(numpy.get_include())")
               cmake_args+=("-DNumpy_INCLUDE_DIR=$NUMPY_INCLUDE")
