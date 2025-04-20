@@ -71,33 +71,51 @@ jobs:
           install: git
           pacboy: cc:p cmake:p 
 
+      - name: Install pybind11 for UCRT64
+        if: inputs.pybind11 == 'ON' && inputs.msystem == 'UCRT64'
+        run: pacboy -S python:p pybind11:p --noconfirm
+        shell: msys2 {0}
+
       - name: Set up Python for MINGW32
-        if: inputs.msystem == 'MINGW32'
+        if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           architecture: 'x86'
       
-      - name: Install pybind11 for UCRT64
-        if: inputs.msystem == 'UCRT64'
-        run: pacboy -S python:p pybind11:p --noconfirm
-        shell: msys2 {0}
+      - name: Install pybind11 for MINGW32
+        if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
+        run: |
+          export PYTHON_DIR=$(cygpath -u "$pythonLocation")
+          echo "PYTHON_DIR=$PYTHON_DIR" >> "$GITHUB_ENV"
+
+          export PYTHON_EXECUTABLE="$PYTHON_DIR/python.exe"
+          echo "PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE" >> $GITHUB_ENV
+
+          $PYTHON_EXECUTABLE -m pip install --upgrade pip pybind11             
+        
+          export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          echo pybind11_DIR="$pybind11_DIR" >> $GITHUB_ENV
+        shell: bash
 
       - name: Create build directories
         run: mkdir _install _build _examples _python
         shell: bash
 
+      - name: Install pybind11
+      
       - name: Set Up Conan
-        if: inputs.python == 'ON' || ( inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32' )
+        if: ( inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && inputs.msystem == '' )
         run: |
           CONAN_ROOT="${{ github.workspace }}/_conan"
           conan_args=("install")
           conan_args+=("--output-folder=${CONAN_ROOT}")
           conan_args+=("--build=missing")
           conan_args+=("--generator" "CMakeDeps")
+          
           conan_args+=("--generator" "CMakeToolchain")
           conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
-          if [[ "${{ inputs.pybind11 }}" == "ON" && "${{ inputs.msystem }}" == "MINGW32" ]]; then
+          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
             conan_args+=("--requires=pybind11/2.11.1")
           fi
           if [[ "${{ inputs.python }}" == "ON" ]]; then
@@ -107,16 +125,6 @@ jobs:
             conan_args+=("--options" "boost/*:without_format=False")
             conan_args+=("--options" "boost/*:shared=True")
           fi
-          if [[ "${{ inputs.msystem }}" != "" ]]; then
-            conan_args+=("--settings" "compiler=gcc")
-            conan_args+=("--settings" "compiler.version=14")
-            conan_args+=("--settings" "compiler.libcxx=libstdc++11")
-            if [[ "${{ inputs.msystem }}" == "UCRT64" ]]; then
-              conan_args+=("--settings" "arch=x86_64")
-            else
-              conan_args+=("--settings" "arch=x86")
-            fi
-          fi
           python -m pip install --upgrade pip "numpy<2" conan
           conan profile detect
           echo conan "${conan_args[@]}"
@@ -124,20 +132,6 @@ jobs:
           echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
           echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Install Python Dependencies
-        if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
-        run: |
-          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-              pip install pybind11
-              pybind11_DIR=$(python -c 'import pybind11; print(pybind11.get_cmake_dir())')
-              echo "pybind11_DIR=$pybind11_DIR" >> $GITHUB_ENV
-          fi
-          echo "PYTHON_INSTALL_DIR=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          echo "PYTHONPATH=${{ github.workspace }}/_install/python" >> $GITHUB_ENV
-          PYTHON_EXECUTABLE=$(which python)
-          echo "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}" >> $GITHUB_ENV
         shell: bash
 
       - name: Construct CMake command
