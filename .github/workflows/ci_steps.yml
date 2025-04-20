@@ -94,18 +94,18 @@ jobs:
           install: git
           pacboy: cc:p cmake:p 
 
-      - name: Install pybind11 for UCRT64
-        if: inputs.pybind11 == 'ON' && inputs.msystem == 'UCRT64'
-        run: pacboy -S python:p pybind11:p --noconfirm
-        shell: msys2 {0}
-
-      - name: Set up Python for MINGW32
+      - name: Install python for MINGW32
         if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           architecture: 'x86'
       
+      - name: Install python for UCRT64
+        if: inputs.pybind11 == 'ON' && inputs.msystem == 'UCRT64'
+        run: pacboy -S python:p pybind11:p --noconfirm
+        shell: msys2 {0}
+
       - name: Set Up Python Variables
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
@@ -126,8 +126,8 @@ jobs:
 
         shell: bash
         
-      - name: Install pybind11 for MINGW32
-        if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
+      - name: Install pybind11 
+        if: inputs.pybind11 == 'ON'
         run: |
           set -x
 
@@ -140,7 +140,7 @@ jobs:
 
       - name: Set Up Conan
         # conan is required for Boost.python.
-        # Boost.python doesn't build under msys2, so they all have inputs.pyton=OFF,
+        # Boost.python doesn't build under msys2, so msys2 jobs all have inputs.pyton=OFF,
         # hence the conan configuration doesn't have to support msys2
         if: inputs.python == 'ON'
         run: |
@@ -252,7 +252,7 @@ jobs:
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
           export PYTHONPATH=$PYTHON_INSTALL_DIR
-          $PYTHON $WORKSPACE/test_import_pybind11.py
+          $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
       - name: Test Python
@@ -261,7 +261,7 @@ jobs:
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
           export PYTHONPATH=$PYTHON_INSTALL_DIR
-          $PYTHON $WORKSPACE/test_import_python.py
+          $PYTHON $WORKSPACE/src/python/PyImathTest/test_import_imath.py
         shell: bash
 
       - name: Test
