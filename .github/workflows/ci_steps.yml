@@ -68,7 +68,9 @@ jobs:
 
           mkdir _install _build _examples _python
 
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
+          if [ -n "${{ inputs.msystem }}" ]; then
+              # convert backslashed Windows paths to Linuxe style,
+              # i.e. convert D:\Imath /d/
               WORKSPACE=$(cygpath -u "$GITHUB_WORKSPACE")
           else
               WORKSPACE=$GITHUB_WORKSPACE
@@ -80,6 +82,8 @@ jobs:
 
           INSTALL_DIR=$WORKSPACE/_install
           echo "INSTALL_DIR=$INSTALL_DIR" >> $GITHUB_ENV
+
+        shell: bash
 
       - name: Install MSYS2 ${{ inputs.msystem }}
         if: inputs.msystem != ''
@@ -245,14 +249,19 @@ jobs:
       - name: Test Pybind11
         if: inputs.pybind11 == 'ON'
         run: |
-          python src/pybind11/PyBindImathTest/test_import_pybindimath.py
+          set -x
+          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
+          $PYTHON $WORKSPACE/test_import_pybind11.py
         shell: bash
 
       - name: Test Python
         if: inputs.python == 'ON'
         run: |
-          python src/python/PyImathTest/test_import_imath.py
-          python src/python/PyImathNumpyTest/test_import_imathnumpy.py
+          set -x
+          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
+          $PYTHON $WORKSPACE/test_import_python.py
         shell: bash
 
       - name: Test
