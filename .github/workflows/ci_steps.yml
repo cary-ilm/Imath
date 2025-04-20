@@ -102,8 +102,6 @@ jobs:
         run: mkdir _install _build _examples _python
         shell: bash
 
-      - name: Install pybind11
-      
       - name: Set Up Conan
         if: ( inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && inputs.msystem == '' )
         run: |
