@@ -116,7 +116,7 @@ jobs:
           PYTHON_INSTALL_DIR=$INSTALL_DIR/python
           echo "PYTHON_INSTALL_DIR=$PYTHON_INSTALL_DIR" >> $GITHUB_ENV
 
-        shell:bash
+        shell: bash
         
       - name: Install pybind11 for MINGW32
         if: inputs.pybind11 == 'ON' && inputs.msystem == 'MINGW32'
