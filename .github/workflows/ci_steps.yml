@@ -169,7 +169,7 @@ jobs:
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
-          cmake_args=("-B" "$BUILD_ROOT" "-S" "$ROOT")
+          cmake_args=("-B" "$BUILD_DIR" "-S" "$ROOT")
           cmake_args+=("-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR")
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
