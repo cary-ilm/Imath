@@ -69,16 +69,16 @@ jobs:
           mkdir _install _build _examples _python
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-              ROOT=$(cygpath -u "$GITHUB_WORKSPACE")
+              WORKSPACE=$(cygpath -u "$GITHUB_WORKSPACE")
           else
-              ROOT=$GITHUB_WORKSPACE
+              WORKSPACE=$GITHUB_WORKSPACE
           fi
-          echo "ROOT=$ROOT" >> $GITHUB_ENV
+          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
           
-          BUILD_DIR=$ROOT/_build
+          BUILD_DIR=$WORKSPACE/_build
           echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
 
-          INSTALL_DIR=$ROOT/_install
+          INSTALL_DIR=$WORKSPACE/_install
           echo "INSTALL_DIR=$INSTALL_DIR" >> $GITHUB_ENV
 
       - name: Install MSYS2 ${{ inputs.msystem }}
@@ -107,11 +107,15 @@ jobs:
         run: |
           set -x
           
-          export PYTHON_DIR=$(cygpath -u "$pythonLocation")
-          echo "PYTHON_DIR=$PYTHON_DIR" >> "$GITHUB_ENV"
-
-          export PYTHON_EXECUTABLE="$PYTHON_DIR/python.exe"
-          echo "PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE" >> $GITHUB_ENV
+          if [ -n "$pythonLocation" ]; then
+              PYTHON_LOCATION=$(cygpath -u "$pythonLocation")
+              PYTHON="$PYTHON_LOCATION/python.exe"
+          else
+              export PYTHON=$(which python)
+              export PYTHON_DIR=$(dirname $PYTHON)
+          fi
+          
+          echo "PYTHON=$PYTHON" >> $GITHUB_ENV
 
           PYTHON_INSTALL_DIR=$INSTALL_DIR/python
           echo "PYTHON_INSTALL_DIR=$PYTHON_INSTALL_DIR" >> $GITHUB_ENV
@@ -123,9 +127,9 @@ jobs:
         run: |
           set -x
 
-          $PYTHON_EXECUTABLE -m pip install --upgrade pip pybind11 "numpy<2"            
+          $PYTHON -m pip install --upgrade pip pybind11 "numpy<2"            
         
-          export pybind11_DIR=$(cygpath -u "$($PYTHON_EXECUTABLE -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          export pybind11_DIR=$(cygpath -u "$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')")
           echo pybind11_DIR="$pybind11_DIR" >> $GITHUB_ENV
 
         shell: bash
@@ -138,11 +142,11 @@ jobs:
         run: |
           set -x
 
-          CONAN_ROOT=$ROOT/_conan
-          echo "CONAN_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+          CONAN_DIR=$WORKSPACE/_conan
+          echo "CONAN_DIR=${CONAN_DIR}" >> $GITHUB_ENV
 
           conan_args=("install")
-          conan_args+=("--output-folder=${CONAN_ROOT}")
+          conan_args+=("--output-folder=${CONAN_DIR}")
           conan_args+=("--build=missing")
           conan_args+=("--generator" "CMakeDeps")
           
@@ -164,8 +168,8 @@ jobs:
           echo conan "${conan_args[@]}"
           conan "${conan_args[@]}"
 
-          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_ROOT}/conan_toolchain.cmake" >> $GITHUB_ENV
-          echo "Boost_ROOT=${CONAN_ROOT}" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=${CONAN_DIR}/conan_toolchain.cmake" >> $GITHUB_ENV
+          echo "Boost_ROOT=${CONAN_DIR}" >> $GITHUB_ENV
         shell: bash
 
       - name: Construct CMake command
@@ -175,7 +179,7 @@ jobs:
           # Construct the cmake command as a variable, so the
           # Configure step below can execute it, but also so we can store
           # in in the install_manifest as a debugging reference
-          cmake_args=("-B" "$BUILD_DIR" "-S" "$ROOT")
+          cmake_args=("-B" "$BUILD_DIR" "-S" "$WORKSPACE")
           cmake_args+=("-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR")
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
@@ -185,15 +189,15 @@ jobs:
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
           cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
-          if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
-              cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
+          if [ -n "${{ env.PYTHON }}" ]; then
+              cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON }}")
           fi
           PYTHON_ON="${{ inputs.python }}"
           PYBIND11_ON="${{ inputs.pybind11 }}"
           if [[ "$PYTHON_ON" == "ON" || "PYBIND11_ON" == "ON" ]]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
-              PYTHON_EXECUTABLE="${{ env.PYTHON_EXECUTABLE }}"
-              NUMPY_INCLUDE=$($PYTHON_EXECUTABLE -c "import numpy; print(numpy.get_include())")
+              PYTHON="${{ env.PYTHON }}"
+              NUMPY_INCLUDE=$($PYTHON -c "import numpy; print(numpy.get_include())")
               cmake_args+=("-DNumpy_INCLUDE_DIR=$NUMPY_INCLUDE")
           fi
           if [ -n "${{ env.pybind11_DIR }}" ]; then
