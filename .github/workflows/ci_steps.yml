@@ -182,7 +182,9 @@ jobs:
           if [ -n "${{ env.PYTHON_EXECUTABLE }}" ]; then
               cmake_args+=("-DPython3_EXECUTABLE=${{ env.PYTHON_EXECUTABLE }}")
           fi
-          if [[ "${{ inputs.python }}" == "ON" || "${{ inputs.pybind11 }}" == "ON" ]]; then
+          PYTHON_ON="${{ inputs.python }}"
+          PYBIND11_ON="${{ inputs.pybind11 }}"
+          if [[ "$PYTHON_ON" == "ON" || "PYBIND11_ON" == "ON" ]]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
               NUMPY_INCLUDE=$($PYTHON_EXECUTABLE -c "import numpy; print(numpy.get_include())")
               cmake_args+=("-DNumpy_INCLUDE_DIR=$NUMPY_INCLUDE")
