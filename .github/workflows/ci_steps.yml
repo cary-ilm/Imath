@@ -43,6 +43,10 @@ on:
         type: string
       BUILD_TESTING:
         type: string
+      IMATH_TEST_PYTHON:
+        type: string
+      IMATH_TEST_PYBIND11:
+        type: string
       namespace:
         type: string
       validate_install:
@@ -247,7 +251,7 @@ jobs:
         shell: msys2 {0}
 
       - name: Test Pybind11
-        if: inputs.pybind11 == 'ON'
+        if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON'
         run: |
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
@@ -256,7 +260,7 @@ jobs:
         shell: bash
 
       - name: Test Python
-        if: inputs.python == 'ON'
+        if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON'
         run: |
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
@@ -268,7 +272,8 @@ jobs:
         if: inputs.BUILD_TESTING == 'ON'
         run: |
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
-
+        shell: bash
+        
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
         # and remove the path prefix, so the manifest contains only

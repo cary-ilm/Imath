@@ -15,7 +15,15 @@ set(PYBINDIMATH_LIB_SUFFIX "-${IMATH_VERSION_API}" CACHE STRING "String added to
 set(PYBINDIMATH_LIB_PYTHONVER_ROOT "_Python" CACHE STRING "String added as a root to the identifier of the python version in the libraries")
 
 add_subdirectory(PyBindImath)
-if(BUILD_TESTING)
+
+##########################
+# Tests
+##########################
+include(CTest)
+
+option(IMATH_TEST_PYBIND11 "Include the pybind11 tests when BUILD_TESTING is on" ON)
+
+if(BUILD_TESTING AND IMATH_TEST_PYBIND11)
   enable_testing()
   add_subdirectory( PyBindImathTest )
 endif()

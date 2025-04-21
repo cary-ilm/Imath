@@ -156,6 +156,8 @@ jobs:
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
+      IMATH_TEST_PYTHON: ${{ matrix.IMATH_TEST_PYTHON || 'ON' }}
+      IMATH_TEST_PYBIND11: ${{ matrix.IMATH_TEST_PYBIND11 || 'ON' }}
       msystem: ${{ matrix.msystem }}
       validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
@@ -188,20 +190,24 @@ jobs:
             label: msys2-mingw32
             msystem: MINGW32
             python: 'OFF' # TODO: conan won't build boost.python w/msys2
+            IMATH_TEST_PYBIND11: 'OFF'
             
           - build: 7
             label: msys2-mingw32, static
             msystem: MINGW32
             BUILD_SHARED_LIBS: 'OFF'
             python: 'OFF' # TODO: conan won't build boost.python w/msys2
+            IMATH_TEST_PYBIND11: 'OFF'
 
           - build: 8
             label: msys2-ucrt64
             msystem: UCRT64
             python: 'OFF' # TODO: conan won't build boost.python w/msys2
+            IMATH_TEST_PYBIND11: 'OFF'
 
           - build: 9
             label: msys2-ucrt64, static
             msystem: UCRT64
             BUILD_SHARED_LIBS: 'OFF'
             python: 'OFF' # TODO: conan won't build boost.python w/msys2
+            IMATH_TEST_PYBIND11: 'OFF'

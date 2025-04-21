@@ -26,7 +26,10 @@ add_subdirectory( PyImathNumpy )
 # Tests
 ##########################
 include(CTest)
-if(BUILD_TESTING)
+
+option(IMATH_TEST_PYTHON "Include the python tests when BUILD_TESTING is on" ON)
+
+if(BUILD_TESTING AND IMATH_TEST_PYTHON)
   enable_testing()
   add_subdirectory( PyImathPythonTest )
   add_subdirectory( PyImathTest )
