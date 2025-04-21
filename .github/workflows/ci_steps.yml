@@ -291,7 +291,7 @@ jobs:
         if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
           set -x
-          objdump -p /a/Imath/Imath/_install/python/imath.pyd | grep 'DLL Name' 
+          objdump -p "$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")" | grep 'DLL Name'
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH="$PYTHON_INSTALL_DIR"
           $PYTHON "$WORKSPACE/src/python/PyImathTest/test_import_imath.py"
