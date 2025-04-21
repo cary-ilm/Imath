@@ -122,8 +122,8 @@ jobs:
               PYTHON_DIR=$(cygpath -u "$pythonLocation")
               PYTHON="$PYTHON_DIR/python.exe"
           else
-              export PYTHON=$(which python)
-              export PYTHON_DIR=$(dirname $PYTHON)
+              PYTHON=$(which python)
+              PYTHON_DIR=$(dirname $PYTHON)
           fi
           
           IMATH_PATH="$PYTHON_DIR:$IMATH_PATH"
@@ -143,7 +143,7 @@ jobs:
 
           $PYTHON -m pip install --upgrade pip pybind11 "numpy<2"            
         
-          export pybind11_DIR=$(cygpath -u "$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          pybind11_DIR=$(cygpath -u "$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')")
           echo pybind11_DIR="$pybind11_DIR" >> $GITHUB_ENV
 
         shell: bash
@@ -186,8 +186,9 @@ jobs:
           echo "Boost_ROOT=${CONAN_DIR}" >> $GITHUB_ENV
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-              CONAN_LIB=$(cygpath -u "${USERPROFILE}")/.conan2/p/lib
-              IMATH_PATH="$CONAN_LIB:$IMATH_PATH"
+              CONAN_LIB=$(cygpath -u ${USERPROFILE})/.conan2
+              BOOST_LIB=$(find "$CONAN_LIB" -type f -name "boost_python*.lib" -print -quit | xargs dirname)
+              IMATH_PATH="$BOOST_LIB:$IMATH_PATH"
               echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
           fi
 
