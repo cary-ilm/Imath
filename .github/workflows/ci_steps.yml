@@ -190,9 +190,7 @@ jobs:
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               CONAN_LIB=$(cygpath -u ${USERPROFILE})/.conan2/p/b
-              ls -l $CONAN_LIB
-              LIB=$(echo $CONAN_LIB/*/b/lib)
-              BOOST_LIB=$(find "$LIB" -type f -name "boost_python*.lib" -print -quit | xargs dirname)
+              BOOST_LIB=$(find "$CONAN_LIB" -type f -path "*/lib/boost_python*.lib" -print -quit | xargs dirname)
               IMATH_PATH="$BOOST_LIB:$IMATH_PATH"
               echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
           fi
