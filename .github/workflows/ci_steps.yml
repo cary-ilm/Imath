@@ -68,7 +68,7 @@ jobs:
 
           mkdir _install _build _examples _python
 
-          if [ -n "${{ inputs.msystem }}" ]; then
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
               # convert backslashed Windows paths to Linuxe style,
               # i.e. convert D:\Imath /d/
               WORKSPACE=$(cygpath -u "$GITHUB_WORKSPACE")
@@ -198,7 +198,7 @@ jobs:
           fi
           PYTHON_ON="${{ inputs.python }}"
           PYBIND11_ON="${{ inputs.pybind11 }}"
-          if [[ "$PYTHON_ON" == "ON" || "PYBIND11_ON" == "ON" ]]; then
+          if [[ "$PYTHON_ON" == "ON" || "$PYBIND11_ON" == "ON" ]]; then
               cmake_args+=("-DPYTHON_INSTALL_DIR=${{ env.PYTHON_INSTALL_DIR }}")
               PYTHON="${{ env.PYTHON }}"
               NUMPY_INCLUDE=$($PYTHON -c "import numpy; print(numpy.get_include())")
