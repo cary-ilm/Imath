@@ -190,8 +190,7 @@ jobs:
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               CONAN_LIB=$(cygpath -u ${USERPROFILE})/.conan2/p/b
-              find $CONAN_LIB
-              BOOST_DLL=$(find "$CONAN_LIB" -type f -path "*/boost_python*.dll" -print -quit)
+              BOOST_DLL=$(find "$CONAN_LIB" -type f -path "*/bin/boost_python*.dll" -print -quit)
               BOOST_LIB=$(dirname $BOOST_DLL)
               IMATH_PATH="$BOOST_LIB:$IMATH_PATH"
               echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
@@ -289,14 +288,22 @@ jobs:
           $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
+      - name: dumpbin
+        run: |
+            dumpbin /ALL "$PYTHON_INSTALL_DIR/imath.pyd"
+        shell: cmd
+        
       - name: Test Python
         if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
           set -x
-          objdump -p "$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")" | grep 'DLL Name'
+          IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")
+          if [[ -f "$IMATH_PYD" ]]; then
+              objdump -p "$IMATH_PYD" | grep 'DLL Name'
+          fi      
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH="$PYTHON_INSTALL_DIR"
-          $PYTHON "$WORKSPACE/src/python/PyImathTest/test_import_imath.py"
+          $PYTHON -v "$WORKSPACE/src/python/PyImathTest/test_import_imath.py"
         shell: bash
 
       - name: Test
