@@ -207,6 +207,8 @@ jobs:
               PYTHON="${{ env.PYTHON }}"
               NUMPY_INCLUDE=$($PYTHON -c "import numpy; print(numpy.get_include())")
               cmake_args+=("-DNumpy_INCLUDE_DIR=$NUMPY_INCLUDE")
+              cmake_args+=("-DIMATH_TEST_PYTHON=$IMATH_TEST_PYTHON")
+              cmake_args+=("-DIMATH_TEST_PYBIND11=$IMATH_TEST_PYBIND11")
           fi
           if [ -n "${{ env.pybind11_DIR }}" ]; then
               cmake_args+=("-Dpybind11_DIR=${{ env.pybind11_DIR }}")
