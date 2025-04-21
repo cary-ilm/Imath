@@ -87,6 +87,9 @@ jobs:
           INSTALL_DIR=$WORKSPACE/_install
           echo "INSTALL_DIR=$INSTALL_DIR" >> $GITHUB_ENV
 
+          IMATH_PATH="$INSTALL_DIR/bin:$INSTALL_DIR/lib"
+          echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
+          
         shell: bash
 
       - name: Install MSYS2 ${{ inputs.msystem }}
@@ -116,12 +119,15 @@ jobs:
           set -x
           
           if [ -n "$pythonLocation" ]; then
-              PYTHON_LOCATION=$(cygpath -u "$pythonLocation")
-              PYTHON="$PYTHON_LOCATION/python.exe"
+              PYTHON_DIR=$(cygpath -u "$pythonLocation")
+              PYTHON="$PYTHON_DIR/python.exe"
           else
               export PYTHON=$(which python)
               export PYTHON_DIR=$(dirname $PYTHON)
           fi
+          
+          IMATH_PATH="$PYTHON_DIR:$IMATH_PATH"
+          echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
           
           echo "PYTHON=$PYTHON" >> $GITHUB_ENV
 
@@ -178,6 +184,13 @@ jobs:
 
           echo "CMAKE_TOOLCHAIN_FILE=${CONAN_DIR}/conan_toolchain.cmake" >> $GITHUB_ENV
           echo "Boost_ROOT=${CONAN_DIR}" >> $GITHUB_ENV
+
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              CONAN_LIB="${USERPROFILE}/.conan2/p/lib"
+              IMATH_PATH="$CONAN_LIB:$IMATH_PATH"
+              echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
+          fi
+
         shell: bash
 
       - name: Construct CMake command
@@ -256,7 +269,7 @@ jobs:
         if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem == ''
         run: |
           set -x
-          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
+          export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
@@ -265,7 +278,7 @@ jobs:
         if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem != ''
         run: |
           set -x
-          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
+          export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
@@ -274,20 +287,24 @@ jobs:
         if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
           set -x
-          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
-          export PYTHONPATH=$PYTHON_INSTALL_DIR
-          $PYTHON $WORKSPACE/src/python/PyImathTest/test_import_imath.py
+          export PATH="$IMATH_PATH:$PATH"
+          export PYTHONPATH="$PYTHON_INSTALL_DIR"
+          $PYTHON "$WORKSPACE/src/python/PyImathTest/test_import_imath.py"
         shell: bash
 
       - name: Test
         if: inputs.BUILD_TESTING == 'ON' && inputs.msystem == ''
         run: |
+          export PATH="$IMATH_PATH:$PATH"
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
         shell: bash
         
       - name: Test (msys2)
         if: inputs.BUILD_TESTING == 'ON' && inputs.msystem != ''
         run: |
+          export PATH="$IMATH_PATH:$PATH"
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
         shell: msys2 {0}
         
