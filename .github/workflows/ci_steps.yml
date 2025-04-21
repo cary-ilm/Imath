@@ -253,7 +253,16 @@ jobs:
         shell: msys2 {0}
 
       - name: Test Pybind11
-        if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON'
+        if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem == ''
+        run: |
+          set -x
+          export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
+          export PYTHONPATH=$PYTHON_INSTALL_DIR
+          $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
+        shell: bash
+
+      - name: Test Pybind11 (msys2)
+        if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem != ''
         run: |
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
@@ -262,7 +271,7 @@ jobs:
         shell: bash
 
       - name: Test Python
-        if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON'
+        if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
           set -x
           export PATH=$PYTHON_DIR:$INSTALL_DIR/bin:$INSTALL_DIR/lib:$PATH
@@ -271,10 +280,16 @@ jobs:
         shell: bash
 
       - name: Test
-        if: inputs.BUILD_TESTING == 'ON'
+        if: inputs.BUILD_TESTING == 'ON' && inputs.msystem == ''
         run: |
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
         shell: bash
+        
+      - name: Test (msys2)
+        if: inputs.BUILD_TESTING == 'ON' && inputs.msystem != ''
+        run: |
+          ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
+        shell: msys2 {0}
         
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
