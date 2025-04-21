@@ -186,7 +186,7 @@ jobs:
           echo "Boost_ROOT=${CONAN_DIR}" >> $GITHUB_ENV
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-              CONAN_LIB="${USERPROFILE}/.conan2/p/lib"
+              CONAN_LIB=$(cygpath -u "${USERPROFILE}")/.conan2/p/lib
               IMATH_PATH="$CONAN_LIB:$IMATH_PATH"
               echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
           fi
