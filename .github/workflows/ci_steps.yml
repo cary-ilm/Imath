@@ -73,7 +73,7 @@ jobs:
           mkdir _install _build _examples _python
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-              # convert backslashed Windows paths to Linuxe style,
+              # convert backslashed Windows paths to Linux style,
               # i.e. convert D:\Imath /d/
               WORKSPACE=$(cygpath -u "$GITHUB_WORKSPACE")
           else
@@ -143,7 +143,10 @@ jobs:
 
           $PYTHON -m pip install --upgrade pip pybind11 "numpy<2"            
         
-          pybind11_DIR=$(cygpath -u "$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')")
+          pybind11_DIR=$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              pybind11_DIR=$(cygpath -u "$pybind11_DIR")
+          fi
           echo pybind11_DIR="$pybind11_DIR" >> $GITHUB_ENV
 
         shell: bash
