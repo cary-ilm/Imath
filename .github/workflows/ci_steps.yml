@@ -297,6 +297,10 @@ jobs:
         if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem == ''
         run: |
           set -x
+          IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/pybindimath.cp39-win_amd64.pyd")
+          if [[ -f "$IMATH_PYD" ]]; then
+              objdump -p "$IMATH_PYD" | grep 'DLL Name'
+          fi      
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
@@ -316,10 +320,10 @@ jobs:
         if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
           set -x
-          #IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")
-          #if [[ -f "$IMATH_PYD" ]]; then
-          #    objdump -p "$IMATH_PYD" | grep 'DLL Name'
-          #fi      
+          IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")
+          if [[ -f "$IMATH_PYD" ]]; then
+              objdump -p "$IMATH_PYD" | grep 'DLL Name'
+          fi      
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH="$PYTHON_INSTALL_DIR"
           $PYTHON -v "$WORKSPACE/src/python/PyImathTest/test_import_imath.py"

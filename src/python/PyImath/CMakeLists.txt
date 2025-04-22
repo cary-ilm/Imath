@@ -144,9 +144,12 @@ set(PYIMATH_MODULE_SOURCES
     PyImathBasicTypes.cpp
 )
 
-add_library(${PYIMATH_MODULE} MODULE ${PYIMATH_MODULE_SOURCES})
+# Build "imath", not "imath_d" in Debug.
+# Note this must appear before add_library
 
-set(CMAKE_DEBUG_POSTFIX "") # build "imath", not "imath_d" in Debug
+set(CMAKE_DEBUG_POSTFIX "")
+
+add_library(${PYIMATH_MODULE} MODULE ${PYIMATH_MODULE_SOURCES})
 
 # Ensure correct module extension on Windows
 if(WIN32)
