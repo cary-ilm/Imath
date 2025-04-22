@@ -332,7 +332,7 @@ jobs:
         with:
 
           name: ${{ env.INSTALL_MANIFEST }}
-          path: $BUILD_DIR/${{ env.INSTALL_MANIFEST }}
+          path: ${{ env.BUILD_DIR }}/${{ env.INSTALL_MANIFEST }}
 
       - name: Validate install
         if: inputs.validate_install == 'ON'
