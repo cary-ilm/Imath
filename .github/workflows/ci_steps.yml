@@ -288,18 +288,6 @@ jobs:
           $PYTHON $WORKSPACE/src/pybind11/PyBindImathTest/test_import_pybindimath.py
         shell: bash
 
-      - name: Use dumpbin to inspect pyd
-        shell: cmd
-        run: |
-          call "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
-          set /p VS_PATH=<vs_path.txt
-          call "%VS_PATH%\VC\Auxiliary\Build\vcvars32.bat"
-
-          bash -c "cygpath -w \"$PYTHON_INSTALL_DIR\"" > win_path.txt
-          set /p WIN_PATH=<win_path.txt
-
-          dumpbin /ALL "%WIN_PATH%\imath.pyd"
-
       - name: Test Python
         if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
         run: |
