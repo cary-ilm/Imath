@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
-message(STATUS "Configuring imath module")
 
 #
 # Declare the libPyImath library, identified by PYIMATH_LIBRARY
@@ -16,6 +15,8 @@ if (NOT "${PYIMATH_LIB_PYTHONVER_ROOT}" STREQUAL "")
 endif()
 
 set(PYIMATH_LIBRARY PyImath${PYTHON_VER_STRING}${PYIMATH_LIB_SUFFIX}) 
+
+message(STATUS "Configuring imath module and ${PYIMATH_LIBRARY} library")
 
 set(PYIMATH_SOURCES
     PyImath.cpp
@@ -159,6 +160,7 @@ set_target_properties(${PYIMATH_MODULE} PROPERTIES
 )
 
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
 target_link_libraries(${PYIMATH_MODULE} 
     PRIVATE
         ${PYIMATH_LIBRARY}

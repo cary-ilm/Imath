@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
-message(STATUS "Configuring pybindimath module")
-
 #
 # Declare the libPyImath library, identified by PYIMATH_LIBRARY
 #
@@ -18,6 +16,8 @@ if (NOT "${PYBINDIMATH_LIB_PYTHONVER_ROOT}" STREQUAL "")
 endif()
 
 set(PYBINDIMATH_LIBRARY PyBindImath${PYTHON_VER_STRING}${PYBINDIMATH_LIB_SUFFIX}) 
+
+message(STATUS "Configuring pybindimath module and ${PYBINDIMATH_LIBRARY} library")
 
 set(PYBINDIMATH_SOURCES
     PyBindImathFun.cpp

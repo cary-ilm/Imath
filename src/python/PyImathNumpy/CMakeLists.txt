@@ -3,19 +3,17 @@
 
 message(STATUS "Configuring imathnumpy module")
 
+#
+# Python module, identified by PYIMATHNUMPY_MODULE
+#
+
 set(PYIMATHNUMPY_MODULE imathnumpy)
 
-set(CMAKE_DEBUG_POSTFIX "")
+set(PYIMATHNUMPY_MODULE_SOURCES imathnumpymodule.cpp)
 
-add_library(${PYIMATHNUMPY_MODULE} MODULE imathnumpymodule.cpp)
+add_library(${PYIMATHNUMPY_MODULE} MODULE ${PYIMATHNUMPY_MODULE_SOURCES})
 
-target_link_libraries(${PYIMATHNUMPY_MODULE}
-      Imath::Config
-      PyImath::PyImath
-      Boost::boost
-      Boost::python
-      Python3::Module
-)
+set(CMAKE_DEBUG_POSTFIX "") # build "imath", not "imath_d" in Debug
 
 # Ensure correct module extension on Windows
 if(WIN32)
@@ -28,6 +26,7 @@ set_target_properties(${PYIMATHNUMPY_MODULE} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
 )
 
+# Ask python for the numpy include dir
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
     OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
@@ -37,9 +36,16 @@ execute_process(
 target_include_directories(${PYIMATHNUMPY_MODULE}
   PUBLIC ${NUMPY_INCLUDE_DIR} ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-if (IMATH_INSTALL)
+target_link_libraries(${PYIMATHNUMPY_MODULE}
+    PRIVATE
+        Imath::Config
+        PyImath::PyImath
+        Boost::boost
+        Boost::python
+        Python3::Module
+)
 
-  include(GNUInstallDirs)
+if (IMATH_INSTALL)
 
   #
   # Set the PYTHON_INSTALL_DIR but only if it's not already set,
