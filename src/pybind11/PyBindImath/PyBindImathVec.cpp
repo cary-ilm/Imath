@@ -106,20 +106,52 @@ vecFromList(const py::list& l)
     return v;
 }
 
+#include <type_traits>
+
+// Overload for Vec2
+template <typename Vec>
+typename std::enable_if<std::is_same<Vec, Vec2<typename Vec::BaseType>>::value, bool>::type
+lessThan(const Vec& a, const Vec& b)
+{
+    return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+}
+
+// Overload for Vec3
+template <typename Vec>
+typename std::enable_if<std::is_same<Vec, Vec3<typename Vec::BaseType>>::value, bool>::type
+lessThan(const Vec& a, const Vec& b)
+{
+    return (a.x < b.x) ||
+           (a.x == b.x && ((a.y < b.y) ||
+           (a.y == b.y && a.z < b.z)));
+}
+
+// Overload for Vec4
+template <typename Vec>
+typename std::enable_if<std::is_same<Vec, Vec4<typename Vec::BaseType>>::value, bool>::type
+lessThan(const Vec& a, const Vec& b)
+{
+    return (a.x < b.x) ||
+           (a.x == b.x && ((a.y < b.y) ||
+           (a.y == b.y && ((a.z < b.z) ||
+           (a.z == b.z && a.w < b.w)))));
+}
+#if XXX
 template <typename Vec>
 bool
 lessThan(const Vec& a, const Vec& b)
 {
-    if (std::is_same_v<Vec, Vec2<typename Vec::BaseType>>) {
+    if constexpr (std::is_same_v<Vec, Vec2<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && a.y < b.y);
-    } else if (std::is_same_v<Vec, Vec3<typename Vec::BaseType>>) {
+    } else if constexpr (std::is_same_v<Vec, Vec3<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && ((a.y < b.y) || (a.y == b.y && a.z < b.z)));
-    } else if (std::is_same_v<Vec, Vec4<typename Vec::BaseType>>) {
+    } else if constexpr (std::is_same_v<Vec, Vec4<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && ((a.y < b.y) || (a.y == b.y && ((a.z < b.z) || (a.z == b.z && a.w < b.w)))));
     }
     return false;
 }
-
+#endif
+    
 template <class Vec>
 std::string
 repr(const char* name, const Vec& v)
