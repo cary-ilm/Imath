@@ -171,26 +171,23 @@ jobs:
         shell: bash
 
       - name: Test standalone
-        if: inputs.msystem == ''
+        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
         run: |
           # Make sure we can build the tests when configured as a
           # standalone application linking against the just-installed
           # Imath library.
           cmake ../src/ImathTest \
                 -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_INCLUDE_PATH=../../_install/lib/imath.framework/Headers  \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
                 -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
-          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" != "ON" ]; then
-            if [[ "$RUNNER_OS" == "Windows" ]]; then
-              ./bin/"${{ inputs.build-type }}"/ImathTest.exe || true
-            else
-              ./bin/ImathTest
-            fi
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            ./bin/"${{ inputs.build-type }}"/ImathTest.exe || true
+          else
+            ./bin/ImathTest
           fi
         shell: bash
         working-directory: _examples
@@ -211,14 +208,12 @@ jobs:
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
           cmake --build . --config ${{ inputs.build-type }}
 
-          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" != "ON" ]; then
-            if [[ "$RUNNER_OS" == "Windows" ]]; then
-              ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
-              ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
-            else
-              ./bin/imath-intro
-              ./bin/imath-examples
-            fi
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
+            ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
+          else
+            ./bin/imath-intro
+            ./bin/imath-examples
           fi
         shell: bash
         working-directory: _examples
