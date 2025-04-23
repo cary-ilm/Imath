@@ -16,11 +16,11 @@
 #define _PyBindImath_h_
 
 namespace PyBindImath {
-__declspec(dllexport) void register_imath_fun(pybind11::module& m);
-__declspec(dllexport) void register_imath_vec(pybind11::module& m);
-__declspec(dllexport) void register_imath_box(pybind11::module& m);
-__declspec(dllexport) void register_imath_plane(pybind11::module& m);
-__declspec(dllexport) void register_imath_line(pybind11::module& m);
+PYBINDIMATH_EXPORT void register_imath_fun(pybind11::module& m);
+PYBINDIMATH_EXPORT void register_imath_vec(pybind11::module& m);
+PYBINDIMATH_EXPORT void register_imath_box(pybind11::module& m);
+PYBINDIMATH_EXPORT void register_imath_plane(pybind11::module& m);
+PYBINDIMATH_EXPORT void register_imath_line(pybind11::module& m);
 }
 
 #endif

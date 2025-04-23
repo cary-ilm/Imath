@@ -3,21 +3,9 @@
 // Copyright Contributors to the OpenEXR Project.
 //
 
-//#include "PyBindImath.h"
-#include <pybind11/pybind11.h>
-#include <pybind11/pytypes.h>
-#include <pybind11/stl.h>
-#include <pybind11/stl_bind.h>
-#include <pybind11/operators.h>
+#include "PyBindImath.h"
 #include <ImathEuler.h>
 
-namespace PyBindImath {
-__declspec(dllimport) void register_imath_fun(pybind11::module& m);
-__declspec(dllimport) void register_imath_vec(pybind11::module& m);
-__declspec(dllimport) void register_imath_box(pybind11::module& m);
-__declspec(dllimport) void register_imath_plane(pybind11::module& m);
-__declspec(dllimport) void register_imath_line(pybind11::module& m);
-}
 
 
 PYBIND11_MODULE(pybindimath, m)
