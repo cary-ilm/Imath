@@ -110,11 +110,11 @@ template <typename Vec>
 bool
 lessThan(const Vec& a, const Vec& b)
 {
-    if constexpr (std::is_same_v<Vec, Vec2<typename Vec::BaseType>>) {
+    if (std::is_same_v<Vec, Vec2<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && a.y < b.y);
-    } else if constexpr (std::is_same_v<Vec, Vec3<typename Vec::BaseType>>) {
+    } else if (std::is_same_v<Vec, Vec3<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && ((a.y < b.y) || (a.y == b.y && a.z < b.z)));
-    } else if constexpr (std::is_same_v<Vec, Vec4<typename Vec::BaseType>>) {
+    } else if (std::is_same_v<Vec, Vec4<typename Vec::BaseType>>) {
         return (a.x < b.x) || (a.x == b.x && ((a.y < b.y) || (a.y == b.y && ((a.z < b.z) || (a.z == b.z && a.w < b.w)))));
     }
     return false;
@@ -128,9 +128,9 @@ repr(const char* name, const Vec& v)
 
     std::stringstream s;
 
-    if constexpr (std::is_same_v<T, float>) {
+    if (std::is_same_v<T, float>) {
         s.precision(9);
-    } else if constexpr (std::is_same_v<T, double>) {
+    } else if (std::is_same_v<T, double>) {
         s.precision(17);
     }
     s << std::fixed;
