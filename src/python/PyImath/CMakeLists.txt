@@ -92,20 +92,19 @@ set(PYIMATH_HEADERS
 
 if(BUILD_SHARED_LIBS)
     add_library(${PYIMATH_LIBRARY} SHARED ${PYIMATH_SOURCES})
+    if(WIN32)
+        # IMATH_DLL controls the export declarations for Windows
+        target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
+
+        # PYIMATH_BUILD is used by PyImathExport.h to set
+        # PYIMATH_EXPORT to either dllexport or dllimport
+        target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
+    endif()
 else()
    add_library(${PYIMATH_LIBRARY} STATIC ${PYIMATH_SOURCES})
 endif()
 
 target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
-if(WIN32)
-    # IMATH_DLL controls the export declarations for Windows
-    target_compile_definitions(${PYIMATH_LIBRARY} PUBLIC IMATH_DLL)
-endif()
-
-# PYIMATH_BUILD is used by PyImathExport.h to set
-# PYIMATH_EXPORT to either dllexport or dllimport
-
-target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE PYIMATH_BUILD)
 
 add_library(PyImath::PyImath ALIAS ${PYIMATH_LIBRARY})
 

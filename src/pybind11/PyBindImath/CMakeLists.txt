@@ -35,21 +35,20 @@ set(PYBINDIMATH_HEADERS
 #
 
 if(BUILD_SHARED_LIBS)
-  add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+    add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+    if(WIN32)
+        # IMATH_DLL controls the export declarations for Windows
+        target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_DLL)
+
+        # PYBINDIMATH_BUILD is used by PyBindImathExport.h to set
+        # PYBINDIMATH_EXPORT to either dllexport or dllimport
+        target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE PYBINDIMATH_BUILD)
+    endif()
 else()
-  add_library(${PYBINDIMATH_LIBRARY} STATIC ${PYBINDIMATH_SOURCES})
+    add_library(${PYBINDIMATH_LIBRARY} STATIC ${PYBINDIMATH_SOURCES})
 endif()
 
 target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
-if(WIN32)
-    # IMATH_DLL controls the export declarations for Windows
-    target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_DLL)
-endif()
-
-# PYBINDIMATH_BUILD is used by PyBindImathExport.h to set
-# PYBINDIMATH_EXPORT to either dllexport or dllimport
-
-target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE PYBINDIMATH_BUILD)
 
 set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
   SOVERSION ${IMATH_LIB_SOVERSION}
