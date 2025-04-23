@@ -19,7 +19,7 @@ using namespace boost::python;
 
 namespace PyImath {
 
-void
+PYIMATH_EXPORT void
 register_basicTypes()
 {
     class_<BoolArray> bclass = BoolArray::register_("Fixed length array of bool");

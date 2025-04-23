@@ -46,6 +46,11 @@ if(WIN32)
     target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_DLL)
 endif()
 
+# PYBINDIMATH_BUILD is used by PyBindImathExport.h to set
+# PYBINDIMATH_EXPORT to either dllexport or dllimport
+
+target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE PYBINDIMATH_BUILD)
+
 set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
   SOVERSION ${IMATH_LIB_SOVERSION}
   VERSION ${IMATH_LIB_VERSION}
