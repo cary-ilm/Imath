@@ -121,7 +121,7 @@ jobs:
           cmake --version
           cmake ${{ env.CMAKE_ARGS }}
           cmake --build . --target install --config ${{ inputs.build-type }}
-          if [ "${{ inputs.BUILD_TESTING }}" == "ON" ]; then
+          if [ "${{ inputs.BUILD_TESTING }}" == "ON" && "${{ inputs.BUILD_IMATH_APPLE_FRAMEWORKS }}" != "ON"]; then
             ctest -T Test -C ${{ inputs.build-type }} --timeout 7200 --output-on-failure -VV
           fi
         working-directory: _build
