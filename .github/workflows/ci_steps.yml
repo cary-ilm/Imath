@@ -355,8 +355,13 @@ jobs:
         # and remove the path prefix, so the manifest contains only
         # the local filenames.
         run: |
-          echo "# cmake ${{ env.CMAKE_ARGS }}" > "$BUILD_DIR/$INSTALL_MANIFEST"
-          sort $BUILD_DIR/install_manifest.txt | sed -e "s:^.*/_install/::" >> "$BUILD_DIR/$INSTALL_MANIFEST"
+          INSTALL_MANIFEST_PATH="$BUILD_DIR/$INSTALL_MANIFEST"
+          echo "# cmake ${{ env.CMAKE_ARGS }}" > $INSTALL_MANIFEST_PATH
+          sort $BUILD_DIR/install_manifest.txt | sed -e "s:^.*/_install/::" >> $INSTALL_MANIFEST_PATH
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              INSTALL_MANIFEST_PATH=$(cygpath -w $INSTALL_MANIFEST_PATH)
+          fi
+          echo INSTALL_MANIFEST_PATH=$INSTALL_MANIFEST_PATH >> $GITHUB_ENV
         shell: bash
 
       - name: Upload install_manifest.txt
@@ -365,7 +370,7 @@ jobs:
         with:
 
           name: ${{ env.INSTALL_MANIFEST }}
-          path: ${{ env.BUILD_DIR }}/${{ env.INSTALL_MANIFEST }}
+          path: ${{ env.INSTALL_MANIFEST_PATH }}
 
       - name: Validate install
         if: inputs.validate_install == 'ON'
