@@ -31,10 +31,20 @@ set(PYBINDIMATH_HEADERS
 )
 
 #
-# Shared Library
+# libPyBindImath library
 #
 
-add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+if(BUILD_SHARED_LIBS)
+  add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_SOURCES})
+else()
+  add_library(${PYBINDIMATH_LIBRARY} STATIC ${PYBINDIMATH_SOURCES})
+endif()
+
+target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
+if(WIN32)
+    # IMATH_DLL controls the export declarations for Windows
+    target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_DLL)
+endif()
 
 set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
   SOVERSION ${IMATH_LIB_SOVERSION}
