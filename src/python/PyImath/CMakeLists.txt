@@ -5,16 +5,8 @@
 #
 # Declare the libPyImath library, identified by PYIMATH_LIBRARY
 #
-# The name has a "_Python<major>_<minor>-<release>" suffix,
-# i.e. libPyImath_Python3_10-3_2.so, subject to
-# PYIMATH_LIB_PYTHONVER_ROOT and PYIMATH_LIB_SUFFIX
-#
 
-if (NOT "${PYIMATH_LIB_PYTHONVER_ROOT}" STREQUAL "")
-   set (PYTHON_VER_STRING "${PYIMATH_LIB_PYTHONVER_ROOT}${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
-endif()
-
-set(PYIMATH_LIBRARY PyImath${PYTHON_VER_STRING}${PYIMATH_LIB_SUFFIX}) 
+set(PYIMATH_LIBRARY PyImath${PYIMATH_LIB_SUFFIX})
 
 message(STATUS "Configuring imath module and ${PYIMATH_LIBRARY} library")
 

@@ -269,8 +269,6 @@ jobs:
               cmake_args+=("-DIMATH_LIB_SUFFIX=${{ inputs.namespace }}")
               cmake_args+=("-DPYIMATH_LIB_SUFFIX=PY_${{ inputs.namespace }}")
               cmake_args+=("-DPYBINDIMATH_LIB_SUFFIX=PYBIND_${{ inputs.namespace }}")
-              cmake_args+=("-DPYIMATH_LIB_PYTHONVER_ROOT='XXX'")
-              cmake_args+=("-DPYBINDIMATH_LIB_PYTHONVER_ROOT='XXX'")
           fi
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")

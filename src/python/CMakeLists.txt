@@ -3,8 +3,6 @@
 
 include(GNUInstallDirs)
 
-include(config/PyImathSetup.cmake)
-
 #if(POLICY CMP0177)
 #  cmake_policy(SET CMP0177 NEW)
 #endif()
@@ -24,6 +22,17 @@ find_package(Boost REQUIRED COMPONENTS python)
 if(NOT Boost_FOUND)
     message(FATAL_ERROR "Could not find Boost")
 endif()
+
+#
+# Python library suffix string, by default including python version and
+# Imath release number, e.g. "_Python3_12-3_4"
+#
+
+set(PYIMATH_LIB_SUFFIX
+    "_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}-${IMATH_VERSION_API}"
+    CACHE STRING
+    "Suffix string for python version and Imath release in library names"
+)
 
 #
 # PyImath and PyImathNumpy

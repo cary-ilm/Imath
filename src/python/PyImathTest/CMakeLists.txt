@@ -37,7 +37,7 @@ else()
   add_executable(PyImathTestC ${PYIMATH_TEST_SOURCES})
 
   set(PYIMATH_MODULE imath)
-  set(PYIMATH_LIBRARY PyImath_Python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}${IMATH_LIB_SUFFIX}) 
+  set(PYIMATH_LIBRARY PyImath${PYIMATH_LIB_SUFFIX})
 
   # Test of the python API.  Execute the test by invoking python
   # with the script as an argument, with PATH and PYTHONPATH set properly.
