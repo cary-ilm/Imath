@@ -178,6 +178,7 @@ jobs:
           # Imath library.
           cmake ../src/ImathTest \
                 -DCMAKE_PREFIX_PATH=../../_install \
+                -DCMAKE_FRAMEWORK_PATH=../../_install/lib
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
                 -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
@@ -203,6 +204,7 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake ../website/examples \
                 -DCMAKE_PREFIX_PATH=../../_install \
+                -DCMAKE_FRAMEWORK_PATH=../../_install/lib
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
           cmake --build . --config ${{ inputs.build-type }}
