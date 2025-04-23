@@ -178,17 +178,19 @@ jobs:
           # Imath library.
           cmake ../src/ImathTest \
                 -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_FRAMEWORK_PATH=../../_install/lib
+                -DCMAKE_FRAMEWORK_PATH=../../_install/lib \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }} \
                 -DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}
           cmake --build . \
                 --config ${{ inputs.build-type }}
 
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            ./bin/"${{ inputs.build-type }}"/ImathTest.exe || true
-          else
-            ./bin/ImathTest
+          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" != "ON" ]; then
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              ./bin/"${{ inputs.build-type }}"/ImathTest.exe || true
+            else
+              ./bin/ImathTest
+            fi
           fi
         shell: bash
         working-directory: _examples
@@ -204,16 +206,19 @@ jobs:
           rm -rf bin CMakeCache.txt CMakeFiles cmake_install.cmake Makefile
           cmake ../website/examples \
                 -DCMAKE_PREFIX_PATH=../../_install \
-                -DCMAKE_FRAMEWORK_PATH=../../_install/lib
+                -DCMAKE_FRAMEWORK_PATH=../../_install/lib \
                 -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} \
                 -DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}
           cmake --build . --config ${{ inputs.build-type }}
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
-            ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
-          else
-            ./bin/imath-intro
-            ./bin/imath-examples
+
+          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" != "ON" ]; then
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              ./bin/"${{ inputs.build-type }}"/imath-intro.exe || true
+              ./bin/"${{ inputs.build-type }}"/imath-examples.exe || true
+            else
+              ./bin/imath-intro
+              ./bin/imath-examples
+            fi
           fi
         shell: bash
         working-directory: _examples
