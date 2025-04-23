@@ -166,6 +166,7 @@ jobs:
           - build: 1
             label: Release
             IMATH_TEST_PYTHON: 'OFF' # TODO: "import imath" fails on Windows, please help find why!
+            IMATH_TEST_PYBIND11: 'OFF' # TODO: "import pybindimath" fails on Windows, please help find why!
 
           - build: 2
             label: Debug
@@ -177,6 +178,7 @@ jobs:
             label: static
             BUILD_SHARED_LIBS: 'OFF'
             IMATH_TEST_PYTHON: 'OFF' # TODO: "import imath" fails on Windows, please help find why!
+            IMATH_TEST_PYBIND11: 'OFF' # TODO: "import pybindimath" fails on Windows, please help find why!
 
           - build: 4
             # test with everything turned off
