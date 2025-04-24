@@ -24,8 +24,8 @@ def test_import():
         print("ok")
     except Exception as e:
         print(f"{__file__} failed. Can't import pybindimath: {e}")
-        print_files_in_path('PATH')
-        print_files_in_path('PYTHONPATH')
+        #print_files_in_path('PATH')
+        #print_files_in_path('PYTHONPATH')
         sys.exit(1)
         
 test_import()
