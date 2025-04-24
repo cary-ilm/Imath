@@ -45,7 +45,7 @@ lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR/PyBindImath_
 lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINORTargets-release.cmake
 lib/cmake/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINORTargets.cmake
 lib/libImath-$MAJOR_$MINOR.a
-lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.dll.a
+lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.a
 lib/pkgconfig/Imath.pc
 lib/pkgconfig/PyBindImath.pc
 python/pybindimath.cp$PYTHONMAJOR$PYTHONMINOR-win32.pyd
