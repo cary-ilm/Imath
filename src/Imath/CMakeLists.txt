@@ -125,39 +125,34 @@ if (IMATH_BUILD_APPLE_FRAMEWORKS)
       MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${Imath_VERSION}"
       MACOSX_RPATH TRUE)
 
-#    # Copy resource files to the build directory's framework Resources/
-#    set(RES_DEST_DIR "$<TARGET_FILE_DIR:Imath>/Resources")
-#    add_custom_command(TARGET Imath POST_BUILD
-#      COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
-#      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#              ${IMATH_RESOURCE_FILES}
-#              "${CMAKE_BINARY_DIR}/config/ImathTargets.cmake"
-#              "${RES_DEST_DIR}/"
-#      COMMENT "Copying resource files to Imath.framework/Resources in build directory"
-#    )
+    # Copy resource files to the build directory's framework Resources/
+    set(RES_DEST_DIR "$<TARGET_FILE_DIR:Imath>/Resources")
+    add_custom_command(TARGET Imath POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              ${IMATH_RESOURCE_FILES}
+              "${CMAKE_BINARY_DIR}/config/ImathTargets.cmake"
+              "${RES_DEST_DIR}/"
+      COMMENT "Copying resource files to Imath.framework/Resources in build directory"
+    )
 endif()
   
 if (IMATH_INSTALL)
 
     install(TARGETS Imath
       EXPORT Imath
-      RUNTIME 
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
-      LIBRARY 
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE 
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      FRAMEWORK
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
         COMPONENT runtime
         OPTIONAL
-      INCLUDES 
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      PUBLIC_HEADER
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
     )
 
-    if(BUILD_SHARED_LIBS AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "") AND IMATH_INSTALL_SYM_LINK)
+    if(BUILD_SHARED_LIBS AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
+    AND IMATH_INSTALL_SYM_LINK AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
       string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
       set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}Imath${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
       set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}Imath${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})

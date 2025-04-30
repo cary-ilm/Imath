@@ -55,8 +55,9 @@ if (IMATH_BUILD_APPLE_FRAMEWORKS)
     "${CMAKE_SOURCE_DIR}/README.md"
     "${CMAKE_SOURCE_DIR}/LICENSE.md"
     "${CMAKE_SOURCE_DIR}/SECURITY.md"
-    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathTargets.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfigVersion.cmake"
   )
 endif()
 
@@ -79,10 +80,6 @@ add_subdirectory(src/Imath)
 # Imath_DIR points to the location of ImathConfig.cmake, which tells
 # downstream projects where to find Imath, via find_package(Imath).
 set(Imath_DIR "${CMAKE_CURRENT_BINARY_DIR}/config" CACHE PATH "" FORCE)
-
-# Add an empty ImathTargets.cmake file for the config to use. It can
-# be empty since we already defined the targets in add_subdirectory().
-# file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config/ImathTargets.cmake" "# Dummy file") # Removed to avoid confusion
 
 option(PYTHON "Set ON to compile boost PyImath bindings")
 if (PYTHON)
