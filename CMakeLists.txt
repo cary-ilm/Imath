@@ -42,11 +42,25 @@ message(STATUS "Configure ${IMATH_PACKAGE_NAME}, library API version: ${IMATH_LI
 
 option(IMATH_INSTALL "Install Imath library" ON)
 
-# Config headers and package config files
-add_subdirectory(config)
+if (APPLE)
+  option(IMATH_BUILD_APPLE_FRAMEWORKS "Build as Apple Frameworks" OFF)
+endif()
 
-# Utility function for the repeated boilerplate of defining the libraries
-include(config/LibraryDefine.cmake)
+# Config headers and package config files
+#add_subdirectory(config)
+
+if (IMATH_BUILD_APPLE_FRAMEWORKS)
+  # Define resource files for Apple Framework
+  set(IMATH_RESOURCE_FILES
+    "${CMAKE_SOURCE_DIR}/README.md"
+    "${CMAKE_SOURCE_DIR}/LICENSE.md"
+    "${CMAKE_SOURCE_DIR}/SECURITY.md"
+    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfig.cmake"
+  )
+endif()
+
+message(STATUS "Resource files: ${IMATH_RESOURCE_FILES}")
 
 # uninstall target
 if(NOT TARGET uninstall)
@@ -68,7 +82,7 @@ set(Imath_DIR "${CMAKE_CURRENT_BINARY_DIR}/config" CACHE PATH "" FORCE)
 
 # Add an empty ImathTargets.cmake file for the config to use. It can
 # be empty since we already defined the targets in add_subdirectory().
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config/ImathTargets.cmake" "# Dummy file")
+# file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config/ImathTargets.cmake" "# Dummy file") # Removed to avoid confusion
 
 option(PYTHON "Set ON to compile boost PyImath bindings")
 if (PYTHON)
@@ -85,8 +99,9 @@ if (BUILD_WEBSITE AND NOT IMATH_IS_SUBPROJECT)
   add_subdirectory(website)
 endif()
 
-if (APPLE)
-  option(IMATH_BUILD_APPLE_FRAMEWORKS "Build as Apple Frameworks" OFF)
+# pkg-config is not required for Apple Frameworks
+if (IMATH_BUILD_APPLE_FRAMEWORKS)
+  set(IMATH_INSTALL_SYM_LINK OFF)
 endif()
 
 # If you want to use ctest to configure, build and
