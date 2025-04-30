@@ -47,7 +47,7 @@ if (APPLE)
 endif()
 
 # Config headers and package config files
-#add_subdirectory(config)
+add_subdirectory(config)
 
 if (IMATH_BUILD_APPLE_FRAMEWORKS)
   # Define resource files for Apple Framework
