@@ -147,6 +147,7 @@ jobs:
           - build: 6
             label: Apple Frameworks
             IMATH_BUILD_APPLE_FRAMEWORKS: 'ON'
+            BUILD_TESTING: 'OFF'
             python: 'OFF' # conan boost doesn't support iOS
             pybind11: 'OFF' # iOS doesn't support CPython
 
