@@ -22,12 +22,14 @@ on:
     paths:
       - '**'
       - '!**.md'
+      - '!share/ci/install_manifest/**'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow_old.yml'
   pull_request:
     paths:
       - '**'
       - '!**.md'
+      - '!share/ci/install_manifest/**'
       - '!.github/workflows/**'
       - '.github/workflows/ci_workflow_old.yml'
 
@@ -37,7 +39,7 @@ permissions:
 jobs:
 
   linux:
-    name: 'Linux vfx${{ matrix.vfx-cy }}' 
+    name: 'Linux vfx${{ matrix.vfx-cy }}'
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openexr:${{ matrix.vfx-cy }}
