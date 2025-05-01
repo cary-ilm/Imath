@@ -437,7 +437,7 @@ jobs:
         shell: bash
 
       - name: Test ImathTest Standalone (iOS)
-        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS -= 'ON'
+        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'ON'
         run: |
           set -x
           # Use the ImathTest program as an example of an application
