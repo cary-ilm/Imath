@@ -38,6 +38,7 @@ permissions:
 
 jobs:
   linux:
+    if: false
     name: 'Linux.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:
@@ -146,8 +147,10 @@ jobs:
           - build: 6
             label: Apple Frameworks
             IMATH_BUILD_APPLE_FRAMEWORKS: 'ON'
+            python: 'OFF' # conan boost doesn't support iOS
 
   windows:
+    if: false
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:

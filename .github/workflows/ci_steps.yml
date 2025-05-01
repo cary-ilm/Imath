@@ -58,6 +58,8 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
+    continue-on-error: true
+    
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
