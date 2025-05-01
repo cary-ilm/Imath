@@ -440,12 +440,17 @@ jobs:
         if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'ON'
         run: |
           set -x
+
+          CMAKE_PREFIX_PATH=$INSTALL_DIR/lib/Imath.framework/Resources
+          ls -l $CMAKE_PREFIX_PATH/lib/Imath.framework/Resources/Imath
+
           # Use the ImathTest program as an example of an application
           # using the Imath library,  to validate that we can build
           # against the just-installed Imath library
           IMATHTEST_BUILD_DIR=$WORKSPACE/_build.imathTest.iOS
           cmake_args=("-B" "$IMATHTEST_BUILD_DIR" "-S" "$WORKSPACE/src/ImathTest")
-          cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR/lib/Imath.framework/Resources")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH")
+          cmake_args+=("-DImath_DIR=$CMAKE_PREFIX_PATH")
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
