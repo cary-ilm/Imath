@@ -442,7 +442,7 @@ jobs:
           set -x
 
           CMAKE_PREFIX_PATH=$INSTALL_DIR/lib/Imath.framework/Resources
-          ls -l $CMAKE_PREFIX_PATH/lib/Imath.framework/Resources/Imath
+          ls -l $CMAKE_PREFIX_PATH/lib/Imath.framework/Resources/ImathConfig.cmake
 
           # Use the ImathTest program as an example of an application
           # using the Imath library,  to validate that we can build
