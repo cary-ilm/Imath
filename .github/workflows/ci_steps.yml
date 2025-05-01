@@ -445,7 +445,7 @@ jobs:
           # against the just-installed Imath library
           IMATHTEST_BUILD_DIR=$WORKSPACE/_build.imathTest.iOS
           cmake_args=("-B" "$IMATHTEST_BUILD_DIR" "-S" "$WORKSPACE/src/ImathTest")
-          cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR/lib/Imath.framework/Resources")
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")

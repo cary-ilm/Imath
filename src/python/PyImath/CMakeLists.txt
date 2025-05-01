@@ -143,7 +143,7 @@ target_compile_definitions(${PYIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
 target_link_libraries(${PYIMATH_LIBRARY} PUBLIC Imath)
 target_link_libraries(${PYIMATH_LIBRARY} PRIVATE Boost::boost Boost::python Python3::Module)
 
-set_property(TARGET ${PYMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYMATH_HEADERS})
+set_property(TARGET ${PYIMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYMATH_HEADERS})
 
 #
 # Python module, identified by PYIMATH_MODULE (e.g. "imath).
