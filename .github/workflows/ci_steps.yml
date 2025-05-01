@@ -103,9 +103,9 @@ jobs:
           
         shell: bash
 
-      - name: Select Xcode Version
-        if: runner.os == 'macOS'
-        run: sudo xcode-select --switch /Applications/Xcode_15.2.app
+#      - name: Select Xcode Version
+#        if: runner.os == 'macOS'
+#        run: sudo xcode-select --switch /Applications/Xcode_15.2.app
 
       - name: Install MSYS2 ${{ inputs.msystem }}
         if: inputs.msystem != ''
