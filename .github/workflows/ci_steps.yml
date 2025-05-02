@@ -313,7 +313,7 @@ jobs:
               debug_postfix="_d"
           else
               debug_postfix=""
-          endif
+          fi
           ls -l $INSTALL_DIR/lib
           CONFIG=$INSTALL_DIR/include/Imath/ImathConfig.h
           share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libImath$debug_postfix $CONFIG ${{ inputs.namespace }} ${{ inputs.namespace }}
