@@ -306,11 +306,23 @@ jobs:
         shell: msys2 {0}
 
       - name: Validate library symlinks
-        if: inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
         run: |
           set -x
+          if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
+              debug_postfix="_d"
+          else
+              debug_postfix=""
+          endif
           ls -l $INSTALL_DIR/lib
-          share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libImath $INSTALL_DIR/include/Imath/ImathConfig.h ${{ inputs.namespace }} ${{ inputs.namespace }}
+          CONFIG=$INSTALL_DIR/include/Imath/ImathConfig.h
+          share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libImath$debug_postfix $CONFIG ${{ inputs.namespace }} ${{ inputs.namespace }}
+          if [[ "${{ inputs.python }}" == "ON" ]]; then
+              share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libPyImath$debug_postfix $CONFIG ${{ inputs.namespace }} ${{ inputs.namespace }}
+          fi
+          if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
+              share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libPyBindImath$debug_postfix $CONFIG ${{ inputs.namespace }} ${{ inputs.namespace }}
+          fi
         shell: bash
         
       - name: Test PyBind11 Import
