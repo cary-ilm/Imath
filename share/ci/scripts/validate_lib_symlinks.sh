@@ -1,33 +1,50 @@
-
 #!/usr/bin/env bash
 
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright Contributors to the OpenEXR Project.
 
-#!/usr/bin/env bash
+# Validate that the shared objects have the proper symbolic links between the so-versioned libraries:
+#
+# libImath_d.dylib -> libImath-3_2_d.dylib
+# libImath-3_2_d.dylib -> libImath-3_2_d.30.dylib
+# libImath-3_2_d.30.dylib -> libImath-3_2_d.30.3.2.0.dylib
+#
+# or:
+#
+# libPyImath_d.dylib -> libPyImath_Python3_9-3_2_d.dylib
+# libPyImath_Python3_9-3_2_d.dylib -> libPyImath_Python3_9-3_2_d.30.dylib
+# libPyImath_Python3_9-3_2_d.30.dylib -> libPyImath_Python3_9-3_2_d.30.3.2.0.dylib
+
+# $1 is the path of the unversioned lib: libImath.so
+# $2 is the the path of ImathConfig.h, which contains the version numbers
+# $3 is the "-3_2" suffix if it is manualy specified
+# $4 is the "_Python3_2" suffix if it is manualy specified
+# 
+
 set -euo pipefail
 
-# Construct names
 base="$1"
 CONFIG_FILE="$2"
+
+# Do it in the directory of library, that way no worrying about paths
 
 cd $(dirname $base)
 base=$(basename $base)
 
+# Check if the base library is Debug, i.e. ends in "_d"
 debug_postfix=""
 if [[ "$base" == *_d ]]; then
   base="${base%_d}"
   debug_postfix="_d"
 fi
 
-# Extract version string using sed
+# Extract version string from IMATH_LIB_VERSION_STRING in ImathConfig.h 
 version_string=$(sed -n 's/#define IMATH_LIB_VERSION_STRING \"\([^"]*\)\"/\1/p' "$CONFIG_FILE")
 IFS='.' read -r soversion major minor patch <<< "$version_string"
 
 suffix=${3:-"-${major}_${minor}"}
 python="${4:-}"
 
-# Determine shared library suffix and platform
 case "$(uname -s)" in
     Darwin)
         unversioned=${base}${debug_postfix}.dylib # libImath_d.dylib
@@ -50,18 +67,6 @@ case "$(uname -s)" in
         ;;
 esac
 
-#echo "version_string=$version_string"
-#echo "soversion=$soversion"
-#echo "major=$major"
-#echo "minor=$minor"
-#echo "patch=$patch"
-#echo "base=$base"
-#echo "full_version=$full_version"
-#echo "versioned=$versioned"
-#echo "soversioned=$soversioned"
-#echo "full_named=$full_named"
-
-# Validation function
 check_symlink() {
     local src="$1"
     local expected_target="$2"
