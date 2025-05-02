@@ -307,31 +307,37 @@ jobs:
 
       - name: Validate library symlinks
         if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        shell: bash
         run: |
-          set -x
+          set -xe
+      
           if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
               debug_postfix="_d"
           else
               debug_postfix=""
           fi
-          ls -l $INSTALL_DIR/lib
-          CONFIG=$INSTALL_DIR/include/Imath/ImathConfig.h
-          share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libImath$debug_postfix $CONFIG ${{ inputs.namespace }} ${{ inputs.namespace }}
+      
+          ls -l "$INSTALL_DIR/lib"
+          CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
+      
+          share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "${{ inputs.namespace }}"
+      
+          get_python_suffix() {
+            if [ -n "${{ inputs.namespace }}" ] && [ -n "$PYTHON" ]; then
+              "$PYTHON" -c 'import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")'
+            else
+              echo ""
+            fi
+          }
+      
           if [[ "${{ inputs.python }}" == "ON" ]]; then
-              if [ -n "${{ inputs.namespace }}" ]; then
-                 python_suffix=$("$PYTHON" -c 'import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")')
-              else
-                 python_suffix=""
-              fi
-              share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libPyImath$debug_postfix $CONFIG ${{ inputs.namespace }} $python_suffix 
+            python_suffix=$(get_python_suffix)
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
           fi
+      
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-              if [ -n "${{ inputs.namespace }}" ]; then
-                 python_suffix=$("$PYTHON" -c 'import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")')
-              else
-                 python_suffix=""
-              fi
-              share/ci/scripts/validate_lib_symlinks.sh $INSTALL_DIR/lib/libPyBindImath$debug_postfix $CONFIG ${{ inputs.namespace }} $python_suffix 
+            python_suffix=$(get_python_suffix)
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
           fi
         shell: bash
         
