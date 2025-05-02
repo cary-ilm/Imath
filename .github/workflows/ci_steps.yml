@@ -305,6 +305,14 @@ jobs:
           cmake --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: msys2 {0}
 
+      - name: Validate library simlinks
+        if: inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        run: |
+          set -x
+          ls -l $INSTALL_DIR/lib
+          share/ci/scripts/validate_lib_simlinks.sh $INSTALL_DIR/lib/libImath $INSTALL_DIR/include/Imath/ImathConfig.h ${{ inputs.namespace }} ${{ inputs.namespace }}
+        shell: bash
+        
       - name: Test PyBind11 Import
         if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem == ''
         run: |

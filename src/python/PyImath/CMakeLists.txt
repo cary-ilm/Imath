@@ -163,7 +163,7 @@ set(PYIMATH_MODULE_SOURCES
 
 # Build "imath", not "imath_d" in Debug.
 # Note this must appear before add_library()
-set(CMAKE_DEBUG_POSTFIX "")
+#set(CMAKE_DEBUG_POSTFIX "")
 
 add_library(${PYIMATH_MODULE} MODULE ${PYIMATH_MODULE_SOURCES})
 
@@ -259,24 +259,26 @@ if (IMATH_INSTALL)
     NAMESPACE Imath::
   )
 
-  if (BUILD_SHARED_LIBS
-      AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
-      AND IMATH_INSTALL_SYM_LINK
-      AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+  if(BUILD_SHARED_LIBS
+     AND (NOT "${PYIMATH_LIB_SUFFIX}" STREQUAL "")
+     AND IMATH_INSTALL_SYM_LINK
+     AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
 
-    # create symlinks for the shared object so versions
-
+    # create symlink from libPyImath_Python3_11-3_2.so to libPyImath.so
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-    set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}${PYIMATH_LIBRARY}${pythonver_root}${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}${PYIMATH_LIBRARY}${pythonver_root}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    file(CREATE_LINK ${verlibname} ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} SYMBOLIC)
+    set(postfix ${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
+    set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYIMATH_LIBRARY}${PYIMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BASE_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYIMATH_LIBRARY}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+    file(CREATE_LINK ${VERSIONED_LIB_FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} SYMBOLIC)
     if(WIN32)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-      install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_BINDIR}/${baselibname} -> ${verlibname}\")")
+      set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
     else()
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-      install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_LIBDIR}/${baselibname} -> ${verlibname}\")")
+      set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
     endif()
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} DESTINATION ${INSTALL_DESTINATION})
+    install(CODE "message(STATUS \"Creating symlink ${INSTALL_DESTINATION}/${BASE_LIB_FILENAME} -> ${VERSIONED_LIB_FILENAME}\")")
+
   endif()
 
   # pkgconfig

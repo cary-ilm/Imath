@@ -5,6 +5,8 @@
 # Imath
 #
 
+set(IMATH_LIBRARY Imath)
+
 set(IMATH_SOURCES
     half.cpp
     ImathColorAlgo.cpp
@@ -152,30 +154,28 @@ if (IMATH_INSTALL)
       PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
     )
 
-    if(BUILD_SHARED_LIBS AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
-    AND IMATH_INSTALL_SYM_LINK AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+
+    if(BUILD_SHARED_LIBS
+       AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
+       AND IMATH_INSTALL_SYM_LINK
+       AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+
+      # create symlink from libImath.so to libPyImath.so
       string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-      set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}Imath${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-      set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}Imath${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-      file(CREATE_LINK ${verlibname} ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} SYMBOLIC)
+      set(postfix ${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
+      set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${IMATH_LIBRARY}${IMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+      set(BASE_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${IMATH_LIBRARY}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+      file(CREATE_LINK ${VERSIONED_LIB_FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} SYMBOLIC)
       if(WIN32)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-        install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_BINDIR}/${baselibname} -> ${verlibname}\")")
+        set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
       else()
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-        install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_LIBDIR}/${baselibname} -> ${verlibname}\")")
+        set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
       endif()
-      set(verlibname)
-      set(baselibname)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} DESTINATION ${INSTALL_DESTINATION})
+      install(CODE "message(STATUS \"Creating symlink ${INSTALL_DESTINATION}/${BASE_LIB_FILENAME} -> ${VERSIONED_LIB_FILENAME}\")")
+
     endif()
 
 endif()
-
-
-
-
-
-
-
-
 

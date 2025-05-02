@@ -97,7 +97,7 @@ set(PYBINDIMATH_MODULE_SOURCES pybindimathmodule.cpp)
 pybind11_add_module(${PYBINDIMATH_MODULE} ${PYBINDIMATH_MODULE_SOURCES})
 
 set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
-    OUTPUT_NAME ${PYBINDIMATH_MODULE_NAME}
+    OUTPUT_NAME ${PYBINDIMATH_MODULE_NAME} # override the _d suffix for Debug builds
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}/"
     PREFIX ""
     DEBUG_POSTFIX ""
@@ -168,24 +168,26 @@ if (IMATH_INSTALL)
     NAMESPACE Imath::
   )
 
-  if (BUILD_SHARED_LIBS
-      AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
-      AND IMATH_INSTALL_SYM_LINK
-      AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+  if(BUILD_SHARED_LIBS
+     AND (NOT "${PYBINDIMATH_LIB_SUFFIX}" STREQUAL "")
+     AND IMATH_INSTALL_SYM_LINK
+     AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
 
-    # create symlinks for the shared object so versions
-
+    # create symlink from libPyBindImath_Python3_11-3_2.so to libPyBindImath.so
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-    set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${pythonver_root}${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${pythonver_root}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    file(CREATE_LINK ${verlibname} ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} SYMBOLIC)
+    set(postfix ${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
+    set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${PYBINDIMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BASE_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+    file(CREATE_LINK ${VERSIONED_LIB_FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} SYMBOLIC)
     if(WIN32)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-      install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_BINDIR}/${baselibname} -> ${verlibname}\")")
+      set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
     else()
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${baselibname} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-      install(CODE "message(STATUS \"Creating symlink ${CMAKE_INSTALL_FULL_LIBDIR}/${baselibname} -> ${verlibname}\")")
+      set(INSTALL_DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
     endif()
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} DESTINATION ${INSTALL_DESTINATION})
+    install(CODE "message(STATUS \"Creating symlink ${INSTALL_DESTINATION}/${BASE_LIB_FILENAME} -> ${VERSIONED_LIB_FILENAME}\")")
+
   endif()
 
   # pkgconfig
@@ -201,7 +203,7 @@ if (IMATH_INSTALL)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pcout} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
     message(STATUS "generating ${pcout}") 
   else()
-    message(STATUS "pkg-config generation disabled for PyBindImath")
+    message(STATUS "pkg-config generation disabled for ${PYBINDIMATH_LIBRARY}")
   endif()
 
 endif()
