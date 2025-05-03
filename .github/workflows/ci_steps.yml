@@ -319,7 +319,7 @@ jobs:
           ls -l "$INSTALL_DIR/lib"
           CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
       
-          python_suffix="${{ input.namespace }}"
+          python_suffix="${{ inputs.namespace }}"
           if [ -n "$python_suffix" ] && [ -n "$PYTHON" ]; then
               python_suffix=$($PYTHON -c "import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")
           fi
