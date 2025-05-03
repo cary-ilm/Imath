@@ -313,6 +313,9 @@ jobs:
         run: |
           set -xe
       
+          echo "install_manifest.txt:"
+          cat $BUILD_DIR/install_manifest.txt
+
           if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
               debug_postfix="_d"
           else
@@ -331,13 +334,18 @@ jobs:
               PYBIND_NAMESPACE=PYBIND_$NAMESPACE
           fi
 
-          share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "$NAMESPACE" 
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+              INSTALL_PREFIX=$INSTALL_DIR/bin/
+          else
+              INSTALL_PREFIX=$INSTALL_DIR/lib/lib
+          fi
+          share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}Imath$debug_postfix" "$CONFIG" "$NAMESPACE" 
       
           if [[ "${{ inputs.python }}" == "ON" ]]; then
-            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "$PY_NAMESPACE" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}PyImath$debug_postfix" "$CONFIG" "$PY_NAMESPACE" "$python_suffix"
           fi
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "$PYBIND_NAMESPACE" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}PyBindImath$debug_postfix" "$CONFIG" "$PYBIND_NAMESPACE" "$python_suffix"
           fi
         shell: bash
         
