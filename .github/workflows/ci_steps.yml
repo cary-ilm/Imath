@@ -39,6 +39,8 @@ on:
         type: string
       IMATH_INSTALL_PKG_CONFIG:
         type: string
+      IMATH_INSTALL_SYM_LINK:
+        type: string
       BUILD_SHARED_LIBS:
         type: string
       BUILD_TESTING:
@@ -231,6 +233,7 @@ jobs:
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
           cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
           cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
+          cmake_args+=("-DIMATH_INSTALL_SYM_LINK=${{ inputs.IMATH_INSTALL_SYM_LINK }}")
           cmake_args+=("-DIMATH_BUILD_APPLE_FRAMEWORKS=${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}")
           cmake_args+=("-DBUILD_TESTING=${{ inputs.BUILD_TESTING }}")
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
@@ -306,7 +309,7 @@ jobs:
         shell: msys2 {0}
 
       - name: Validate library symlinks
-        if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON' && inputs.IMATH_INSTALL_SYM_LINK == 'ON'
         run: |
           set -xe
       
@@ -319,18 +322,22 @@ jobs:
           ls -l "$INSTALL_DIR/lib"
           CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
       
-          python_suffix="${{ inputs.namespace }}"
-          if [ -z "$python_suffix" ] && [ -n "$PYTHON" ]; then
+          NAMESPACE="${{ inputs.namespace }}"
+          python_suffix=""
+          if [ -z "$NAMESPACE" ] && [ -n "$PYTHON" ]; then
               python_suffix=$($PYTHON -c "import sys; print(f'_Python{sys.version_info.major}_{sys.version_info.minor}')")
+          else
+              PY_NAMESPACE=PY_$NAMESPACE
+              PYBIND_NAMESPACE=PYBIND_$NAMESPACE
           fi
 
-          share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" 
+          share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "$NAMESPACE" 
       
           if [[ "${{ inputs.python }}" == "ON" ]]; then
-            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "$PY_NAMESPACE" "$python_suffix"
           fi
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "$PYBIND_NAMESPACE" "$python_suffix"
           fi
         shell: bash
         

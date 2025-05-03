@@ -66,7 +66,11 @@ case "$(uname -s)" in
         fullversioned=${base}${python}${namespace}${debug_postfix}.so.${soversion}.${major}.${minor}.${patch} # libImath-3_2_d.so.30.3.2.0
         ;;
     MINGW*|MSYS*|CYGWIN*|Windows_NT)
-        lib_suffix="dll"
+        unversioned=${base}${debug_postfix}.dll # libImath_d.dll
+        suffixed=${base}${python}${namespace}${debug_postfix}.dll # libImath-3_2_d.dll
+        soversioned=""
+        fullversioned=$suffixed
+        exit 1
         ;;
     *)
         echo "Unsupported OS"
@@ -95,8 +99,10 @@ check_symlink() {
 
 # Validate the link chain
 check_symlink "${unversioned}" "${suffixed}"
-check_symlink "${suffixed}" "${soversioned}"
-check_symlink "${soversioned}" "${fullversioned}"
+if [ -n "${soversioned}" ]; then
+  check_symlink "${suffixed}" "${soversioned}"
+  check_symlink "${soversioned}" "${fullversioned}"
+fi
 
 # Validate that the final target exists and is a regular file
 if [[ ! -f "${fullversioned}" ]]; then
