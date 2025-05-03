@@ -70,7 +70,6 @@ case "$(uname -s)" in
         suffixed=${base}${python}${namespace}${debug_postfix}.dll # libImath-3_2_d.dll
         soversioned=""
         fullversioned=$suffixed
-        exit 1
         ;;
     *)
         echo "Unsupported OS"
