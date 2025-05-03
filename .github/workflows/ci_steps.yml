@@ -321,7 +321,7 @@ jobs:
       
           python_suffix="${{ inputs.namespace }}"
           if [ -n "$python_suffix" ] && [ -n "$PYTHON" ]; then
-              python_suffix=$($PYTHON -c "import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")
+              python_suffix=$($PYTHON -c "import sys; print(f'_Python{sys.version_info.major}_{sys.version_info.minor}')")
           fi
 
           share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" 
