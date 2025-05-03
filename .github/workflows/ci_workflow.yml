@@ -151,7 +151,6 @@ jobs:
             pybind11: 'OFF' # iOS doesn't support CPython
 
   windows:
-    if: false
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
     uses: ./.github/workflows/ci_steps.yml
     with:

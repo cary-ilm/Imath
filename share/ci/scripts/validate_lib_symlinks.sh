@@ -18,7 +18,7 @@
 # $1 is the path of the unversioned lib: libImath.so
 # $2 is the the path of ImathConfig.h, which contains the version numbers
 # $3 is the "-3_2" suffix if it is manualy specified
-# $4 is the "_Python3_2" suffix if it is manualy specified
+# $4 is the "_Python3_9" suffix if it is manualy specified
 # 
 
 set -euox pipefail
@@ -42,21 +42,28 @@ fi
 version_string=$(sed -n 's/#define IMATH_LIB_VERSION_STRING \"\([^"]*\)\"/\1/p' "$CONFIG_FILE")
 IFS='.' read -r soversion major minor patch <<< "$version_string"
 
-suffix=${3:-"-${major}_${minor}"}
-python="${4:-}"
+namespace=$3
+if [ -n "${namespace}" ]; then
+    # A namespace is provided: it is the complete suffix (no python string)
+    python=""
+else
+    # No namespace is provided, so compute it from the version. And use the given python string
+    namespace="-${major}_${minor}"
+    python="${4:-}"
+fi
 
 case "$(uname -s)" in
     Darwin)
         unversioned=${base}${debug_postfix}.dylib # libImath_d.dylib
-        suffixed=${base}${python}${suffix}${debug_postfix}.dylib # libImath-3_2_d.dylib
-        soversioned=${base}${python}${suffix}${debug_postfix}.${soversion}.dylib # libImath-3_2_d.30.dylib
-        fullversioned=${base}${python}${suffix}${debug_postfix}.${soversion}.${major}.${minor}.${patch}.dylib # libImath-3_2_d.30.3.2.0.dylib
+        suffixed=${base}${python}${namespace}${debug_postfix}.dylib # libImath-3_2_d.dylib
+        soversioned=${base}${python}${namespace}${debug_postfix}.${soversion}.dylib # libImath-3_2_d.30.dylib
+        fullversioned=${base}${python}${namespace}${debug_postfix}.${soversion}.${major}.${minor}.${patch}.dylib # libImath-3_2_d.30.3.2.0.dylib
         ;;
     Linux)
         unversioned=${base}${debug_postfix}.so # libImath_d.so
-        suffixed=${base}${python}${suffix}${debug_postfix}.so # libImath-3_2_d.so
-        soversioned=${base}${python}${suffix}${debug_postfix}.so.${soversion} # libImath-3_2_d.so.30
-        fullversioned=${base}${python}${suffix}${debug_postfix}.so.${soversion}.${major}.${minor}.${patch} # libImath-3_2_d.so.30.3.2.0
+        suffixed=${base}${python}${namespace}${debug_postfix}.so # libImath-3_2_d.so
+        soversioned=${base}${python}${namespace}${debug_postfix}.so.${soversion} # libImath-3_2_d.so.30
+        fullversioned=${base}${python}${namespace}${debug_postfix}.so.${soversion}.${major}.${minor}.${patch} # libImath-3_2_d.so.30.3.2.0
         ;;
     MINGW*|MSYS*|CYGWIN*|Windows_NT)
         lib_suffix="dll"
