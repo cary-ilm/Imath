@@ -86,13 +86,13 @@ def load_manifest(path, major, minor, patch, so):
     with open(path, 'r') as file:
         return sorted(process_line(line, major, minor, patch, so) for line in file if line.strip() and not line.lstrip().startswith('#'))
 
-def validate_install(candidate_manifest_path, reference_manifest_path, CMakeCache):
+def validate_install(build_manifest_path, reference_manifest_path, CMakeCache):
     """Main function to verify the installed files."""
 
     major, minor, patch = imath_version(CMakeCache)
     so = imath_soversion()
 
-    candidate_manifest = load_manifest(candidate_manifest_path, major, minor, patch, so)
+    build_manifest = load_manifest(build_manifest_path, major, minor, patch, so)
     reference_manifest = load_manifest(reference_manifest_path, major, minor, patch, so)
 
     print(f"imath version: {major}.{minor}.{patch} soversion={so}")
