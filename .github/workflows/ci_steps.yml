@@ -320,7 +320,7 @@ jobs:
           CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
       
           python_suffix="${{ inputs.namespace }}"
-          if [ -n "$python_suffix" ] && [ -n "$PYTHON" ]; then
+          if [ -z "$python_suffix" ] && [ -n "$PYTHON" ]; then
               python_suffix=$($PYTHON -c "import sys; print(f'_Python{sys.version_info.major}_{sys.version_info.minor}')")
           fi
 
