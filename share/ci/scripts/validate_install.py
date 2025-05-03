@@ -84,7 +84,7 @@ def process_line(line, major, minor, patch, so):
 def load_manifest(path, major, minor, patch, so):
     """Load and return the list of files from the install manifest."""
     with open(path, 'r') as file:
-        return sorted(process_line(line, major, minor, patch, so) for line in file if line.strip() && not line.lstrip().startswith('#'))
+        return sorted(process_line(line, major, minor, patch, so) for line in file if line.strip() and not line.lstrip().startswith('#'))
 
 def validate_install(candidate_manifest_path, reference_manifest_path, CMakeCache):
     """Main function to verify the installed files."""
