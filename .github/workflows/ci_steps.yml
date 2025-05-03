@@ -319,14 +319,18 @@ jobs:
           ls -l "$INSTALL_DIR/lib"
           CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
       
-          $PYTHON share/ci/scripts/validate_lib_symlinks.py "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "${{ inputs.namespace }}"
+          python_suffix="${{ input.namespace }}"
+          if [ -n "$python_suffix" ] && [ -n "$PYTHON" ]; then
+              python_suffix=$($PYTHON -c "import sys; print(f"_Python{sys.version_info.major}_{sys.version_info.minor}")
+          fi
+
+          share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" 
       
           if [[ "${{ inputs.python }}" == "ON" ]]; then
-            $PYTHON share/ci/scripts/validate_lib_symlinks.py "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
           fi
-      
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
-            $PYTHON share/ci/scripts/validate_lib_symlinks.py "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
+            share/ci/scripts/validate_lib_symlinks.sh "$INSTALL_DIR/lib/libPyBindImath$debug_postfix" "$CONFIG" "${{ inputs.namespace }}" "$python_suffix"
           fi
         shell: bash
         

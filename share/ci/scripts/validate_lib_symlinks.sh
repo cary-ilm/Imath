@@ -21,7 +21,7 @@
 # $4 is the "_Python3_2" suffix if it is manualy specified
 # 
 
-set -euo pipefail
+set -euox pipefail
 
 base="$1"
 CONFIG_FILE="$2"
