@@ -307,7 +307,6 @@ jobs:
 
       - name: Validate library symlinks
         if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
-        shell: bash
         run: |
           set -xe
       
