@@ -49,6 +49,7 @@ jobs:
       # DockerHub: https://hub.docker.com/u/aswf
       # Source: https://github.com/AcademySoftwareFoundation/aswf-docker
       container: aswf/ci-openexr:${{ matrix.vfx-cy || '2024' }}
+      cmake: ${{ matrix.cmake || '3.15.7' }}
       cxx-standard: ${{ matrix.cxx-standard || '17' }}
       cxx-compiler: ${{ matrix.cxx-compiler || 'g++' }}
       cc-compiler: ${{ matrix.cc-compiler || 'gcc' }}
@@ -85,6 +86,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF'
             pybind11: 'OFF'
+            cmake: 3.14.7
 
           - build: 5
             label: custom namespace

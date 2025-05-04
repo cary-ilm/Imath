@@ -23,6 +23,8 @@ on:
         type: string
       container:
         type: string
+      cmake:
+        type: string
       cxx-standard:
         type: string
       cxx-compiler:
@@ -221,14 +223,13 @@ jobs:
 
         shell: bash
 
-      - name: Install CMake 3.14
-        if: runner.os == 'Linux' && inputs.build == 4
+      - name: Install CMake 
+        if: runner.os == 'Linux' && inputs.cmake != ''
         run: |
-          wget https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-Linux-x86_64.tar.gz
-          tar -xzf cmake-3.14.7-Linux-x86_64.tar.gz
-          echo "${PWD}/cmake-3.14.7-Linux-x86_64/bin" >> $GITHUB_PATH
-          ls -l ${PWD}/cmake-3.14.7-Linux-x86_64/bin
-          echo "CMAKE=${PWD}/cmake-3.14.7-Linux-x86_64/bin/cmake" >> $GITHUB_ENV
+          CMAKE_VERSION=${{ inputs.cmake }}
+          wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz
+          tar -xzf cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz
+          echo "CMAKE=$PWD/cmake-$CMAKE_VERSION-Linux-x86_64/bin/cmake" >> $GITHUB_ENV
 
       - name: Construct CMake command
         run: |
