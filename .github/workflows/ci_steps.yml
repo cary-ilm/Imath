@@ -313,9 +313,9 @@ jobs:
         run: |
           set -xe
       
-          echo "install_manifest.txt:"
-          cat $BUILD_DIR/install_manifest.txt
-
+          echo "installed files:
+          find $INSTALL_DIR -ls
+          
           if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
               debug_postfix="_d"
           else
@@ -334,7 +334,9 @@ jobs:
               PYBIND_NAMESPACE=PYBIND_$NAMESPACE
           fi
 
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
+          if [[ -n "${{ inputs.msystem }}" ]]; then
+              INSTALL_PREFIX=$INSTALL_DIR/bin/lib
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
               INSTALL_PREFIX=$INSTALL_DIR/bin/
           else
               INSTALL_PREFIX=$INSTALL_DIR/lib/lib
