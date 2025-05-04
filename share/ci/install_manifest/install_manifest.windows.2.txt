@@ -42,9 +42,7 @@ include/Imath/halfFunction.h
 include/Imath/halfLimits.h
 include/PyBindImath/PyBindImath.h
 include/PyBindImath/PyBindImathExport.h
-lib/Imath_d.lib
 lib/Imath-$MAJOR_$MINOR_d.lib
-lib/PyBindImath_d.lib
 lib/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR_d.lib
 lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake

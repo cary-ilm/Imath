@@ -39,7 +39,7 @@ permissions:
 jobs:
 
   linux:
-    name: 'Linux vfx${{ matrix.vfx-cy }}' 
+    name: 'Linux vfx${{ matrix.vfx-cy }}'
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openexr:${{ matrix.vfx-cy }}

@@ -61,7 +61,7 @@ jobs:
     runs-on: ${{ inputs.os }}
 
     continue-on-error: true
-    
+
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
@@ -85,7 +85,7 @@ jobs:
               WORKSPACE=$GITHUB_WORKSPACE
           fi
           echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
-          
+
           # BUILD_DIR is the CMake build directory
           BUILD_DIR=$WORKSPACE/_build
           echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
@@ -99,10 +99,10 @@ jobs:
           # silently and automatically adjusts the PATH variable, so
           # keep the special paths in a separate variable and assign
           # them to PATH only just prior to execution.
-          
+
           IMATH_PATH=$INSTALL_DIR/bin:$INSTALL_DIR/lib
           echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
-          
+
         shell: bash
 
       - name: Install MSYS2 ${{ inputs.msystem }}
@@ -112,7 +112,7 @@ jobs:
           msystem: ${{ inputs.msystem }}
           update: true
           install: git
-          pacboy: cc:p cmake:p 
+          pacboy: cc:p cmake:p
 
       - name: Install python for MINGW32
         # Note that MINGW32 requires the x86 architecture
@@ -121,7 +121,7 @@ jobs:
         with:
           python-version: '3.9'
           architecture: 'x86'
-      
+
       - name: Install python for UCRT64
         # Note this requires the msys2 shell
         if: inputs.pybind11 == 'ON' && inputs.msystem == 'UCRT64'
@@ -132,7 +132,7 @@ jobs:
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
           set -x
-          
+
           # $pythonLocation is set by the setup-python step, only done for MINGW32
           if [ -n "$pythonLocation" ]; then
               PYTHON_DIR=$(cygpath -u "$pythonLocation")
@@ -141,14 +141,14 @@ jobs:
               PYTHON=$(which python)
               PYTHON_DIR=$(dirname $PYTHON)
           fi
-          
+
           echo "PYTHON=$PYTHON" >> $GITHUB_ENV
 
           # Add python to the path
 
           IMATH_PATH=$PYTHON_DIR:$IMATH_PATH
           echo "IMATH_PATH=$IMATH_PATH" >> $GITHUB_ENV
-          
+
           # Install into a special directory, to confirm that the
           # manually-specified install location works properly
 
@@ -156,16 +156,16 @@ jobs:
           echo "PYTHON_INSTALL_DIR=$PYTHON_INSTALL_DIR" >> $GITHUB_ENV
 
         shell: bash
-        
-      - name: Install pybind11 
+
+      - name: Install pybind11
         if: inputs.pybind11 == 'ON'
         run: |
           set -x
 
-          $PYTHON -m pip install --upgrade pip pybind11 "numpy<2"            
-        
+          $PYTHON -m pip install --upgrade pip pybind11 "numpy<2"
+
           # Ask python for the pybind11 header directory
-          
+
           pybind11_DIR=$($PYTHON -c 'import pybind11; print(pybind11.get_cmake_dir())')
           if [[ "$RUNNER_OS" == "Windows" ]]; then
               pybind11_DIR=$(cygpath -u "$pybind11_DIR")
@@ -189,7 +189,8 @@ jobs:
           conan_args+=("--output-folder=${CONAN_DIR}")
           conan_args+=("--build=missing")
           conan_args+=("--generator" "CMakeDeps")
-          
+          conan_args+=("--tool-requires=cmake/3.15.7")
+
           conan_args+=("--generator" "CMakeToolchain")
           conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
           if [[ "${{ inputs.pybind11 }}" == "ON" ]]; then
@@ -312,19 +313,26 @@ jobs:
         if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON' && inputs.IMATH_INSTALL_SYM_LINK == 'ON'
         run: |
           set -xe
-      
-          echo "installed files:"
-          find $INSTALL_DIR -ls
-          
+
+          # Validate that the proper symlinks have been created
+          # between the various versions of the .so/.dylib/.dll,
+          # especially the one created explicitly (based on the
+          # IMATH_INSTALL_SYM_LINK option) with a name with no suffix.
+          # Note this implicitly validates the IMATH_NAMESPACE option.
+          # libImath_d.so -> libImath-3_2_d.so
+          # libImath-3_2_d.so -> libImath-3_2_d.so.30
+          # libImath-3_2_d.so.30.so -> libImath-3_2_d.so.30.3.2.0
+          # NOTE: technically the validate_install.py script also checks this,
+          # but this also confirms that the files are actually symlinks.
+
           if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
               debug_postfix="_d"
           else
               debug_postfix=""
           fi
-      
-          ls -l "$INSTALL_DIR/lib"
+
           CONFIG="$INSTALL_DIR/include/Imath/ImathConfig.h"
-      
+
           NAMESPACE="${{ inputs.namespace }}"
           python_suffix=""
           if [ -z "$NAMESPACE" ] && [ -n "$PYTHON" ]; then
@@ -341,8 +349,8 @@ jobs:
           else
               INSTALL_PREFIX=$INSTALL_DIR/lib/lib
           fi
-          share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}Imath$debug_postfix" "$CONFIG" "$NAMESPACE" 
-      
+          share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}Imath$debug_postfix" "$CONFIG" "$NAMESPACE"
+
           if [[ "${{ inputs.python }}" == "ON" ]]; then
             share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}PyImath$debug_postfix" "$CONFIG" "$PY_NAMESPACE" "$python_suffix"
           fi
@@ -350,7 +358,7 @@ jobs:
             share/ci/scripts/validate_lib_symlinks.sh "${INSTALL_PREFIX}PyBindImath$debug_postfix" "$CONFIG" "$PYBIND_NAMESPACE" "$python_suffix"
           fi
         shell: bash
-        
+
       - name: Test PyBind11 Import
         if: inputs.pybind11 == 'ON' && inputs.IMATH_TEST_PYBIND11 == 'ON' && inputs.msystem == ''
         run: |
@@ -360,7 +368,7 @@ jobs:
           #IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/pybindimath.cp39-win_amd64.pyd")
           #if [[ -f "$IMATH_PYD" ]]; then
           #    objdump -p "$IMATH_PYD" | grep 'DLL Name'
-          #fi      
+          #fi
 
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH=$PYTHON_INSTALL_DIR
@@ -378,7 +386,7 @@ jobs:
         shell: msys2 {0}
 
       - name: Test Python Import
-        if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' 
+        if: inputs.python == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON'
         run: |
           set -x
 
@@ -386,7 +394,7 @@ jobs:
           #IMATH_PYD=$(cygpath -u "$PYTHON_INSTALL_DIR/imath.pyd")
           #if [[ -f "$IMATH_PYD" ]]; then
           #    objdump -p "$IMATH_PYD" | grep 'DLL Name'
-          #fi      
+          #fi
 
           export PATH="$IMATH_PATH:$PATH"
           export PYTHONPATH="$PYTHON_INSTALL_DIR"
@@ -401,7 +409,7 @@ jobs:
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
         shell: bash
-        
+
       - name: Test (msys2)
         # requires msys2 shell
         if: inputs.BUILD_TESTING == 'ON' && inputs.msystem != ''
@@ -411,7 +419,7 @@ jobs:
           export PYTHONPATH=$PYTHON_INSTALL_DIR
           ctest -T Test -C ${{ inputs.build-type }} --test-dir $BUILD_DIR --timeout 7200 --output-on-failure -VV
         shell: msys2 {0}
-        
+
       - name: Prepare install_manifest
         # Store the cmake command as the first line of the manifest,
         # and remove the path prefix, so the manifest contains only

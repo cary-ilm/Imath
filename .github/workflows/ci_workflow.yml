@@ -202,7 +202,7 @@ jobs:
             IMATH_INSTALL_SYM_LINK: 'OFF'
             BUILD_TESTING: 'OFF'
             python: 'OFF'
-            pybind11: 'OFF' 
+            pybind11: 'OFF'
 
           - build: 5
             label: vfx2022
@@ -216,7 +216,7 @@ jobs:
             BUILD_TESTING: 'OFF' # TODO: Imath.testMatrix fails, please help find why!
             python: 'OFF' # TODO: conan won't build boost.python w/msys2, please help find why!
             IMATH_TEST_PYBIND11: 'OFF' # TODO: "import pybindimath" fails on Windows, please help find why!
-            
+
           - build: 7
             label: msys2-mingw32, static
             msystem: MINGW32
