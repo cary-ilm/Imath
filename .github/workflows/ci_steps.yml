@@ -313,7 +313,7 @@ jobs:
         run: |
           set -xe
       
-          echo "installed files:
+          echo "installed files:"
           find $INSTALL_DIR -ls
           
           if [[ "${{ inputs.build-type }}" == "Debug" ]]; then
