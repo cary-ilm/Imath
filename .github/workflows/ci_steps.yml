@@ -65,7 +65,8 @@ jobs:
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
-
+      CMAKE: cmake
+      
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -221,12 +222,13 @@ jobs:
         shell: bash
 
       - name: Install CMake 3.14
-        if: inputs.os == 'Linux' && inputs.build == 1
+        if: runner.os == 'Linux' && inputs.build == 1
         run: |
           wget https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-Linux-x86_64.tar.gz
           tar -xzf cmake-3.14.7-Linux-x86_64.tar.gz
           echo "{PWD}/cmake-3.14.7-Linux-x86_64/bin" >> $GITHUB_PATH
           ls -l {PWD}/cmake-3.14.7-Linux-x86_64/bin
+          echo "CMAKE={PWD}/cmake-3.14.7-Linux-x86_64/bin/cmake" >> $GITHUB_ENV
 
       - name: Construct CMake command
         run: |
@@ -301,9 +303,9 @@ jobs:
         if: inputs.msystem == ''
         run: |
           set -x
-          cmake --version
-          cmake ${{ env.CMAKE_ARGS }}
-          cmake --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
+          $CMAKE --version
+          $CMAKE ${{ env.CMAKE_ARGS }}
+          $CMAKE --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: bash
 
       - name: Configure & Build (msys2) # requires msys2 shell
@@ -311,9 +313,9 @@ jobs:
         if: inputs.msystem != ''
         run: |
           set -x
-          cmake --version
-          cmake ${{ env.CMAKE_ARGS }}
-          cmake --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
+          $CMAKE --version
+          $CMAKE ${{ env.CMAKE_ARGS }}
+          $CMAKE --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: msys2 {0}
 
       - name: Validate library symlinks
@@ -480,8 +482,8 @@ jobs:
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          cmake $quoted_args
-          cmake --build $IMATHTEST_BUILD_DIR \
+          $CMAKE $quoted_args
+          $CMAKE --build $IMATHTEST_BUILD_DIR \
                 --config ${{ inputs.build-type }}
 
           # Validate that there is no dependency on PyImath
@@ -516,8 +518,8 @@ jobs:
           cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
           cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          cmake $quoted_args
-          cmake --build $IMATHTEST_BUILD_DIR \
+          $CMAKE $quoted_args
+          $CMAKE --build $IMATHTEST_BUILD_DIR \
                 --config ${{ inputs.build-type }}
           otool -L $IMATHTEST_BUILD_DIR/bin/ImathTest.app/ImathTest
         shell: bash
@@ -547,8 +549,8 @@ jobs:
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          cmake $quoted_args
-          cmake --build $PYIMATHTEST_BUILD_DIR \
+          $CMAKE $quoted_args
+          $CMAKE --build $PYIMATHTEST_BUILD_DIR \
                 --config ${{ inputs.build-type }}
 
           export PYTHONPATH=$PYTHON_INSTALL_DIR
@@ -580,8 +582,8 @@ jobs:
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          cmake $quoted_args
-          cmake --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
+          $CMAKE $quoted_args
+          $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
 
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             $EXAMPLES_BUILD_DIR/bin/"${{ inputs.build-type }}"/imath-intro.exe || true
@@ -612,8 +614,8 @@ jobs:
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          cmake $quoted_args
-          cmake --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
+          $CMAKE $quoted_args
+          $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
           export PATH="$INSTALL_DIR/bin:$PATH"
           $EXAMPLES_BUILD_DIR/bin/imath-intro.exe
           $EXAMPLES_BUILD_DIR/bin/imath-examples.exe
