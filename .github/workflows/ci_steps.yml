@@ -189,7 +189,6 @@ jobs:
           conan_args+=("--output-folder=${CONAN_DIR}")
           conan_args+=("--build=missing")
           conan_args+=("--generator" "CMakeDeps")
-          conan_args+=("--tool-requires=cmake/3.14")
 
           conan_args+=("--generator" "CMakeToolchain")
           conan_args+=("--settings" "build_type=${{ inputs.build-type }}")
@@ -220,6 +219,14 @@ jobs:
           fi
 
         shell: bash
+
+      - name: Install CMake 3.14
+        if: inputs.os == "Linux" && inputs.build == 1
+        run: |
+          wget https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-Linux-x86_64.tar.gz
+          tar -xzf cmake-3.14.7-Linux-x86_64.tar.gz
+          echo "{PWD}/cmake-3.14.7-Linux-x86_64/bin" >> $GITHUB_PATH
+          ls -l {PWD}/cmake-3.14.7-Linux-x86_64/bin
 
       - name: Construct CMake command
         run: |
