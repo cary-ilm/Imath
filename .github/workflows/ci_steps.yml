@@ -222,7 +222,7 @@ jobs:
         shell: bash
 
       - name: Install CMake 3.14
-        if: runner.os == 'Linux' && inputs.build == 1
+        if: runner.os == 'Linux' && inputs.build == 4
         run: |
           wget https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-Linux-x86_64.tar.gz
           tar -xzf cmake-3.14.7-Linux-x86_64.tar.gz
