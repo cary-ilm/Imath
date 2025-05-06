@@ -4,10 +4,10 @@
 # GitHub Actions workflow file
 # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
-name: CI-old
+name: CI-vfx
 
 #
-# Build against past years' VFX reference platform container images
+# Build against VFX reference platform container images
 #
 
 on:
@@ -46,6 +46,12 @@ jobs:
       matrix:
         include:
 
+          - build: 2025
+            vfx-cy: 2025
+
+          - build: 2024
+            vfx-cy: 2024
+
           - build: 2023
             vfx-cy: 2023
 
@@ -62,7 +68,7 @@ jobs:
           INSTALL_DIR=$GITHUB_WORKSPACE/_install
           echo INSTALL_DIR="$INSTALL_DIR" >> $GITHUB_ENV
 
-          cmake -B $BUILD_DIR -S $WORKSPACE \
+          cmake -B $BUILD_DIR -S $GITHUB_WORKSPACE \
                 -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
                 -DCMAKE_VERBOSE_MAKEFILE:BOOL='ON'
 
