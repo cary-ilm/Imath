@@ -32,12 +32,15 @@ permissions:
 jobs:
 
   linux:
+
     name: 'Linux vfx${{ matrix.vfx-cy }}'
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openexr:${{ matrix.vfx-cy }}
 
-    shell: bash
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       matrix:
@@ -96,6 +99,10 @@ jobs:
       volumes:
         - /node20217:/node20217:rw,rshared
         - /node20217:/__e/node20:ro,rshared
+
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       matrix:
