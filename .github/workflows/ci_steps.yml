@@ -65,8 +65,8 @@ jobs:
     continue-on-error: true
     
     # TODO: fix this. 
-    #container:
-    #  image: ${{ inputs.container }}
+    container:
+      image: ${{ inputs.container }}
 
     env:
       CXX: ${{ inputs.cxx-compiler }}
