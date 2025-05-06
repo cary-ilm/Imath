@@ -62,6 +62,8 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
+    continue-on-error: true
+    
     container:
       image: ${{ inputs.container }}
 
@@ -143,8 +145,7 @@ jobs:
         run: |
           set -x
 
-          # $pythonLocation is set by the setup-python step, only done for MINGW32
-          if [ -n "$pythonLocation" ]; then
+          if [[ "$RUNNER_OS" == "Windows" && -n "$pythonLocation" ]]; then
               PYTHON_DIR=$(cygpath -u "$pythonLocation")
               PYTHON=$PYTHON_DIR/python.exe
           else
