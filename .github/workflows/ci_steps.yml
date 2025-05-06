@@ -135,6 +135,12 @@ jobs:
         run: pacboy -S python:p pybind11:p --noconfirm
         shell: msys2 {0}
 
+      - name: Install Python dev packages (Linux)
+        if: (inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
+        shell: bash
 
       - name: Set Up Python Variables
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
