@@ -134,18 +134,14 @@ jobs:
         run: pacboy -S python:p pybind11:p --noconfirm
         shell: msys2 {0}
 
-      - name: Install Python 
-        if: inputs.msystem == ''
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
-        with:
-          python-version: '3.9'
 
       - name: Set Up Python Variables
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'
         run: |
           set -x
 
-          if [[ "$RUNNER_OS" == "Windows" && -n "$pythonLocation" ]]; then
+          # $pythonLocation is set by the setup-python step, only done for MINGW32
+          if [ -n "$pythonLocation" ]; then
               PYTHON_DIR=$(cygpath -u "$pythonLocation")
               PYTHON=$PYTHON_DIR/python.exe
           else
