@@ -183,7 +183,7 @@ jobs:
         shell: bash
 
       - name: Set Up Conan
-        if: inputs.python == 'ON' && inputs.container == ''
+        if: inputs.python == 'ON'
         # conan is required for Boost.python.
         # Boost.python doesn't build under msys2, so msys2 jobs all have inputs.pyton=OFF,
         # hence the conan configuration doesn't have to support msys2
