@@ -138,7 +138,7 @@ jobs:
         if: inputs.msystem == ''
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: '3.x'
+          python-version: '3.9'
 
       - name: Set Up Python Variables
         if: inputs.python == 'ON' || inputs.pybind11 == 'ON'

@@ -55,71 +55,78 @@ set(IMATH_HEADERS
 )
 
 if(BUILD_SHARED_LIBS)
-    add_library(Imath SHARED ${IMATH_HEADERS} ${IMATH_SOURCES})
-    target_compile_definitions(Imath PRIVATE IMATH_EXPORTS)
+
+    add_library(${IMATH_LIBRARY} SHARED ${IMATH_HEADERS} ${IMATH_SOURCES})
+
+    target_compile_definitions(${IMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
     if(WIN32)
-      target_compile_definitions(Imath PUBLIC IMATH_DLL)
+      target_compile_definitions(${IMATH_LIBRARY} PUBLIC IMATH_DLL)
     endif()
+
+    set_target_properties(${IMATH_LIBRARY} PROPERTIES
+      SOVERSION ${IMATH_LIB_SOVERSION}
+      VERSION ${IMATH_LIB_VERSION}
+    )
+
 else()
-    add_library(Imath STATIC ${IMATH_HEADERS} ${IMATH_SOURCES})
+
+    add_library(${IMATH_LIBRARY} STATIC ${IMATH_HEADERS} ${IMATH_SOURCES})
+
 endif()
 
-target_include_directories(Imath INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-target_link_libraries(Imath PUBLIC ImathConfig)
+add_library(Imath::Imath ALIAS ${IMATH_LIBRARY})
 
-target_compile_features(Imath
+#
+# Compile options
+#
+
+target_compile_features(${IMATH_LIBRARY}
     PRIVATE cxx_std_${IMATH_CXX_STANDARD}
     INTERFACE cxx_std_11
 )
 
-set_target_properties(Imath PROPERTIES
+set_target_properties(${IMATH_LIBRARY} PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
     POSITION_INDEPENDENT_CODE ON
 )
 
 if (NOT IMATH_USE_DEFAULT_VISIBILITY)
-    set_target_properties(Imath PROPERTIES
+    set_target_properties(${IMATH_LIBRARY} PROPERTIES
       C_VISIBILITY_PRESET hidden
       CXX_VISIBILITY_PRESET hidden
       VISIBILITY_INLINES_HIDDEN ON
     )
 else()
-    target_compile_definitions(Imath PUBLIC IMATH_USE_DEFAULT_VISIBILITY)
+    target_compile_definitions(${IMATH_LIBRARY} PUBLIC IMATH_USE_DEFAULT_VISIBILITY)
 endif()
 
 if (MSVC)
-    target_compile_options(Imath PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/EHsc>")
+    target_compile_options(${IMATH_LIBRARY} PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/EHsc>")
 endif()
 
-set_property(TARGET Imath PROPERTY PUBLIC_HEADER ${IMATH_HEADERS})
+set_property(TARGET ${IMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${IMATH_HEADERS})
 
-if(BUILD_SHARED_LIBS)
-    set_target_properties(Imath PROPERTIES
-      SOVERSION ${IMATH_LIB_SOVERSION}
-      VERSION ${IMATH_LIB_VERSION}
-    )
-endif()
+target_include_directories(${IMATH_LIBRARY} INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+#
+# Link options
+#
+
+target_link_libraries(${IMATH_LIBRARY} PUBLIC ImathConfig)
 
 include(CheckLibraryExists)
 check_library_exists(m sin "" HAVE_LIB_M)
 if (HAVE_LIB_M)
-    target_link_libraries(Imath PUBLIC m)
+    target_link_libraries(${IMATH_LIBRARY} PUBLIC m)
 endif()
-
-if (NOT IMATH_BUILD_APPLE_FRAMEWORKS)
-    set_target_properties(Imath PROPERTIES OUTPUT_NAME "Imath${IMATH_LIB_SUFFIX}" )
-endif()
-
-add_library(Imath::Imath ALIAS Imath)
-
 
 if (IMATH_BUILD_APPLE_FRAMEWORKS)
     # Mark files as resources
     set_source_files_properties(${IMATH_RESOURCE_FILES} PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources
     )
-    set_target_properties(Imath PROPERTIES 
+    set_target_properties(${IMATH_LIBRARY} PROPERTIES 
       FRAMEWORK TRUE
       FRAMEWORK_VERSION "${IMATH_LIB_VERSION}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.aswf.Imath"
@@ -129,8 +136,8 @@ if (IMATH_BUILD_APPLE_FRAMEWORKS)
       MACOSX_RPATH TRUE)
 
     # Copy resource files to the build directory's framework Resources/
-    set(RES_DEST_DIR "$<TARGET_FILE_DIR:Imath>/Resources")
-    add_custom_command(TARGET Imath POST_BUILD
+    set(RES_DEST_DIR "$<TARGET_FILE_DIR:${IMATH_LIBRARY}>/Resources")
+    add_custom_command(TARGET ${IMATH_LIBRARY} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
               ${IMATH_RESOURCE_FILES}
@@ -138,11 +145,17 @@ if (IMATH_BUILD_APPLE_FRAMEWORKS)
               "${RES_DEST_DIR}/"
       COMMENT "Copying resource files to Imath.framework/Resources in build directory"
     )
+else()
+    set_target_properties(${IMATH_LIBRARY} PROPERTIES OUTPUT_NAME "Imath${IMATH_LIB_SUFFIX}" )
 endif()
   
+#
+# Install configuration
+#
+
 if (IMATH_INSTALL)
 
-    install(TARGETS Imath
+    install(TARGETS ${IMATH_LIBRARY}
       EXPORT Imath
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -154,13 +167,13 @@ if (IMATH_INSTALL)
       PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
     )
 
-
     if(BUILD_SHARED_LIBS
        AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
        AND IMATH_INSTALL_SYM_LINK
        AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
 
-      # create symlink from libImath.so to libPyImath.so
+      # create symlink from libImath.so to libImath-3_2.so
+
       string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
       set(postfix ${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
       set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${IMATH_LIBRARY}${IMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
