@@ -21,8 +21,6 @@ on:
         type: string
       os:
         type: string
-      container:
-        type: string
       cmake:
         type: string
       cxx-standard:
@@ -62,17 +60,11 @@ jobs:
   steps:
     runs-on: ${{ inputs.os }}
 
-    continue-on-error: true
-    
-    # TODO: fix this. 
-    container:
-      image: ${{ inputs.container }}
-
     env:
       CXX: ${{ inputs.cxx-compiler }}
       CC: ${{ inputs.cc-compiler }}
       CMAKE: cmake
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -234,7 +226,7 @@ jobs:
 
         shell: bash
 
-      - name: Install CMake 
+      - name: Install CMake
         if: runner.os == 'Linux' && inputs.cmake != ''
         # CMakeLists.txt specifies a minimum CMake version of 3.14 for
         # the Imath project, so use that for the CI. Except that the

@@ -46,9 +46,6 @@ jobs:
       # values.
       os: ubuntu-latest
       build: ${{ matrix.build }}
-      # DockerHub: https://hub.docker.com/u/aswf
-      # Source: https://github.com/AcademySoftwareFoundation/aswf-docker
-      container: aswf/ci-openexr:${{ matrix.vfx-cy || '2024' }}
       cmake: ${{ matrix.cmake || '3.15.7' }}
       cxx-standard: ${{ matrix.cxx-standard || '14' }}
       cxx-compiler: ${{ matrix.cxx-compiler || 'g++' }}
@@ -97,10 +94,6 @@ jobs:
             label: clang
             cxx-compiler: clang++
             cc-compiler: clang
-
-          - build: 7
-            label: vfx2023
-            vfx-cy: 2023
 
   macOS:
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
