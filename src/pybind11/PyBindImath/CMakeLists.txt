@@ -12,6 +12,7 @@ set(PYBINDIMATH_SOURCES
     PyBindImathFun.cpp
     PyBindImathBox.cpp
     PyBindImathVec.cpp
+    PyBindImathMatrix.cpp
     PyBindImathPlane.cpp
     PyBindImathLine.cpp
     

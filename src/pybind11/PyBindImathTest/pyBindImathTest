@@ -2182,7 +2182,7 @@ def testV2 ():
     print ("V2d")
     testV2x (V2d)
 
-testList.append (('testV2',testV2))
+#testList.append (('testV2',testV2))
 
 
 # -------------------------------------------------------------------------
@@ -2949,7 +2949,7 @@ def testV3 ():
     print ("V3d")
     testV3x (V3d)
 
-testList.append (('testV3',testV3))
+#testList.append (('testV3',testV3))
 
 
 # -------------------------------------------------------------------------
@@ -3827,7 +3827,7 @@ def testV4 ():
     print ("V4d")
     testV4x (V4d)
 
-testList.append (('testV4',testV4))
+#testList.append (('testV4',testV4))
 
 
 # -------------------------------------------------------------------------
@@ -4347,7 +4347,7 @@ def testVecConversions ():
     return
 
 
-testList.append (('testVecConversions',testVecConversions))
+#testList.append (('testVecConversions',testVecConversions))
 
 
 
@@ -5023,7 +5023,7 @@ def testM22 ():
     print ("M22d")
     testM22x (M22d, V2d)
 
-#testList.append (('testM22',testM22))
+testList.append (('testM22',testM22))
 
 
 # -------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #include "PyBindImath.h"
 #include <ImathVec.h>
 #include <ImathVecAlgo.h>
-
+#include <ImathMatrix.h>
 //
 // Wrappings for:
 //
@@ -305,6 +305,60 @@ register_vec_fp(py::class_<Vec> c)
         ;
 }
 
+template <class Vec, class Mat>
+py::class_<Vec>
+register_vec_mat(py::class_<Vec> c)
+{
+    c.def("__mul__", [](const Vec& self, const Mat& m) { return self * m; })
+        .def("__imul__", [](Vec& self, const Mat& m) { return self *= m; })
+        ;
+    
+    return register_vec_fp(c);
+}
+
+#if XXX
+    c.def("__mul__", [](const Vec& self, const M22f& m) { return self * m; })
+        .def("__mul__", [](const Vec& self, const M33f& m) { return self * m; })
+        .def("__imul__", [](Vec& self, const M22f& m) { return self *= m; })
+        .def("__imul__", [](Vec& self, const M33f& m) { return self *= m; })
+        .def("__mul__", [](const Vec& self, const M22d& m) { return self * m; })
+        .def("__mul__", [](const Vec& self, const M33d& m) { return self * m; })
+        .def("__imul__", [](Vec& self, const M22d& m) { return self *= m; })
+        .def("__imul__", [](Vec& self, const M33d& m) { return self *= m; })
+        ;
+#endif
+    
+template <class Vec>
+py::class_<Vec>
+register_vec_fp2(py::class_<Vec> c)
+{
+    register_vec_mat<Vec,M22f>(c);
+    register_vec_mat<Vec,M22d>(c);
+    register_vec_mat<Vec,M33f>(c);
+    register_vec_mat<Vec,M33d>(c);
+    return register_vec_fp(c);
+}
+
+template <class Vec>
+py::class_<Vec>
+register_vec_fp3(py::class_<Vec> c)
+{
+    register_vec_mat<Vec,M33f>(c);
+    register_vec_mat<Vec,M33d>(c);
+    register_vec_mat<Vec,M44f>(c);
+    register_vec_mat<Vec,M44d>(c);
+    return register_vec_fp(c);
+}
+
+template <class Vec>
+py::class_<Vec>
+register_vec_fp4(py::class_<Vec> c)
+{
+    register_vec_mat<Vec,M44f>(c);
+    register_vec_mat<Vec,M44d>(c);
+    return register_vec_fp(c);
+}
+
 //
 // Vec2<T>
 //
@@ -333,6 +387,7 @@ register_vec2(py::module& m, const char * name)
         .def_readwrite("y", &Vec::y)
         .def("setValue", [](Vec& self, T x, T y) { self.setValue(x, y); }, "set to the given x,y values")
         .def("cross", &Vec::cross, "return the right-handed cross product with the given vector")
+
         ;
 
     register_vec<Vec>(c);
@@ -423,8 +478,8 @@ register_imath_vec(py::module& m)
 
     auto v2s = register_vec2<V2s>(m, "V2s");
     auto v2i = register_vec2<V2i>(m, "V2i");
-    auto v2f = register_vec_fp(register_vec2<V2f>(m, "V2f"));
-    auto v2d = register_vec_fp(register_vec2<V2d>(m, "V2d"));
+    auto v2f = register_vec_fp2(register_vec2<V2f>(m, "V2f"));
+    auto v2d = register_vec_fp2(register_vec2<V2d>(m, "V2d"));
 
     register_vec_arithmetic<V2s,V2s>(v2s);
     register_vec_arithmetic<V2s,V2i>(v2s);
@@ -448,8 +503,8 @@ register_imath_vec(py::module& m)
 
     auto v3s = register_vec3<V3s>(m, "V3s");
     auto v3i = register_vec3<V3i>(m, "V3i");
-    auto v3f = register_vec_fp(register_vec3<V3f>(m, "V3f"));
-    auto v3d = register_vec_fp(register_vec3<V3d>(m, "V3d"));
+    auto v3f = register_vec_fp3(register_vec3<V3f>(m, "V3f"));
+    auto v3d = register_vec_fp3(register_vec3<V3d>(m, "V3d"));
 
     register_vec_arithmetic<V3s,V3s>(v3s);
     register_vec_arithmetic<V3s,V3i>(v3s);
@@ -473,8 +528,8 @@ register_imath_vec(py::module& m)
 
     auto v4s = register_vec4<V4s>(m, "V4s");
     auto v4i = register_vec4<V4i>(m, "V4i");
-    auto v4f = register_vec_fp(register_vec4<V4f>(m, "V4f"));
-    auto v4d = register_vec_fp(register_vec4<V4d>(m, "V4d"));
+    auto v4f = register_vec_fp4(register_vec4<V4f>(m, "V4f"));
+    auto v4d = register_vec_fp4(register_vec4<V4d>(m, "V4d"));
 
     register_vec_arithmetic<V4s,V4s>(v4s);
     register_vec_arithmetic<V4s,V4i>(v4s);
