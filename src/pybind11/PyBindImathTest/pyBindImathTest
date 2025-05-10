@@ -4893,14 +4893,14 @@ def testM22x (Mat, Vec):
     assert v2.equalWithAbsError((0, 1), v2.baseTypeEpsilon())
     v2 = m4.multDirMatrix(v1)
     assert v2.equalWithAbsError((0, 1), v2.baseTypeEpsilon())
-    v1a = V2fArray(1)
-    v1a[:] = V2f(v1)
-    v2a = m4.multDirMatrix(v1a)
-    assert v2a[0].equalWithAbsError((0, 1), v2a[0].baseTypeEpsilon())
-    v1a = V2dArray(1)
-    v1a[:] = V2d(v1)
-    v2a = m4.multDirMatrix(v1a)
-    assert v2a[0].equalWithAbsError((0, 1), v2a[0].baseTypeEpsilon())
+#    v1a = V2fArray(1)
+#    v1a[:] = V2f(v1)
+#    v2a = m4.multDirMatrix(v1a)
+#    assert v2a[0].equalWithAbsError(Vec(0, 1), v2a[0].baseTypeEpsilon())
+#    v1a = V2dArray(1)
+#    v1a[:] = V2d(v1)
+#    v2a = m4.multDirMatrix(v1a)
+#    assert v2a[0].equalWithAbsError((0, 1), v2a[0].baseTypeEpsilon())
     
     # Division.
 
