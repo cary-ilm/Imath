@@ -50,6 +50,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git remote add origin-write https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git push origin-write HEAD:refs/heads/temp-ci-${{ github.run_id }}
+        shell: bash
 
       - name: Configure & Build
         run: |
@@ -83,4 +84,5 @@ jobs:
           set -x
           git remote add origin-write https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git push origin-write --delete temp-ci-${{ github.run_id }}
+        shell: bash
           
