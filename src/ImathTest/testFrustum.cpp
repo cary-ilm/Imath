@@ -443,6 +443,9 @@ testFrustum ()
         f1.ZToDepth (zMin, zMin, zMax) == f1.ZToDepthExc (zMin, zMin, zMax));
     assert (f1.normalizedZToDepth (float(zMin)) == f1.normalizedZToDepthExc (float(zMin)));
     assert (f1.DepthToZ (n, zMin, zMax) == f1.DepthToZExc (n, zMin, zMax));
+    auto r1 = f1.worldRadius (v3, one);
+    auto r2 = f1.worldRadiusExc (v3, one);
+    std::cout << "XXX: r1=" << r1 << " r2=" << r2 << std::endl;
     assert (f1.worldRadius (v3, one) == f1.worldRadiusExc (v3, one));
     assert (f1.screenRadius (v3, one) == f1.screenRadiusExc (v3, one));
     assert (f1.projectPointToScreen (v3) == f1.projectPointToScreenExc (v3));
@@ -463,6 +466,11 @@ testFrustum ()
     f1.setOrthographic (true);
     assert (
         f1.ZToDepth (zMin, zMin, zMax) == f1.ZToDepthExc (zMin, zMin, zMax));
+    std::cout << "f1.normalizedZToDepth (" << zMin << ") " << f1.normalizedZToDepth (float(zMin)) << std::endl;
+    std::cout << "f1.normalizedZToDepthExc (" << zMin << ") " << f1.normalizedZToDepthExc (float(zMin)) << std::endl;
+    auto z1 = f1.normalizedZToDepth (float(zMin));
+    auto z2 = f1.normalizedZToDepthExc (float(zMin));
+    std::cout << "z1=" << z1 << " z2=" << z2 << std::endl;
     assert (f1.normalizedZToDepth (float(zMin)) == f1.normalizedZToDepthExc (float(zMin)));
     assert (f1.DepthToZ (n, zMin, zMax) == f1.DepthToZExc (n, zMin, zMax));
     assert (f1.worldRadius (v3, one) == f1.worldRadiusExc (v3, one));

@@ -278,6 +278,10 @@ testExtendByPoint (const char* type)
 
             b.extendBy (p);
 
+            std::cout << "XXX: " << __FILE__
+                      << " b.min=" << b.min << " min=" << min
+                      << " b.max=" << b.max << " max=" << max
+                      << std::endl;
             assert (b.min == min && b.max == max);
         }
     }

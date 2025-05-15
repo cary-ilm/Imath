@@ -826,6 +826,7 @@ boxMatrixTransform ()
     assert (approximatelyEqual (b3.max, b4.max, e));
     assert (approximatelyEqual (b3.max, b4.max, e));
 
+    std::cout << "XXX: " << __FILE__ << " b21=" << b21 << " b2=" << b2 << std::endl;
     assert (b21 == b2);
     assert (b31 == b3);
 
