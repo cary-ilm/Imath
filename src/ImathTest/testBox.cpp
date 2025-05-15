@@ -278,7 +278,7 @@ testExtendByPoint (const char* type)
 
             b.extendBy (p);
 
-            std::cout << "XXX: " << __FILE__
+            std::cout << std::fixed << std::setprecision(20) << "XXX: " << __FILE__
                       << " b.min=" << b.min << " min=" << min
                       << " b.max=" << b.max << " max=" << max
                       << std::endl;

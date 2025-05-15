@@ -445,7 +445,7 @@ testFrustum ()
     assert (f1.DepthToZ (n, zMin, zMax) == f1.DepthToZExc (n, zMin, zMax));
     auto r1 = f1.worldRadius (v3, one);
     auto r2 = f1.worldRadiusExc (v3, one);
-    std::cout << "XXX: r1=" << r1 << " r2=" << r2 << std::endl;
+    std::cout << std::fixed << std::setprecision(20) << "XXX: r1=" << r1 << " r2=" << r2 << std::endl;
     assert (f1.worldRadius (v3, one) == f1.worldRadiusExc (v3, one));
     assert (f1.screenRadius (v3, one) == f1.screenRadiusExc (v3, one));
     assert (f1.projectPointToScreen (v3) == f1.projectPointToScreenExc (v3));
