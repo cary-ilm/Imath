@@ -70,15 +70,6 @@ register_fun(pybind11::module& m)
     m.def("abs", IMATH_NAMESPACE::abs<int>);
     m.def("sign", IMATH_NAMESPACE::sign<int>);
     m.def("clamp", IMATH_NAMESPACE::clamp<int>);
-    // `log`/`log10`/`atan2`/`pow` have their types explicitly specified here to satisfy GCC and MSVC.
-    m.def("log", std::log<float>);
-    m.def("log", std::log<double>);
-    m.def("log10", ::log10<float>);
-    m.def("log10", ::log10<double>);
-    m.def("atan2", std::atan2<float>);
-    m.def("atan2", std::atan2<double>);
-    m.def("pow", std::pow<float>);
-    m.def("pow", std::pow<double>);
     m.def("divs", IMATH_NAMESPACE::divs);
     m.def("mods", IMATH_NAMESPACE::mods);
     m.def("divp", IMATH_NAMESPACE::divp);
@@ -100,6 +91,8 @@ register_fun_fp_T(pybind11::module& m)
 {
     m.def("abs", IMATH_NAMESPACE::abs<T>);
     m.def("sign", IMATH_NAMESPACE::sign<T>);
+    m.def("log", [](T t) { return ::log(t); });
+    m.def("log10", [](T t) { return ::log10(t); });
     m.def("lerp", IMATH_NAMESPACE::lerp<T, T>);
     m.def("ulerp", IMATH_NAMESPACE::ulerp<T, T>);
     m.def("lerpfactor", IMATH_NAMESPACE::lerpfactor<T>);
@@ -115,7 +108,9 @@ register_fun_fp_T(pybind11::module& m)
     m.def("asin", std::asin<T>);
     m.def("acos", std::acos<T>);
     m.def("atan", std::atan<T>);
+    m.def("atan2", [](T y, T x) { return std::atan2(y, x); });
     m.def("sqrt", std::sqrt<T>);
+    m.def("pow", [](T x, T y) { return std::pow(x, y); });
     m.def("exp", std::exp<T>);
     m.def("sinh", std::sinh<T>);
     m.def("cosh", std::cosh<T>);
@@ -135,9 +130,8 @@ register_imath_fun(pybind11::module& m)
     // Bindings for functions using explicit argument(s) and return types.
     register_fun(m);
 
-    // Bindings for functions using floating point types, i.e. `float` and `double`, for its argument(s)
+    // Bindings for functions using floating point types
     // and return types.
-    register_fun_fp_T<float>(m);
     register_fun_fp_T<double>(m);
 }
 
