@@ -190,12 +190,12 @@ register_fun_fp_T(py::module& m)
         "Return \"1\" or \"-1\" based on the sign of the argument.");
     m.def(
         "log",
-        std::log<T>,
+        [](T t) {return std::log(t); },
         py::arg("value"),
         "Return the natural logarithm of the argument.");
     m.def(
         "log10",
-        std::log10<T>,
+        [](T t) { return std::log10(t); },
         py::arg("value"),
         "Return the base 10 logarithm of the argument.");
     m.def(
@@ -355,7 +355,6 @@ register_imath_fun(py::module& m)
 
     // Bindings for functions using floating point types, i.e. `float` and `double`, for its argument(s)
     // and return types.
-    register_fun_fp_T<float>(m);
     register_fun_fp_T<double>(m);
 }
 
