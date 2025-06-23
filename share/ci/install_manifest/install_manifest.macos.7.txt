@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Contributors to the OpenEXR Project.
+# cmake -B /Users/runner/work/Imath/Imath/_build -S /Users/runner/work/Imath/Imath -DCMAKE_INSTALL_PREFIX=/Users/runner/work/Imath/Imath/_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=14 -DBUILD_SHARED_LIBS=ON -DIMATH_INSTALL_PKG_CONFIG=ON -DIMATH_INSTALL_SYM_LINK=ON -DIMATH_BUILD_APPLE_FRAMEWORK=ON -DBUILD_TESTING=OFF -DPYTHON=OFF -DPYBIND11=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_SYSTEM_NAME=iOS 
+Imath.framework/Headers/ImathBox.h
+Imath.framework/Headers/ImathBoxAlgo.h
+Imath.framework/Headers/ImathColor.h
+Imath.framework/Headers/ImathColorAlgo.h
+Imath.framework/Headers/ImathConfig.h
+Imath.framework/Headers/ImathEuler.h
+Imath.framework/Headers/ImathExport.h
+Imath.framework/Headers/ImathForward.h
+Imath.framework/Headers/ImathFrame.h
+Imath.framework/Headers/ImathFrustum.h
+Imath.framework/Headers/ImathFrustumTest.h
+Imath.framework/Headers/ImathFun.h
+Imath.framework/Headers/ImathGL.h
+Imath.framework/Headers/ImathGLU.h
+Imath.framework/Headers/ImathInt64.h
+Imath.framework/Headers/ImathInterval.h
+Imath.framework/Headers/ImathLine.h
+Imath.framework/Headers/ImathLineAlgo.h
+Imath.framework/Headers/ImathMath.h
+Imath.framework/Headers/ImathMatrix.h
+Imath.framework/Headers/ImathMatrixAlgo.h
+Imath.framework/Headers/ImathNamespace.h
+Imath.framework/Headers/ImathPlane.h
+Imath.framework/Headers/ImathPlatform.h
+Imath.framework/Headers/ImathQuat.h
+Imath.framework/Headers/ImathRandom.h
+Imath.framework/Headers/ImathRoots.h
+Imath.framework/Headers/ImathShear.h
+Imath.framework/Headers/ImathSphere.h
+Imath.framework/Headers/ImathTypeTraits.h
+Imath.framework/Headers/ImathVec.h
+Imath.framework/Headers/ImathVecAlgo.h
+Imath.framework/Headers/half.h
+Imath.framework/Headers/halfFunction.h
+Imath.framework/Headers/halfLimits.h
+Imath.framework/Imath
+Imath.framework/Info.plist
+Imath.framework/Resources/CMake/Imath/ImathConfig.cmake
+Imath.framework/Resources/CMake/Imath/ImathConfigVersion.cmake
+Imath.framework/Resources/CMake/Imath/ImathTargets-release.cmake
+Imath.framework/Resources/CMake/Imath/ImathTargets.cmake

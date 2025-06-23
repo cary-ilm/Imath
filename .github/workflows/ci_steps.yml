@@ -45,7 +45,13 @@ on:
         type: string
       BUILD_TESTING:
         type: string
-      IMATH_BUILD_APPLE_FRAMEWORKS:
+      IMATH_BUILD_APPLE_FRAMEWORK:
+        type: string
+      CMAKE_OSX_SYSROOT:
+        type: string
+      CMAKE_OSX_ARCHITECTURES:
+        type: string
+      CMAKE_SYSTEM_NAME: 
         type: string
       IMATH_TEST_PYTHON:
         type: string
@@ -106,7 +112,7 @@ jobs:
 
       - name: Install MSYS2 ${{ inputs.msystem }}
         if: inputs.msystem != ''
-        uses: msys2/setup-msys2@61f9e5e925871ba6c9e3e8da24ede83ea27fa91f # v2.27.0
+        uses: msys2/setup-msys2@40677d36a502eb2cf0fb808cc9dec31bf6152638 # v2.28.0
         with:
           msystem: ${{ inputs.msystem }}
           update: true
@@ -252,7 +258,7 @@ jobs:
           cmake_args+=("-DBUILD_SHARED_LIBS=${{ inputs.BUILD_SHARED_LIBS }}")
           cmake_args+=("-DIMATH_INSTALL_PKG_CONFIG=${{ inputs.IMATH_INSTALL_PKG_CONFIG }}")
           cmake_args+=("-DIMATH_INSTALL_SYM_LINK=${{ inputs.IMATH_INSTALL_SYM_LINK }}")
-          cmake_args+=("-DIMATH_BUILD_APPLE_FRAMEWORKS=${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}")
+          cmake_args+=("-DIMATH_BUILD_APPLE_FRAMEWORK=${{ inputs.IMATH_BUILD_APPLE_FRAMEWORK }}")
           cmake_args+=("-DBUILD_TESTING=${{ inputs.BUILD_TESTING }}")
           cmake_args+=("-DPYTHON=${{ inputs.python }}")
           cmake_args+=("-DPYBIND11=${{ inputs.pybind11 }}")
@@ -289,8 +295,14 @@ jobs:
               cmake_args+=("-DPYIMATH_LIB_SUFFIX=PY_${{ inputs.namespace }}")
               cmake_args+=("-DPYBINDIMATH_LIB_SUFFIX=PYBIND_${{ inputs.namespace }}")
           fi
-          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" == "ON" ]; then
-              cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
+          if [ -n "${{ inputs.CMAKE_SYSTEM_NAME }}" ]; then
+            cmake_args+=("-DCMAKE_SYSTEM_NAME=${{ inputs.CMAKE_SYSTEM_NAME }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_SYSROOT }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_SYSROOT=${{ inputs.CMAKE_OSX_SYSROOT }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_ARCHITECTURES }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=${{ inputs.CMAKE_OSX_ARCHITECTURES }}")
           fi
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
@@ -308,6 +320,7 @@ jobs:
         run: |
           set -x
           $CMAKE --version
+          echo $CMAKE ${{ env.CMAKE_ARGS }}
           $CMAKE ${{ env.CMAKE_ARGS }}
           $CMAKE --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: bash
@@ -323,7 +336,7 @@ jobs:
         shell: msys2 {0}
 
       - name: Validate library symlinks
-        if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON' && inputs.IMATH_INSTALL_SYM_LINK == 'ON'
+        if: inputs.BUILD_SHARED_LIBS == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORK != 'ON' && inputs.IMATH_INSTALL_SYM_LINK == 'ON'
         # Validate that the proper symlinks have been created
         # between the various versions of the .so/.dylib/.dll,
         # especially the one created explicitly (based on the
@@ -470,7 +483,7 @@ jobs:
         shell: bash
 
       - name: Test ImathTest Standalone
-        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK != 'ON'
         # Use the ImathTest program as an example of an application
         # using the Imath library,  to validate that we can build
         # against the just-installed Imath library
@@ -510,33 +523,8 @@ jobs:
           fi
         shell: bash
 
-      - name: Test ImathTest Standalone (iOS)
-        if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'ON'
-        # Use the ImathTest program as an example of an application
-        # using the Imath library,  to validate that we can build
-        # against the just-installed Imath library
-        run: |
-          set -x
-
-          IMATHTEST_BUILD_DIR=$WORKSPACE/_build.imathTest.iOS
-          cmake_args=("-B" "$IMATHTEST_BUILD_DIR" "-S" "$WORKSPACE/src/ImathTest")
-          cmake_args+=("-DImath_DIR=$INSTALL_DIR/lib/Imath.framework/Resources")
-          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
-          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
-          cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
-          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
-          cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
-          cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
-          cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
-          quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          $CMAKE $quoted_args
-          $CMAKE --build $IMATHTEST_BUILD_DIR \
-                --config ${{ inputs.build-type }}
-          otool -L $IMATHTEST_BUILD_DIR/bin/ImathTest.app/ImathTest
-        shell: bash
-
       - name: Test PyImathTest Standalone
-        if: inputs.msystem == '' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        if: inputs.msystem == '' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORK != 'ON'
         # Use the PyImathTestC program as an example of an application
         # that uses the PyImath library, to validate that we can build
         # against the just-installed Imath library (with python
@@ -573,7 +561,7 @@ jobs:
         shell: bash
 
       - name: Examples
-        if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK != 'ON'
         # Confirm the website examples compile and execute.
         # The example code uses the Imath:: namespace explicitly, so
         # they won't work with a custom namespace, so skip the test in
@@ -633,4 +621,26 @@ jobs:
           $EXAMPLES_BUILD_DIR/bin/imath-examples.exe
         shell: msys2 {0}
 
-
+      - name: Examples (Apple Framework)
+        if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK == 'ON'
+        # Confirm the website examples compile against an Apple framework installation
+        run: |
+          set -x
+          EXAMPLES_BUILD_DIR=$WORKSPACE/_build.examples.apple
+          IMATH_DIR=$(find $INSTALL_DIR -type d -path "*/Imath.framework/*/Resources/CMake/Imath" | head -n 1)
+          cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
+          cmake_args+=("-DImath_DIR=$IMATH_DIR")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          if [ -n "${{ inputs.CMAKE_SYSTEM_NAME }}" ]; then
+            cmake_args+=("-DCMAKE_SYSTEM_NAME=${{ inputs.CMAKE_SYSTEM_NAME }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_SYSROOT }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_SYSROOT=${{ inputs.CMAKE_OSX_SYSROOT }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_ARCHITECTURES }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=${{ inputs.CMAKE_OSX_ARCHITECTURES }}")
+          fi
+          $CMAKE "${cmake_args[@]}"
+          $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
+        shell: bash

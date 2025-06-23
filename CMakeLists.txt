@@ -43,31 +43,22 @@ message(STATUS "Configure ${IMATH_PACKAGE_NAME}, library API version: ${IMATH_LI
 option(IMATH_INSTALL "Install Imath library" ON)
 
 if (APPLE)
-  option(IMATH_BUILD_APPLE_FRAMEWORKS "Build as Apple Frameworks" OFF)
+  option(IMATH_BUILD_APPLE_FRAMEWORK "Build as Apple Framework" OFF)
 endif()
 
 # Config headers and package config files
 add_subdirectory(config)
 
-if (IMATH_BUILD_APPLE_FRAMEWORKS)
-  # Define resource files for Apple Framework
-  set(IMATH_RESOURCE_FILES
-    "${CMAKE_SOURCE_DIR}/README.md"
-    "${CMAKE_SOURCE_DIR}/LICENSE.md"
-    "${CMAKE_SOURCE_DIR}/SECURITY.md"
-    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathTargets.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/config/ImathConfigVersion.cmake"
-  )
-  if (PYTHON)
-    set(IMATH_RESOURCE_FILES ${IMATH_RESOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config/PyImathTargets.cmake")
-  endif()
-  if (PYBIND11)
-    set(IMATH_RESOURCE_FILES ${IMATH_RESOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config/PyBindImathTargets.cmake")
-  endif()
-
-  message(STATUS "Resource files: ${IMATH_RESOURCE_FILES}")
-endif()
+#if (IMATH_BUILD_APPLE_FRAMEWORK)
+#  if (PYTHON)
+#    set(IMATH_RESOURCE_FILES ${IMATH_RESOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config/PyImathTargets.cmake")
+#  endif()
+#  if (PYBIND11)
+#    set(IMATH_RESOURCE_FILES ${IMATH_RESOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config/PyBindImathTargets.cmake")
+#  endif()
+#
+#  message(STATUS "Resource files: ${IMATH_RESOURCE_FILES}")
+#endif()
 
 # uninstall target
 if(NOT TARGET uninstall)
@@ -102,8 +93,8 @@ if (BUILD_WEBSITE AND NOT IMATH_IS_SUBPROJECT)
   add_subdirectory(website)
 endif()
 
-# pkg-config is not required for Apple Frameworks
-if (IMATH_BUILD_APPLE_FRAMEWORKS)
+# pkg-config is not required for Apple Framework
+if (IMATH_BUILD_APPLE_FRAMEWORK)
   set(IMATH_INSTALL_SYM_LINK OFF)
 endif()
 

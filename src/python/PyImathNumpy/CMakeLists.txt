@@ -55,18 +55,24 @@ if (IMATH_INSTALL)
   # which allows an externally-set value to take effect.
   #
   
-  if (NOT DEFINED PYTHON_INSTALL_DIR)
-
-    set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-    message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR}")
-
+  if (DEFINED PYTHON_INSTALL_DIR)
+    set(python_destination ${PYTHON_INSTALL_DIR})
+    message(STATUS "installing ${PYIMATHNUMPY_MODULE} to ${python_destination} (set externally)")
   else()
-
-    message(STATUS "installing ${PYIMATHNUMPY_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
-  
+    if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
+      if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        # iOS framework does not use Versions
+        set(python_destination PyImath.framework/Resources/python)
+      else()
+        set(python_destination PyImath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/python)
+      endif()
+    else()
+      set(python_destination "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
+    endif()
+    message(STATUS "installing ${PYIMATHNUMPY_MODULE} to ${python_destination}")
   endif()
   
-  install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
+  install(TARGETS ${PYIMATHNUMPY_MODULE} LIBRARY DESTINATION ${python_destination})
 
 endif()
 

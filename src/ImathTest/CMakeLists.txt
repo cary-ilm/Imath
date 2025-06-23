@@ -11,7 +11,6 @@ if("${CMAKE_PROJECT_NAME}" STREQUAL "")
   cmake_minimum_required(VERSION 3.14)
   project(ImathTest)
   find_package(Imath)
-
 endif()
 
 #
