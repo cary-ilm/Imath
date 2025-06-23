@@ -38,7 +38,7 @@ Imath.framework/Headers/halfFunction.h
 Imath.framework/Headers/halfLimits.h
 Imath.framework/Imath
 Imath.framework/Info.plist
-Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/ImathConfig.cmake
-Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/ImathConfigVersion.cmake
-Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/ImathTargets.cmake
+Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/Imath/ImathConfig.cmake
+Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/Imath/ImathConfigVersion.cmake
+Imath.framework/Versions/$MAJOR.$MINOR/Resources/CMake/Imath/ImathTargets.cmake
 
