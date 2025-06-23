@@ -104,6 +104,7 @@ jobs:
       # values.
       os: ${{ matrix.os || 'macos-14' }}
       build: ${{ matrix.build }}
+      cmake: ${{ matrix.cmake || '3.15.7' }}
       cxx-standard: ${{ matrix.cxx-standard || '14' }}
       build-type: ${{ matrix.build-type || 'Release' }}
       python: ${{ matrix.python || 'ON' }}
@@ -111,7 +112,9 @@ jobs:
       BUILD_SHARED_LIBS: ${{ matrix.BUILD_SHARED_LIBS || 'ON' }}
       IMATH_INSTALL_PKG_CONFIG: ${{ matrix.IMATH_INSTALL_PKG_CONFIG || 'ON' }}
       IMATH_INSTALL_SYM_LINK: ${{ matrix.IMATH_INSTALL_SYM_LINK || 'ON' }}
-      IMATH_BUILD_APPLE_FRAMEWORKS: ${{ matrix.IMATH_BUILD_APPLE_FRAMEWORKS || 'OFF' }}
+      IMATH_BUILD_APPLE_FRAMEWORK: ${{ matrix.IMATH_BUILD_APPLE_FRAMEWORK || 'OFF' }}
+      CMAKE_SYSTEM_NAME: ${{ matrix.CMAKE_SYSTEM_NAME }}
+      CMAKE_OSX_ARCHITECTURES: ${{ matrix.CMAKE_OSX_ARCHITECTURES }}
       BUILD_TESTING: ${{ matrix.BUILD_TESTING || 'ON' }}
       IMATH_TEST_PYTHON: ${{ matrix.IMATH_TEST_PYTHON || 'ON' }}
       IMATH_TEST_PYBIND11: ${{ matrix.IMATH_TEST_PYBIND11 || 'ON' }}
@@ -145,11 +148,20 @@ jobs:
             os: macos-13
 
           - build: 6
-            label: Apple Frameworks
-            IMATH_BUILD_APPLE_FRAMEWORKS: 'ON'
+            label: Apple Framework Universal2
+            IMATH_BUILD_APPLE_FRAMEWORK: 'ON'
+            CMAKE_OSX_ARCHITECTURES: "x86_64;arm64"
             BUILD_TESTING: 'OFF'
-            python: 'OFF' # conan boost doesn't support iOS
-            pybind11: 'OFF' # iOS doesn't support CPython
+            python: 'OFF' 
+            pybind11: 'OFF' 
+
+          - build: 7
+            label: Apple iOS
+            IMATH_BUILD_APPLE_FRAMEWORK: 'ON'
+            CMAKE_SYSTEM_NAME: iOS
+            BUILD_TESTING: 'OFF'
+            python: 'OFF' 
+            pybind11: 'OFF' 
 
   windows:
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
