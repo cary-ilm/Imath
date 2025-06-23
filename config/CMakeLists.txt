@@ -78,7 +78,7 @@ file(MAKE_DIRECTORY ${config_build_dir})
 if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORKS)
   set(cmake_destination Imath.framework/Versions/${IMATH_LIB_VERSION}/Resources/CMake/Imath)
 else()
-  set(cmake_destination ${config_build_dir})
+  set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
 endif()
 
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/ImathConfig.cmake.in
