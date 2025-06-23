@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) Contributors to the OpenEXR Project.
-# cmake -B /Users/runner/work/Imath/Imath/_build -S /Users/runner/work/Imath/Imath -DCMAKE_INSTALL_PREFIX=/Users/runner/work/Imath/Imath/_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DBUILD_SHARED_LIBS=ON -DIMATH_INSTALL_PKG_CONFIG=ON -DIMATH_BUILD_APPLE_FRAMEWORKS=ON -DBUILD_TESTING=OFF -DPYTHON=OFF -DPYBIND11=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_SYSTEM_NAME=iOS 
+# cmake -B /Users/runner/work/Imath/Imath/_build -S /Users/runner/work/Imath/Imath -DCMAKE_INSTALL_PREFIX=/Users/runner/work/Imath/Imath/_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DBUILD_SHARED_LIBS=ON -DIMATH_INSTALL_PKG_CONFIG=ON -DIMATH_BUILD_APPLE_FRAMEWORK=ON -DBUILD_TESTING=OFF -DPYTHON=OFF -DPYBIND11=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_SYSTEM_NAME=iOS 
 Imath.framework/Headers/ImathBox.h
 Imath.framework/Headers/ImathBoxAlgo.h
 Imath.framework/Headers/ImathColor.h

@@ -121,19 +121,19 @@ if (HAVE_LIB_M)
     target_link_libraries(${IMATH_LIBRARY} PUBLIC m)
 endif()
 
-if (IMATH_BUILD_APPLE_FRAMEWORKS)
+if (IMATH_BUILD_APPLE_FRAMEWORK)
   set_target_properties(${IMATH_LIBRARY} PROPERTIES 
     FRAMEWORK TRUE
     FRAMEWORK_VERSION "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.aswf.Imath"
     MACOSX_FRAMEWORK_IDENTIFIER "org.aswf.Imath"
-    MACOSX_FRAMEWORK_BUNDLE_VERSION "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}.${Imath_VERSION_PATCH}"
+    MACOSX_FRAMEWORK_BUNDLE_VERSION "${IMATH_VERSION}"
     MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}"
     MACOSX_RPATH TRUE
   )
   set_property(TARGET ${IMATH_LIBRARY} PROPERTY
-    RESOURCE "${config_build_dir}/ImathConfig.cmake"
-             "${config_build_dir}/ImathConfigVersion.cmake"
+    RESOURCE "${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfig.cmake"
+             "${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfigVersion.cmake"
   )
 else()
   set_target_properties(${IMATH_LIBRARY} PROPERTIES OUTPUT_NAME "Imath${IMATH_LIB_SUFFIX}" )
@@ -160,7 +160,7 @@ if (IMATH_INSTALL)
   if(BUILD_SHARED_LIBS
      AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
      AND IMATH_INSTALL_SYM_LINK
-     AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+     AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
 
     # create symlink from libImath.so to libImath-3_2.so
 

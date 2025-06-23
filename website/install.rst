@@ -226,7 +226,7 @@ CMake Build-time Configuration Options
   If true, create a symbolic link to the shared object with a name
   with no suffix, i.e. ``libImath.so``. On by default.
 
-* ``IMATH_BUILD_APPLE_FRAMEWORKS``
+* ``IMATH_BUILD_APPLE_FRAMEWORK``
 
   If true, the build configures the library into an Apple framework,
   i.e. ``Imath.framework``, rather than the traditional ``lib`` and

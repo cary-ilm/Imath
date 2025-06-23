@@ -22,18 +22,12 @@ target_include_directories(ImathConfig INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}>)
 
 if (IMATH_INSTALL)
-  if (NOT IMATH_BUILD_APPLE_FRAMEWORKS)
-    install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.h
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
-    )
-  endif()
   install(TARGETS ImathConfig EXPORT Imath)
 endif()
 
 add_library(Imath::Config ALIAS ImathConfig)
 
-if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
 
   # Prepend prefix for includedir only if CMAKE_INSTALL_INCLUDEDIR is relative
   if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
@@ -72,29 +66,31 @@ endif()
 
 include(CMakePackageConfigHelpers)
 
-set(config_build_dir ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} CACHE INTERNAL "dir for .cmake files")
-file(MAKE_DIRECTORY ${config_build_dir})
+set(IMATH_CMAKE_CONFIG_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+    CACHE INTERNAL "dir for .cmake files")
+file(MAKE_DIRECTORY ${IMATH_CMAKE_CONFIG_BUILD_DIR})
 
-if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORKS)
-  set(cmake_destination Imath.framework/Versions/${IMATH_LIB_VERSION}/Resources/CMake/Imath)
+if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
+  set(cmake_destination Imath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/CMake/Imath)
 else()
   set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
 endif()
 
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/ImathConfig.cmake.in
-  ${config_build_dir}/ImathConfig.cmake
+  ${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfig.cmake
   INSTALL_DESTINATION ${cmake_destination}
 )
 
-write_basic_package_version_file(${config_build_dir}/ImathConfigVersion.cmake
+write_basic_package_version_file(${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfigVersion.cmake
   VERSION ${PROJECT_VERSION}
-  COMPATIBILITY SameMajorVersion)
+  COMPATIBILITY SameMajorVersion
+)
 
 if (IMATH_INSTALL)
 
   install(FILES
-    ${config_build_dir}/ImathConfig.cmake
-    ${config_build_dir}/ImathConfigVersion.cmake
+    ${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfig.cmake
+    ${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfigVersion.cmake
     DESTINATION ${cmake_destination}
   )
 

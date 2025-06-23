@@ -112,7 +112,7 @@ endif()
 
 add_library(Imath::PyImath ALIAS ${PYIMATH_LIBRARY})
 
-if (IMATH_BUILD_APPLE_FRAMEWORKS)
+if (IMATH_BUILD_APPLE_FRAMEWORK)
   set_target_properties(PyBindImath PROPERTIES 
     FRAMEWORK TRUE
     FRAMEWORK_VERSION "${IMATH_LIB_VERSION}"
@@ -246,7 +246,7 @@ if (IMATH_INSTALL)
 
   # Install export set for downstream CMake
 
-  if (NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+  if (NOT IMATH_BUILD_APPLE_FRAMEWORK)
     install(EXPORT ${PYIMATH_LIBRARY}Targets
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Imath
       FILE ${PYIMATH_LIBRARY}Targets.cmake
@@ -262,7 +262,7 @@ if (IMATH_INSTALL)
   if(BUILD_SHARED_LIBS
      AND (NOT "${PYIMATH_LIB_SUFFIX}" STREQUAL "")
      AND IMATH_INSTALL_SYM_LINK
-     AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+     AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
 
     # create symlink from libPyImath_Python3_11-3_2.so to libPyImath.so
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
@@ -283,7 +283,7 @@ if (IMATH_INSTALL)
 
   # pkgconfig
 
-  if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+  if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
     set(pcinfile PyImath.pc.in)
     set(prefix ${CMAKE_INSTALL_PREFIX})
     set(exec_prefix "\${prefix}")
