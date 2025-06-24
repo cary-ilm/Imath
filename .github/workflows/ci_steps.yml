@@ -612,6 +612,7 @@ jobs:
         if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK == 'ON'
         # Confirm the website examples compile on iOS
         run: |
+          set -x
           EXAMPLES_BUILD_DIR=$WORKSPACE/_build.examples.iOS
           cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR")
@@ -621,6 +622,8 @@ jobs:
           cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
           cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          find $INSTALL_DIR
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
+          find $EXAMPLES_BUILD_DIR
         shell: bash
