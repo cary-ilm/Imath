@@ -154,6 +154,15 @@ if (IMATH_INSTALL)
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
   )
 
+  if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORKS)
+    # Create the Resources symlink at the framework root
+    install(CODE "
+      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
+        Versions/Current/Resources 
+        \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.framework/Resources)
+    ")
+  endif()
+
   if(BUILD_SHARED_LIBS
      AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
      AND IMATH_INSTALL_SYM_LINK
