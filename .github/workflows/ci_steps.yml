@@ -622,8 +622,8 @@ jobs:
           cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
           cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
-          find $INSTALL_DIR
-          ls -l $INSTALL_DIR/Resources/CMake
+          find $INSTALL_DIR -ls
+          ls -l $INSTALL_DIR/Imath.framework/Resources/CMake
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
           find $EXAMPLES_BUILD_DIR
