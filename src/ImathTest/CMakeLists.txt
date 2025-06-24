@@ -3,6 +3,8 @@
 
 if("${CMAKE_PROJECT_NAME}" STREQUAL "")
 
+  message(STATUS "Configuring Imath as a standalone: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+
   # If the project name is set, this is being configured as a part of
   # Imath.  If there is no project name, it's being configured as a
   # standalone program linking against an already-installed Imath
@@ -12,6 +14,8 @@ if("${CMAKE_PROJECT_NAME}" STREQUAL "")
   project(ImathTest)
   find_package(Imath)
 
+else()
+  message(STATUS "Configuring Imath as a test: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
 endif()
 
 #
