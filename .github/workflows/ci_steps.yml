@@ -69,6 +69,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Install tree
+        run: |
+          brew install tree
+        shell: bash
+        
       - name: Set Up Directories & Environment
         run: |
           set -x
@@ -613,6 +618,7 @@ jobs:
         # Confirm the website examples compile on iOS
         run: |
           set -x
+          tree $INSTALL_DIR/Imath.framework
           EXAMPLES_BUILD_DIR=$WORKSPACE/_build.examples.iOS
           cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR/Imath.framework")
@@ -624,5 +630,5 @@ jobs:
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
-          find $EXAMPLES_BUILD_DIR
+          tree $EXAMPLES_BUILD_DIR
         shell: bash
