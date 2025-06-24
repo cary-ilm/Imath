@@ -161,6 +161,9 @@ if (IMATH_INSTALL)
       execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
         Versions/Current/Resources 
         \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.framework/Resources)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
+        "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}" 
+        \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.framework/Versions/Current)
     ")
   else()
     message(STATUS "NOT Creating Resources symlink")
