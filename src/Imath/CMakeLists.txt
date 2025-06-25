@@ -154,20 +154,21 @@ if (IMATH_INSTALL)
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
   )
 
-  if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
-    message(STATUS "Creating Resources symlink")
-    # Create the Resources symlink at the framework root
-    install(CODE "
-      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
-        Versions/Current/Resources 
-        '${CMAKE_INSTALL_PREFIX}/Imath.framework/Resources')
-      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
-        '${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}' 
-        '${CMAKE_INSTALL_PREFIX}/Imath.framework/Versions/Current')
-    ")
-  else()
-    message(STATUS "NOT Creating Resources symlink")
-  endif()
+#  if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
+#    message(STATUS "Creating Resources symlink")
+#    # Create the Resources symlink at the framework root
+#    file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/Imath.framework/Versions)
+#    install(CODE "
+#      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
+#        Versions/Current/Resources 
+#        '${CMAKE_INSTALL_PREFIX}/Imath.framework/Resources')
+#      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
+#        '${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}' 
+#        '${CMAKE_INSTALL_PREFIX}/Imath.framework/Versions/Current')
+#    ")
+#  else()
+#    message(STATUS "NOT Creating Resources symlink")
+#  endif()
 
   if(BUILD_SHARED_LIBS
      AND (NOT "${IMATH_LIB_SUFFIX}" STREQUAL "")
