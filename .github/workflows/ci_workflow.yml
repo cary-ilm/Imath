@@ -155,7 +155,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF' 
             pybind11: 'OFF' 
-            validate_install: false
+            validate_install: 'OFF'
 
           - build: 7
             label: Apple iOS
@@ -164,7 +164,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF' 
             pybind11: 'OFF' 
-            validate_install: false
+            validate_install: 'OFF'
 
   windows:
     if: false
