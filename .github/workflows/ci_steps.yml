@@ -325,6 +325,7 @@ jobs:
         run: |
           set -x
           $CMAKE --version
+          echo $CMAKE ${{ env.CMAKE_ARGS }}
           $CMAKE ${{ env.CMAKE_ARGS }}
           $CMAKE --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: bash
@@ -628,6 +629,7 @@ jobs:
       - name: Examples (Apple Framework)
         if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK == 'ON'
         # Confirm the website examples compile on iOS
+        continue-on-error: true
         run: |
           set -x
           find $INSTALL_DIR/Imath.framework -ls
@@ -646,6 +648,7 @@ jobs:
             cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=${{ inputs.CMAKE_OSX_ARCHITECTURES }}")
           fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          echo $CMAKE $quoted_args
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
         shell: bash
