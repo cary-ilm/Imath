@@ -47,6 +47,12 @@ on:
         type: string
       IMATH_BUILD_APPLE_FRAMEWORK:
         type: string
+      CMAKE_OSX_SYSROOT:
+        type: string
+      CMAKE_OSX_ARCHITECTURES:
+        type: string
+      CMAKE_SYSTEM_NAME: 
+        type: string
       IMATH_TEST_PYTHON:
         type: string
       IMATH_TEST_PYBIND11:
@@ -294,8 +300,14 @@ jobs:
               cmake_args+=("-DPYIMATH_LIB_SUFFIX=PY_${{ inputs.namespace }}")
               cmake_args+=("-DPYBINDIMATH_LIB_SUFFIX=PYBIND_${{ inputs.namespace }}")
           fi
-          if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORK }}" == "ON" ]; then
-              cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
+          if [ -n "${{ inputs.CMAKE_SYSTEM_NAME }}" ]; then
+            cmake_args+=("-DCMAKE_SYSTEM_NAME=${{ inputs.CMAKE_SYSTEM_NAME }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_SYSROOT }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_SYSROOT=${{ inputs.CMAKE_OSX_SYSROOT }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_ARCHITECTURES }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=${{ inputs.CMAKE_OSX_ARCHITECTURES }}")
           fi
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
@@ -613,22 +625,27 @@ jobs:
           $EXAMPLES_BUILD_DIR/bin/imath-examples.exe
         shell: msys2 {0}
 
-      - name: Examples (iOS)
+      - name: Examples (Apple Framework)
         if: inputs.namespace == '' && inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORK == 'ON'
         # Confirm the website examples compile on iOS
         run: |
           set -x
-          tree $INSTALL_DIR/Imath.framework
+          find $INSTALL_DIR/Imath.framework -ls
           EXAMPLES_BUILD_DIR=$WORKSPACE/_build.examples.iOS
           cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR/Imath.framework")
           cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
           cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
-          cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
-          cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
-          cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
+          if [ -n "${{ inputs.CMAKE_SYSTEM_NAME }}" ]; then
+            cmake_args+=("-DCMAKE_SYSTEM_NAME=${{ inputs.CMAKE_SYSTEM_NAME }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_SYSROOT }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_SYSROOT=${{ inputs.CMAKE_OSX_SYSROOT }}")
+          fi
+          if [ -n "${{ inputs.CMAKE_OSX_ARCHITECTURES }}" ]; then
+            cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=${{ inputs.CMAKE_OSX_ARCHITECTURES }}")
+          fi
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
-          tree $EXAMPLES_BUILD_DIR
         shell: bash
