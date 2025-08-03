@@ -34,8 +34,6 @@ else()
     )
 endif()
 
-add_library(Imath::Config ALIAS ImathConfig)
-
 #
 # Imath.pc
 #

@@ -17,9 +17,9 @@
 
 find_package(pybind11 CONFIG REQUIRED)
 
-set(PYBINDIMATH_LIBRARY PyBindImath)
+set(PYBINDIMATH PyBindImath)
 
-message(STATUS "Configuring pybindimath module and ${PYBINDIMATH_LIBRARY} library")
+message(STATUS "Configuring pybindimath module and ${PYBINDIMATH} library")
 
 set(PYBINDIMATH_SOURCES
     PyBindImathFun.cpp
@@ -44,70 +44,70 @@ set(PYBINDIMATH_HEADERS
 #
 
 if(BUILD_SHARED_LIBS)
-  add_library(${PYBINDIMATH_LIBRARY} SHARED ${PYBINDIMATH_HEADERS} ${PYBINDIMATH_SOURCES})
+  add_library(${PYBINDIMATH} SHARED ${PYBINDIMATH_HEADERS} ${PYBINDIMATH_SOURCES})
   if(WIN32)
     # IMATH_DLL controls the export declarations for Windows
-    target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_DLL)
+    target_compile_definitions(${PYBINDIMATH} PUBLIC IMATH_DLL)
 
     # PYBINDIMATH_BUILD is used by PyBindImathExport.h to set
     # PYBINDIMATH_EXPORT to either dllexport or dllimport
-    target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE PYBINDIMATH_BUILD)
+    target_compile_definitions(${PYBINDIMATH} PRIVATE PYBINDIMATH_BUILD)
   endif()
 
-  set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+  set_target_properties(${PYBINDIMATH} PROPERTIES
     SOVERSION ${IMATH_LIB_SOVERSION}
     VERSION ${IMATH_LIB_VERSION}
   )
 
 else()
-  add_library(${PYBINDIMATH_LIBRARY} STATIC ${PYBINDIMATH_HEADERS} ${PYBINDIMATH_SOURCES})
+  add_library(${PYBINDIMATH} STATIC ${PYBINDIMATH_HEADERS} ${PYBINDIMATH_SOURCES})
 endif()
 
-add_library(Imath::PyBindImath ALIAS ${PYBINDIMATH_LIBRARY})
+#add_library(Imath::PyBindImath ALIAS ${PYBINDIMATH})
 
 #
 # Compile options
 #
 
-target_compile_features(${PYBINDIMATH_LIBRARY}
+target_compile_features(${PYBINDIMATH}
     PRIVATE cxx_std_${IMATH_CXX_STANDARD}
     INTERFACE cxx_std_11
 )
 
-set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+set_target_properties(${PYBINDIMATH} PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
     POSITION_INDEPENDENT_CODE ON
 )
 
 if (NOT IMATH_USE_DEFAULT_VISIBILITY)
-    set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+    set_target_properties(${PYBINDIMATH} PROPERTIES
       C_VISIBILITY_PRESET hidden
       CXX_VISIBILITY_PRESET hidden
       VISIBILITY_INLINES_HIDDEN ON
     )
 else()
-    target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_USE_DEFAULT_VISIBILITY)
+    target_compile_definitions(${PYBINDIMATH} PUBLIC IMATH_USE_DEFAULT_VISIBILITY)
 endif()
 
-target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
+target_compile_definitions(${PYBINDIMATH} PRIVATE IMATH_EXPORTS)
 
-set_property(TARGET ${PYBINDIMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYBINDIMATH_HEADERS})
+set_property(TARGET ${PYBINDIMATH} PROPERTY PUBLIC_HEADER ${PYBINDIMATH_HEADERS})
 
 # Include files are under "include/PyBindImath", or under
 # PyBindImath.framework/Headers for Apple framework
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
-  target_include_directories(${PYBINDIMATH_LIBRARY}
+  target_include_directories(${PYBINDIMATH}
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/PyBindImath.framework/Headers>
+      $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PYBINDIMATH}.framework/Headers>
   )
 else()
-  target_include_directories(${PYBINDIMATH_LIBRARY}
+  target_include_directories(${PYBINDIMATH}
     INTERFACE
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PYBINDIMATH}>
   )
 endif()
 
@@ -115,27 +115,27 @@ endif()
 # Link options
 #
 
-target_link_libraries(${PYBINDIMATH_LIBRARY} PUBLIC Imath)
-target_link_libraries(${PYBINDIMATH_LIBRARY} PRIVATE pybind11::module)
+target_link_libraries(${PYBINDIMATH} PUBLIC Imath)
+target_link_libraries(${PYBINDIMATH} PRIVATE pybind11::module)
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
-  set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES 
+  set_target_properties(${PYBINDIMATH} PROPERTIES 
     FRAMEWORK TRUE
-    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.aswf.PyBindImath"
-    MACOSX_FRAMEWORK_IDENTIFIER "org.aswf.PyBindImath"
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.aswf.${PYBINDIMATH}"
+    MACOSX_FRAMEWORK_IDENTIFIER "org.aswf.${PYBINDIMATH}"
     MACOSX_FRAMEWORK_BUNDLE_VERSION "${IMATH_LIB_VERSION}"
     MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${Imath_VERSION}"
     MACOSX_RPATH TRUE
   )
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
     # Don't set FRAMEWORK_VERSION for iOS
-    set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+    set_target_properties(${PYBINDIMATH} PROPERTIES
       FRAMEWORK_VERSION "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}"
     )
   endif()
 else()
-  set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
-    OUTPUT_NAME "${PYBINDIMATH_LIBRARY}${PYBINDIMATH_LIB_SUFFIX}"
+  set_target_properties(${PYBINDIMATH} PROPERTIES
+    OUTPUT_NAME "${PYBINDIMATH}${PYBINDIMATH_LIB_SUFFIX}"
   )
 endif()
 
@@ -163,7 +163,7 @@ set_target_properties(${PYBINDIMATH_MODULE} PROPERTIES
 
 target_link_libraries(${PYBINDIMATH_MODULE}
     PRIVATE
-        ${PYBINDIMATH_LIBRARY}
+        ${PYBINDIMATH}
         Imath::Imath
 )
 
@@ -185,9 +185,9 @@ if (IMATH_INSTALL)
     if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
       if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
         # iOS framework does not use Versions
-        set(python_destination PyBindImath.framework/Resources/python)
+        set(python_destination ${PYBINDIMATH}.framework/Resources/python)
       else()
-        set(python_destination PyBindImath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/python)
+        set(python_destination ${PYBINDIMATH}.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/python)
       endif()
     else()
       set(python_destination "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
@@ -208,21 +208,21 @@ if (IMATH_INSTALL)
   if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
     if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
       # iOS framework is does not version
-      set(cmake_destination PyBindImath.framework/Resources/CMake/PyBindImath)
+      set(cmake_destination ${PYBINDIMATH}.framework/Resources/CMake/${PYBINDIMATH})
     else()
       # macOS framework Resources is a link to Versions
-      set(cmake_destination PyBindImath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/CMake/PyBindImath)
+      set(cmake_destination ${PYBINDIMATH}.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/CMake/${PYBINDIMATH})
     endif()
-    set(includes_destination PyBindImath.framework/Headers)
-    set(public_header_destination PyBindImath.framework/Headers)
+    set(includes_destination ${PYBINDIMATH}.framework/Headers)
+    set(public_header_destination ${PYBINDIMATH}.framework/Headers)
   else()
-    set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/PyBindImath)
+    set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
     set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR})
-    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath)
+    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/${PYBINDIMATH})
   endif()
 
-  install(TARGETS ${PYBINDIMATH_LIBRARY}
-    EXPORT PyBindImath
+  install(TARGETS ${PYBINDIMATH}
+    EXPORT ${PYBINDIMATH}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -235,9 +235,9 @@ if (IMATH_INSTALL)
 
   # Install export set for downstream CMake
 
-  install(EXPORT ${PYBINDIMATH_LIBRARY}
+  install(EXPORT ${PYBINDIMATH}
     DESTINATION ${cmake_destination}
-    FILE ${PYBINDIMATH_LIBRARY}Targets.cmake
+    FILE ${PYBINDIMATH}Targets.cmake
     NAMESPACE ${PROJECT_NAME}::
     EXPORT_LINK_INTERFACE_LIBRARIES
   )
@@ -250,8 +250,8 @@ if (IMATH_INSTALL)
     # create symlink from libPyBindImath_Python3_11-3_2.so to libPyBindImath.so
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     set(postfix ${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX})
-    set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${PYBINDIMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(BASE_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH_LIBRARY}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(VERSIONED_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH}${PYBINDIMATH_LIB_SUFFIX}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BASE_LIB_FILENAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PYBINDIMATH}${postfix}${CMAKE_SHARED_LIBRARY_SUFFIX})
 
     file(CREATE_LINK ${VERSIONED_LIB_FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${BASE_LIB_FILENAME} SYMBOLIC)
     if(WIN32)
@@ -267,7 +267,7 @@ if (IMATH_INSTALL)
   # pkgconfig
 
   if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
-    set(pcinfile PyBindImath.pc.in)
+    set(pcinfile ${PYBINDIMATH}.pc.in)
     set(prefix ${CMAKE_INSTALL_PREFIX})
     set(exec_prefix "\${prefix}")
     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
@@ -275,15 +275,15 @@ if (IMATH_INSTALL)
     string(REPLACE ".in" "" pcout ${pcinfile})
     configure_file(${pcinfile} ${CMAKE_CURRENT_BINARY_DIR}/${pcout} @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pcout} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-    message(STATUS "generating ${pcout}") 
+    message(STATUS "PyImath pkg-config generation enabled")
   else()
-    message(STATUS "pkg-config generation disabled for ${PYBINDIMATH_LIBRARY}")
+    message(STATUS "PyImath pkg-config generation disabled")
   endif()
 
 endif()
 
 if (MSVC)
-    target_compile_options(${PYBINDIMATH_LIBRARY} PRIVATE /bigobj)
+    target_compile_options(${PYBINDIMATH} PRIVATE /bigobj)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
