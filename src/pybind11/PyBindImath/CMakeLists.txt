@@ -94,7 +94,8 @@ target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
 
 set_property(TARGET ${PYBINDIMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYBINDIMATH_HEADERS})
 
-# Include files are under "include/Imath", or under PyBindImath.framework/Headers for Apple framework
+# Include files are under "include/PyBindImath", or under
+# PyBindImath.framework/Headers for Apple framework
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
   target_include_directories(${PYBINDIMATH_LIBRARY}
@@ -216,7 +217,7 @@ if (IMATH_INSTALL)
     set(public_header_destination PyBindImath.framework/Headers)
   else()
     set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/PyBindImath)
-    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath)
+    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR})
     set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath)
   endif()
 

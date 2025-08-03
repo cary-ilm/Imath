@@ -176,8 +176,9 @@ if (IMATH_INSTALL)
     set(public_header_destination Imath.framework/Headers)
   else()
     set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
-    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/Imath)
-    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/Imath)
+    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR})
+    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR})
+    message(STATUS "Installing headers to ${public_header_destination} IMATH_OUTPUT_SUBDIR=${IMATH_OUTPUT_SUBDIR}")
   endif()
 
   install(TARGETS ${IMATH_LIBRARY}

@@ -238,17 +238,17 @@ target_link_libraries(${PYIMATH_MODULE}
         Boost::python
         Python3::Module
 )
-
-if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
-  if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    # iOS framework does not use Versions
-    set(python_destination PyImath.framework/Resources/python)
-  else()
-    set(python_destination PyImath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/python)
-  endif()
-else()
-  set(python_destination "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
-endif()
+#
+#if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
+#  if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+#    # iOS framework does not use Versions
+#    set(python_destination PyImath.framework/Resources/python)
+#  else()
+#    set(python_destination PyImath.framework/Versions/${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}/Resources/python)
+#  endif()
+#else()
+#  set(python_destination "${CMAKE_BINARY_DIR}/python${Python3_VERSION_MAJOR}_${Python3_VERSION_MINOR}")
+#endif()
 
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
@@ -312,7 +312,7 @@ if (IMATH_INSTALL)
     set(public_header_destination PyImath.framework/Headers)
   else()
     set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
-    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyImath)
+    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR})
     set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyImath)
   endif()
 

@@ -325,6 +325,15 @@ jobs:
           $CMAKE --build $BUILD_DIR --target install --config ${{ inputs.build-type }}
         shell: bash
 
+      - name: Install tree (macOS)
+        if: runner.os == 'macOS'
+        run: brew install tree
+        shell: bash
+
+      - name: Tree
+        run: tree $INSTALL_DIR || true
+        shell: bash
+        
       - name: Configure & Build (msys2) # requires msys2 shell
         if: inputs.msystem != ''
         # Requires msys2 shell
@@ -568,6 +577,7 @@ jobs:
         # that case. Also don't bother with Apple Frameworks. And msys2
         # has its own step below.
         run: |
+          set -x
           EXAMPLES_BUILD_DIR=$WORKSPACE/_build.examples
           cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR")
@@ -601,6 +611,7 @@ jobs:
         # won't work with a custom namespace, so skip the test in that
         # case.
         run: |
+          set -x
           EXAMPLES_BUILD_DIR=$WORKSPACE/_build_examples
           cmake_args=("-B" "$EXAMPLES_BUILD_DIR" "-S" "$WORKSPACE/website/examples")
           cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR")
