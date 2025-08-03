@@ -54,6 +54,10 @@ set(IMATH_HEADERS
     ${IMATH_CONFIG_DIR}/ImathConfig.h
 )
 
+#
+# libImath library
+#
+
 if(BUILD_SHARED_LIBS)
 
     add_library(${IMATH_LIBRARY} SHARED ${IMATH_HEADERS} ${IMATH_SOURCES})
@@ -105,11 +109,9 @@ if (MSVC)
     target_compile_options(${IMATH_LIBRARY} PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/EHsc>")
 endif()
 
-# 3
-
 set_property(TARGET ${IMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${IMATH_HEADERS})
 
-# Includes are installed to "include/Imath", or under Imath.framework/Headers for apple framework
+# Include files are under "include/Imath", or under Imath.framework/Headers for Apple framework
 if (IMATH_BUILD_APPLE_FRAMEWORK)
     target_include_directories(${IMATH_LIBRARY}
        PUBLIC
@@ -136,8 +138,6 @@ if (HAVE_LIB_M)
     target_link_libraries(${IMATH_LIBRARY} PUBLIC m)
 endif()
 
-# 4
-
 if (IMATH_BUILD_APPLE_FRAMEWORK)
   set_target_properties(${IMATH_LIBRARY} PROPERTIES
     FRAMEWORK TRUE
@@ -149,7 +149,7 @@ if (IMATH_BUILD_APPLE_FRAMEWORK)
     RESOURCE "${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfig.cmake;${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfigVersion.cmake"
   )
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    # Don't set FRAMEWORK_VERSION for iOS
+    # Don't set FRAMEWORK_VERSION for iOS, since iOS doesn't version headers
     set_target_properties(${IMATH_LIBRARY} PROPERTIES
       FRAMEWORK_VERSION "${Imath_VERSION_MAJOR}.${Imath_VERSION_MINOR}"
     )
@@ -176,8 +176,8 @@ if (IMATH_INSTALL)
     set(public_header_destination Imath.framework/Headers)
   else()
     set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/Imath)
-    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR})
-    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR})
+    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/Imath)
+    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/Imath)
   endif()
 
   install(TARGETS ${IMATH_LIBRARY}

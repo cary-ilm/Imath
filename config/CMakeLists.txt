@@ -10,6 +10,10 @@ else()
   set(IMATH_ENABLE_API_VISIBILITY ON)
 endif()
 
+#
+# ImathConfig.h
+#
+
 configure_file(ImathConfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.h)
 set(IMATH_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "")
 
@@ -17,7 +21,7 @@ add_library(ImathConfig INTERFACE)
 add_library(Imath::Config ALIAS ImathConfig)
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
-    # apple framework installs includes in Imath.framework/Headers, not include/Imath
+    # Apple framework installs includes under Imath.framework, not include/Imath
     target_include_directories(ImathConfig INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/Imath.framework/Headers>
@@ -25,15 +29,15 @@ if (IMATH_BUILD_APPLE_FRAMEWORK)
 else()
     target_include_directories(ImathConfig INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Imath>
     )
 endif()
 
-if (IMATH_INSTALL)
-  install(TARGETS ImathConfig EXPORT Imath)
-endif()
-
 add_library(Imath::Config ALIAS ImathConfig)
+
+#
+# Imath.pc
+#
 
 if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORK)
 
@@ -74,12 +78,16 @@ endif()
 
 include(CMakePackageConfigHelpers)
 
-set(IMATH_CMAKE_CONFIG_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-    CACHE INTERNAL "dir for .cmake files")
+# src/Imath/CMakeLists.txt looks for ImathConfig.cmake and ImathConfigVersion.cmake
+# in IMATH_CMAKE_CONFIG_BUILD_DIR
+set(IMATH_CMAKE_CONFIG_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/Imath
+    CACHE INTERNAL "directory for ImathConfig.cmake/ImathConfigVersion.cmake")
 file(MAKE_DIRECTORY ${IMATH_CMAKE_CONFIG_BUILD_DIR})
 
 if(APPLE AND IMATH_BUILD_APPLE_FRAMEWORK)
-  # macOS framework versions the Resources and headers, iOS does not
+  # For Apple framework, cmake files go under the Resources folder.
+  # macOS framework versions the folder as Imath.framework/Versions/3.1/Resources.
+  # iOS does not version file Resources folder, it goes under Imath.framework
   if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set(cmake_destination Imath.framework/Resources/CMake/Imath)
   else()
@@ -99,7 +107,13 @@ write_basic_package_version_file(${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfigVers
   COMPATIBILITY SameMajorVersion
 )
 
+#
+# Install
+#
+
 if (IMATH_INSTALL)
+
+  install(TARGETS ImathConfig EXPORT Imath)
 
   install(FILES
     ${IMATH_CMAKE_CONFIG_BUILD_DIR}/ImathConfig.cmake

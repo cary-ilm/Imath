@@ -2,11 +2,17 @@
 # Copyright Contributors to the OpenEXR Project.
 
 #
+# The PyBindImath directory declares both the pybindimath module and the
+# PyBindImath library, which is used by downstream projects
+# (e.g. Alembic) that provide python wrappings based on Imath.
+#
+
+#
 # Declare the libPyBindImath library, identified by PYBINDIMATH_LIBRARY
 #
 # The name has a "_Python<major>_<minor>-<release>" suffix,
 # i.e. libPyBindImath_Python3_10-3_2.so, subject to
-# PYIMATH_LIB_PYTHONVER_ROOT and PYIMATH_LIB_SUFFIX
+# PYBINDIMATH_LIB_PYTHONVER_ROOT and PYBINDIMATH_LIB_SUFFIX
 #
 
 find_package(pybind11 CONFIG REQUIRED)
@@ -47,17 +53,48 @@ if(BUILD_SHARED_LIBS)
     # PYBINDIMATH_EXPORT to either dllexport or dllimport
     target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE PYBINDIMATH_BUILD)
   endif()
+
+  set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+    SOVERSION ${IMATH_LIB_SOVERSION}
+    VERSION ${IMATH_LIB_VERSION}
+  )
+
 else()
   add_library(${PYBINDIMATH_LIBRARY} STATIC ${PYBINDIMATH_HEADERS} ${PYBINDIMATH_SOURCES})
 endif()
 
 add_library(Imath::PyBindImath ALIAS ${PYBINDIMATH_LIBRARY})
 
+#
+# Compile options
+#
+
+target_compile_features(${PYBINDIMATH_LIBRARY}
+    PRIVATE cxx_std_${IMATH_CXX_STANDARD}
+    INTERFACE cxx_std_11
+)
+
+set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    POSITION_INDEPENDENT_CODE ON
+)
+
+if (NOT IMATH_USE_DEFAULT_VISIBILITY)
+    set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
+      C_VISIBILITY_PRESET hidden
+      CXX_VISIBILITY_PRESET hidden
+      VISIBILITY_INLINES_HIDDEN ON
+    )
+else()
+    target_compile_definitions(${PYBINDIMATH_LIBRARY} PUBLIC IMATH_USE_DEFAULT_VISIBILITY)
+endif()
+
+target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
+
 set_property(TARGET ${PYBINDIMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYBINDIMATH_HEADERS})
 
-#
-# Include directories - installed to "include/PyBindImath", or under PyBindImath.framework/Headers for apple framework
-#
+# Include files are under "include/Imath", or under PyBindImath.framework/Headers for Apple framework
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
   target_include_directories(${PYBINDIMATH_LIBRARY}
@@ -67,15 +104,18 @@ if (IMATH_BUILD_APPLE_FRAMEWORK)
   )
 else()
   target_include_directories(${PYBINDIMATH_LIBRARY}
-    PUBLIC
+    INTERFACE
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:include/$PYBINDIMATH_LIBRARY>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath>
   )
 endif()
 
 #
-# Target properties
+# Link options
 #
+
+target_link_libraries(${PYBINDIMATH_LIBRARY} PUBLIC Imath)
+target_link_libraries(${PYBINDIMATH_LIBRARY} PRIVATE pybind11::module)
 
 if (IMATH_BUILD_APPLE_FRAMEWORK)
   set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES 
@@ -95,16 +135,8 @@ if (IMATH_BUILD_APPLE_FRAMEWORK)
 else()
   set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
     OUTPUT_NAME "${PYBINDIMATH_LIBRARY}${PYBINDIMATH_LIB_SUFFIX}"
-    SOVERSION ${IMATH_LIB_SOVERSION}
-    VERSION ${IMATH_LIB_VERSION}
-    POSITION_INDEPENDENT_CODE ON
   )
 endif()
-
-target_compile_definitions(${PYBINDIMATH_LIBRARY} PRIVATE IMATH_EXPORTS)
-
-target_link_libraries(${PYBINDIMATH_LIBRARY} PUBLIC Imath)
-target_link_libraries(${PYBINDIMATH_LIBRARY} PRIVATE pybind11::module)
 
 #
 # Python module, identified by PYBINDIMATH_MODULE e.g. pybindimath.cpython-311-x86_64-linux-gnu.so
@@ -135,7 +167,7 @@ target_link_libraries(${PYBINDIMATH_MODULE}
 )
 
 #
-# Installation
+# Install configuration
 #
 
 if (IMATH_INSTALL)
@@ -184,8 +216,8 @@ if (IMATH_INSTALL)
     set(public_header_destination PyBindImath.framework/Headers)
   else()
     set(cmake_destination ${CMAKE_INSTALL_LIBDIR}/cmake/PyBindImath)
-    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath")
-    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath")
+    set(includes_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath)
+    set(public_header_destination ${CMAKE_INSTALL_INCLUDEDIR}/PyBindImath)
   endif()
 
   install(TARGETS ${PYBINDIMATH_LIBRARY}
@@ -259,3 +291,4 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     PROPERTIES COMPILE_FLAGS "-Wno-self-assign-overloaded"
   )
 endif()
+
