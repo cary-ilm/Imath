@@ -14,7 +14,7 @@ endif()
 
 # Imath version
 
-project(Imath VERSION 3.2.0 LANGUAGES C CXX)
+project(Imath VERSION 3.3.0 LANGUAGES C CXX)
 
 set(IMATH_VERSION_RELEASE_TYPE "-dev" CACHE STRING "Extra version tag string for Imath build, such as -dev, -beta1, etc.")
 
@@ -30,7 +30,7 @@ set(IMATH_VERSION_API "${Imath_VERSION_MAJOR}_${Imath_VERSION_MINOR}")
 # For example, in "libImath.so.31.3.2.0", "libImath.so.31" is the SONAME
 # and ".3.2.0" identifies the corresponding library release.
 
-set(IMATH_LIB_SOVERSION 30)
+set(IMATH_LIB_SOVERSION 31)
 set(IMATH_LIB_VERSION "${IMATH_LIB_SOVERSION}.${IMATH_VERSION}") # e.g. "30.3.2.0"
 
 # ImathSetup.cmake declares all the configuration variables visible
