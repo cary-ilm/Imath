@@ -487,7 +487,7 @@ jobs:
               cmake_args+=("-DCMAKE_POLICY_DEFAULT_CMP0091=NEW")
               LINK_LOG="$IMATHTEST_BUILD_DIR/ImathTest.dir/Release/ImathTest.tlog/link.command.1.tlog"
           else
-              LINK_LOG="$IMATHTEST_BUILD_DIR/CMakeFiles/ImathTest.dir/link.txt"          
+              LINK_LOG="$IMATHTEST_BUILD_DIR/CMakeFiles/ImathTest.dir/link.txt"
           fi
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
@@ -632,5 +632,29 @@ jobs:
           $EXAMPLES_BUILD_DIR/bin/imath-intro.exe
           $EXAMPLES_BUILD_DIR/bin/imath-examples.exe
         shell: msys2 {0}
+
+      - name: Test Imath.pc
+        if: runner.os != 'Windows'
+        run: |
+          set -x
+          export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
+          cflags=$(pkg-config --cflags Imath)
+          libs=$(pkg-config --libs Imath)
+          src=share/ci/src/pkgconfig-test/pkgconfig-test.cpp
+          bin=pkgconfig-test
+          g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
+          ./$bin
+
+      - name: Test PyImath.pc
+        if: runner.os != 'Windows' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON':
+        run: |
+          set -x
+          export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
+          cflags=$(pkg-config --cflags PyImath)
+          libs=$(pkg-config --libs PyImath)
+          src=share/ci/src/pkgconfig-python-test/pkgconfig-python-test.cpp
+          bin=pkgconfig-python-test
+          g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
+          ./$bin
 
 

@@ -113,7 +113,7 @@ endif()
 add_library(Imath::PyImath ALIAS ${PYIMATH_LIBRARY})
 
 if (IMATH_BUILD_APPLE_FRAMEWORKS)
-  set_target_properties(PyBindImath PROPERTIES 
+  set_target_properties(PyBindImath PROPERTIES
     FRAMEWORK TRUE
     FRAMEWORK_VERSION "${IMATH_LIB_VERSION}"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.aswf.PyImath"
@@ -149,10 +149,10 @@ set_property(TARGET ${PYIMATH_LIBRARY} PROPERTY PUBLIC_HEADER ${PYIMATH_HEADERS}
 # Python module, identified by PYIMATH_MODULE (e.g. "imath).
 # Note that CMake on Windows apparently does not respect case in
 # target names, and since the target for the main Imath library is
-# "Imath", the target here is "imath_module". The 
+# "Imath", the target here is "imath_module". The
 #
 
-set(PYIMATH_MODULE_NAME imath) 
+set(PYIMATH_MODULE_NAME imath)
 set(PYIMATH_MODULE ${PYIMATH_MODULE_NAME}_module)
 
 set(PYIMATH_MODULE_SOURCES
@@ -181,7 +181,7 @@ set_target_properties(${PYIMATH_MODULE} PROPERTIES
 
 target_include_directories(${PYIMATH_MODULE} PRIVATE ${Python3_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(${PYIMATH_MODULE} 
+target_link_libraries(${PYIMATH_MODULE}
     PRIVATE
         ${PYIMATH_LIBRARY}
         Imath::Imath
@@ -212,18 +212,18 @@ if (IMATH_INSTALL)
     # Set the PYTHON_INSTALL_DIR but only if it's not already set,
     # which allows an externally-set value to take effect.
     #
-  
+
     set(PYTHON_INSTALL_DIR "lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
     message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR}")
 
   else()
 
     message(STATUS "installing ${PYIMATH_MODULE} module to ${PYTHON_INSTALL_DIR} (set externally)")
-  
+
   endif()
-  
+
   #
-  # Install the python module 
+  # Install the python module
   #
 
   install(TARGETS ${PYIMATH_MODULE} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR})
@@ -231,7 +231,7 @@ if (IMATH_INSTALL)
   #
   # Install the library
   #
-  
+
   install(TARGETS ${PYIMATH_LIBRARY}
     EXPORT "${PYIMATH_LIBRARY}Targets"
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -253,7 +253,7 @@ if (IMATH_INSTALL)
       NAMESPACE ${PROJECT_NAME}::
     )
   endif()
-  
+
   export(EXPORT Imath
     FILE "${CMAKE_BINARY_DIR}/config/PyImathTargets.cmake"
     NAMESPACE Imath::
@@ -289,10 +289,24 @@ if (IMATH_INSTALL)
     set(exec_prefix "\${prefix}")
     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
     set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+
+    set(lib_suffix "${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_build_type}_POSTFIX}")
+    set(pylib_suffix "${PYIMATH_LIB_SUFFIX}${CMAKE_${uppercase_build_type}_POSTFIX}")
+
+    get_target_property(BOOST_PYTHON_LIBS Boost::python INTERFACE_LINK_LIBRARIES)
+    get_target_property(BOOST_PYTHON_LOCATION Boost::python LOCATION) # works in older CMake
+    get_filename_component(BOOST_PYTHON_LIBDIR "${BOOST_PYTHON_LOCATION}" DIRECTORY)
+    get_filename_component(BOOST_PYTHON_LIBNAME "${BOOST_PYTHON_LOCATION}" NAME_WE)
+    string(REGEX REPLACE "^lib" "" BOOST_PYTHON_LIBNAME "${BOOST_PYTHON_LIBNAME}")
+    get_filename_component(PYTHON_LIBDIR "${Python3_LIBRARIES}" DIRECTORY)
+    set(PYTHON_LIBNAME "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
+
     string(REPLACE ".in" "" pcout ${pcinfile})
     configure_file(${pcinfile} ${CMAKE_CURRENT_BINARY_DIR}/${pcout} @ONLY)
+
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pcout} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-    message(STATUS "generating ${pcout}") 
+
+    message(STATUS "generating ${pcout}")
   else()
     message(STATUS "pkg-config generation disabled for PyImath")
   endif()
