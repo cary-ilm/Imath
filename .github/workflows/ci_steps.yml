@@ -634,25 +634,25 @@ jobs:
         shell: msys2 {0}
 
       - name: Test Imath.pc
-        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'OFF'
+        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
         run: |
           set -x
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
           cflags=$(pkg-config --cflags Imath)
           libs=$(pkg-config --libs Imath)
-          src=share/ci/src/Imath.pc/Imath.pc.cpp
+          src=share/ci/src/test/Imath.pc/Imath.pc.cpp
           bin=Imath.pc.bin
           g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
 
       - name: Test PyImath.pc
-        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'OFF'
+        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
         run: |
           set -x
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
           cflags=$(pkg-config --cflags PyImath)
           libs=$(pkg-config --libs PyImath)
-          src=share/ci/src/PyImath.pc/PyImath.pc.cpp
+          src=share/ci/src/test/PyImath.pc/PyImath.pc.cpp
           bin=PyImath.pc.bin
           g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
