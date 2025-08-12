@@ -640,8 +640,8 @@ jobs:
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
           cflags=$(pkg-config --cflags Imath)
           libs=$(pkg-config --libs Imath)
-          src=share/ci/src/pkgconfig-test/pkgconfig-test.cpp
-          bin=pkgconfig-test
+          src=share/ci/src/Imath.pc/Imath.pc.cpp
+          bin=Imath.pc.bin
           g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
 
@@ -652,8 +652,8 @@ jobs:
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
           cflags=$(pkg-config --cflags PyImath)
           libs=$(pkg-config --libs PyImath)
-          src=share/ci/src/pkgconfig-python-test/pkgconfig-python-test.cpp
-          bin=pkgconfig-python-test
+          src=share/ci/src/PyImath.pc/PyImath.pc.cpp
+          bin=PyImath.pc.bin
           g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
 
