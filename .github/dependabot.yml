@@ -20,3 +20,11 @@ updates:
     schedule:
       day: "monday"
       interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows-nodejs20"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "actions/checkout"
+        versions: [">=3.6.0"]
