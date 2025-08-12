@@ -290,14 +290,15 @@ if (IMATH_INSTALL)
     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
     set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
 
-    set(lib_suffix "${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_build_type}_POSTFIX}")
-    set(pylib_suffix "${PYIMATH_LIB_SUFFIX}${CMAKE_${uppercase_build_type}_POSTFIX}")
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+    set(lib_suffix "${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}")
+    set(pylib_suffix "${PYIMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}")
 
-    get_target_property(BOOST_PYTHON_LIBS Boost::python INTERFACE_LINK_LIBRARIES)
-    get_target_property(BOOST_PYTHON_LOCATION Boost::python LOCATION) # works in older CMake
+    set(BOOST_PYTHON_LOCATION ${Boost_PYTHON_LIBRARY_RELEASE})
     get_filename_component(BOOST_PYTHON_LIBDIR "${BOOST_PYTHON_LOCATION}" DIRECTORY)
     get_filename_component(BOOST_PYTHON_LIBNAME "${BOOST_PYTHON_LOCATION}" NAME_WE)
     string(REGEX REPLACE "^lib" "" BOOST_PYTHON_LIBNAME "${BOOST_PYTHON_LIBNAME}")
+
     get_filename_component(PYTHON_LIBDIR "${Python3_LIBRARIES}" DIRECTORY)
     set(PYTHON_LIBNAME "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
 
