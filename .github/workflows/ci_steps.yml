@@ -642,7 +642,7 @@ jobs:
           libs=$(pkg-config --libs Imath)
           src=share/ci/src/test/Imath.pc/Imath.pc.cpp
           bin=Imath.pc.bin
-          g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
+          g++ -std=c++17 $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
 
       - name: Test PyImath.pc
@@ -654,7 +654,7 @@ jobs:
           libs=$(pkg-config --libs PyImath)
           src=share/ci/src/test/PyImath.pc/PyImath.pc.cpp
           bin=PyImath.pc.bin
-          g++ $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
+          g++ -std=c++17 $cflags $src $libs -o $bin -Wl,-rpath,$INSTALL_DIR/lib
           ./$bin
 
 
