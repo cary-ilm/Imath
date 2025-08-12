@@ -307,6 +307,7 @@ jobs:
           if [ "${{ inputs.IMATH_BUILD_APPLE_FRAMEWORKS }}" == "ON" ]; then
               cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
           fi
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
 
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           echo "CMAKE_ARGS=$quoted_args" >> $GITHUB_ENV
@@ -507,6 +508,7 @@ jobs:
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $IMATHTEST_BUILD_DIR --config ${{ inputs.build-type }}
@@ -543,6 +545,7 @@ jobs:
           cmake_args+=("-DCMAKE_SYSTEM_NAME=iOS")
           cmake_args+=("-DCMAKE_OSX_SYSROOT=iphoneos")
           cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $IMATHTEST_BUILD_DIR \
@@ -574,6 +577,7 @@ jobs:
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $PYIMATHTEST_BUILD_DIR --config ${{ inputs.build-type }}
@@ -607,6 +611,7 @@ jobs:
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
@@ -640,6 +645,7 @@ jobs:
           if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
               cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
           fi
+          cmake_args+=("-Werror=dev" "-Werror=deprecated")
           quoted_args=$(printf '%q ' "${cmake_args[@]}")
           $CMAKE $quoted_args
           $CMAKE --build $EXAMPLES_BUILD_DIR --config ${{ inputs.build-type }}
