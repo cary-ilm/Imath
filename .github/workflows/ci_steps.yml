@@ -646,7 +646,7 @@ jobs:
           ./$bin
 
       - name: Test PyImath.pc
-        if: runner.os != 'Windows' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON':
+        if: runner.os != 'Windows' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON'
         run: |
           set -x
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
