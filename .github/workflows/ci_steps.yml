@@ -634,7 +634,7 @@ jobs:
         shell: msys2 {0}
 
       - name: Test Imath.pc
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'OFF'
         run: |
           set -x
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
@@ -646,7 +646,7 @@ jobs:
           ./$bin
 
       - name: Test PyImath.pc
-        if: runner.os != 'Windows' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON'
+        if: runner.os != 'Windows' && inputs.IMATH_INSTALL_PKG_CONFIG == 'ON' && inputs.PYTHON == 'ON' && inputs.IMATH_TEST_PYTHON == 'ON' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'OFF'
         run: |
           set -x
           export PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig
