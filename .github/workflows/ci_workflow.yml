@@ -47,7 +47,7 @@ jobs:
       os: ubuntu-latest
       build: ${{ matrix.build }}
       cmake: ${{ matrix.cmake || '3.15.7' }}
-      cxx-standard: ${{ matrix.cxx-standard || '14' }}
+      cxx-standard: ${{ matrix.cxx-standard || '17' }}
       cxx-compiler: ${{ matrix.cxx-compiler || 'g++' }}
       cc-compiler: ${{ matrix.cc-compiler || 'gcc' }}
       build-type: ${{ matrix.build-type || 'Release' }}
@@ -84,7 +84,7 @@ jobs:
             python: 'OFF'
             pybind11: 'OFF'
             cmake: 3.14.7
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: custom namespace
@@ -108,7 +108,7 @@ jobs:
       # values.
       os: ${{ matrix.os || 'macos-14' }}
       build: ${{ matrix.build }}
-      cxx-standard: ${{ matrix.cxx-standard || '14' }}
+      cxx-standard: ${{ matrix.cxx-standard || '17' }}
       build-type: ${{ matrix.build-type || 'Release' }}
       python: ${{ matrix.python || 'ON' }}
       pybind11: ${{ matrix.pybind11 || 'ON' }}
@@ -142,7 +142,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF'
             pybind11: 'OFF'
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: macos-13
@@ -164,7 +164,7 @@ jobs:
       # values.
       os: ${{ matrix.os || 'windows-2022' }}
       build: ${{ matrix.build }}
-      cxx-standard: ${{ matrix.cxx-standard || '14' }}
+      cxx-standard: ${{ matrix.cxx-standard || '17' }}
       build-type: ${{ matrix.build-type || 'Release' }}
       python: ${{ matrix.python || 'ON' }}
       pybind11: ${{ matrix.pybind11 || 'ON' }}
@@ -204,7 +204,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF'
             pybind11: 'OFF'
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: vfx2023
