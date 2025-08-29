@@ -84,7 +84,7 @@ jobs:
             python: 'OFF'
             pybind11: 'OFF'
             cmake: 3.14.7
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: custom namespace
@@ -98,6 +98,16 @@ jobs:
           - build: 7
             label: cmake 4
             cmake: 4.0.3
+
+          - build: 8
+            label: C++23
+            cxx-standard: 23
+            validate_install: 'OFF'
+
+          - build: 9
+            label: C++26
+            cxx-standard: 26
+            validate_install: 'OFF'
 
   macOS:
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
@@ -142,7 +152,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF'
             pybind11: 'OFF'
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: macos-15-intel
@@ -158,6 +168,16 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF' # conan boost doesn't support iOS
             pybind11: 'OFF' # iOS doesn't support CPython
+
+          - build: 7
+            label: C++23
+            cxx-standard: 23
+            validate_install: 'OFF'
+
+          - build: 8
+            label: C++26
+            cxx-standard: 26
+            validate_install: 'OFF'
 
   windows:
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
@@ -208,7 +228,7 @@ jobs:
             BUILD_TESTING: 'OFF'
             python: 'OFF'
             pybind11: 'OFF'
-            cxx-standard: 14
+            cxx-standard: 20
 
           - build: 5
             label: vfx2023
@@ -243,3 +263,24 @@ jobs:
             BUILD_SHARED_LIBS: 'OFF'
             python: 'OFF' # TODO: conan won't build boost.python w/msys2, please help find why!
             IMATH_TEST_PYBIND11: 'OFF' # TODO: "import pybindimath" fails on Windows, please help find why!
+
+          - build: 10
+            label: C++23
+            cxx-standard: 23
+            IMATH_TEST_PYTHON: 'OFF'
+            IMATH_TEST_PYBIND11: 'OFF'
+            validate_install: 'OFF'
+
+          - build: 11
+            label: C++26
+            cxx-standard: 26
+            IMATH_TEST_PYTHON: 'OFF'
+            IMATH_TEST_PYBIND11: 'OFF'
+            validate_install: 'OFF'
+
+          - build: 12
+            label: msys2-clang64
+            msystem: CLANG64
+            python: 'OFF' # TODO: conan won't build boost.python w/msys2, please help find why!
+            pybind11: 'OFF'
+            validate_install: 'OFF'
