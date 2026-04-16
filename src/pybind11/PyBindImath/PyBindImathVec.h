@@ -387,13 +387,28 @@ template <class Vec>
 py::class_<Vec>
 register_vec_fp(py::class_<Vec> c)
 {
-    return c.def("length", &Vec::length, "return the magnitude of the vector")
-        .def("normalize", &Vec::normalize, "destructively normalizes v and returns a reference to it")
-        .def("normalizeExc", &Vec::normalizeExc, "destructively normalizes V and returns a reference to it, throwing an exception if length() == 0")
-        .def("normalizeNonNull",  &Vec::normalizeNonNull, "destructively normalizes V and returns a reference to it, faster if length() != 0")
-        .def("normalized", &Vec::normalized, "return a normalized copy of v")
-        .def("normalizedExc", &Vec::normalizedExc, "returnsa normalized copy of v, throwing an exception if length() == 0")
-        .def("normalizedNonNull", &Vec::normalizedNonNull, "return a normalized copy of v, faster if lngth() != 0")
+    // Imath exposes these as template members (SFINAE on T); member pointers
+    // are an overload set on MSVC, so call through lambdas for pybind11.
+    return c.def("length", [](const Vec& v) { return v.length(); },
+                 "return the magnitude of the vector")
+        .def("normalize",
+             [](Vec& v) { return v.normalize(); },
+             "destructively normalizes v and returns a reference to it")
+        .def("normalizeExc",
+             [](Vec& v) { return v.normalizeExc(); },
+             "destructively normalizes V and returns a reference to it, throwing an exception if length() == 0")
+        .def("normalizeNonNull",
+             [](Vec& v) { return v.normalizeNonNull(); },
+             "destructively normalizes V and returns a reference to it, faster if length() != 0")
+        .def("normalized",
+             [](const Vec& v) { return v.normalized(); },
+             "return a normalized copy of v")
+        .def("normalizedExc",
+             [](const Vec& v) { return v.normalizedExc(); },
+             "returnsa normalized copy of v, throwing an exception if length() == 0")
+        .def("normalizedNonNull",
+             [](const Vec& v) { return v.normalizedNonNull(); },
+             "return a normalized copy of v, faster if lngth() != 0")
         .def("orthogonal", orthogonal<Vec>, "return the vector that is perpendicular to this vector")
         .def("project", [](const Vec& self, const Vec& p) {
             // In C++/Imath it's a global function; in python it's a member:
