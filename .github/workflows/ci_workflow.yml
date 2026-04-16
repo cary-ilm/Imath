@@ -271,10 +271,12 @@ jobs:
             label: C++23
             cxx-standard: 23
             validate_install: 'OFF'
+            IMATH_TEST_PYTHON: 'OFF'
             IMATH_TEST_PYBIND11: 'OFF'
 
           - build: 11
             label: C++26
             cxx-standard: 26
             validate_install: 'OFF'
+            IMATH_TEST_PYTHON: 'OFF'
             IMATH_TEST_PYBIND11: 'OFF'
