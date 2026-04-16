@@ -139,47 +139,47 @@ jobs:
           - build: 1
             label: Release
 
-#          - build: 2
-#            label: Debug
-#            build-type: Debug
-#
-#          - build: 3
-#            label: static
-#            BUILD_SHARED_LIBS: 'OFF'
-#
-#          - build: 4
-#            label: pkgconfig=OFF, testing=OFF
-#            IMATH_INSTALL_PKG_CONFIG: 'OFF'
-#            IMATH_INSTALL_SYM_LINK: 'OFF'
-#            BUILD_TESTING: 'OFF'
-#            python: 'OFF'
-#            pybind11: 'OFF'
-#            cxx-standard: 20
-#
-#          - build: 5
-#            label: macos-15-intel
-#            os: macos-15-intel
-#
-#          - build: 6
-#            label: macos-14
-#            os: macos-14
-#
-#          - build: 7
-#            label: Apple Frameworks
-#            IMATH_BUILD_APPLE_FRAMEWORKS: 'ON'
-#            BUILD_TESTING: 'OFF'
-#            python: 'OFF' # conan boost doesn't support iOS
-#            pybind11: 'OFF' # iOS doesn't support CPython
-#
-#          - build: 7
-#            label: C++23
-#            cxx-standard: 23
-#            validate_install: 'OFF'
-#
-#          - build: 8
-#            label: C++26
-#            cxx-standard: 26
-#            validate_install: 'OFF'
+          - build: 2
+            label: Debug
+            build-type: Debug
+
+          - build: 3
+            label: static
+            BUILD_SHARED_LIBS: 'OFF'
+
+          - build: 4
+            label: pkgconfig=OFF, testing=OFF
+            IMATH_INSTALL_PKG_CONFIG: 'OFF'
+            IMATH_INSTALL_SYM_LINK: 'OFF'
+            BUILD_TESTING: 'OFF'
+            python: 'OFF'
+            pybind11: 'OFF'
+            cxx-standard: 20
+
+          - build: 5
+            label: macos-15-intel
+            os: macos-15-intel
+
+          - build: 6
+            label: macos-14
+            os: macos-14
+
+          - build: 7
+            label: Apple Frameworks
+            IMATH_BUILD_APPLE_FRAMEWORKS: 'ON'
+            BUILD_TESTING: 'OFF'
+            python: 'OFF' # conan boost doesn't support iOS
+            pybind11: 'OFF' # iOS doesn't support CPython
+
+          - build: 7
+            label: C++23
+            cxx-standard: 23
+            validate_install: 'OFF'
+
+          - build: 8
+            label: C++26
+            cxx-standard: 26
+            validate_install: 'OFF'
 
   windows:
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
@@ -203,6 +203,7 @@ jobs:
       msystem: ${{ matrix.msystem }}
       validate_install: ${{ matrix.validate_install || 'ON' }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - build: 1
@@ -270,8 +271,10 @@ jobs:
             label: C++23
             cxx-standard: 23
             validate_install: 'OFF'
+            IMATH_TEST_PYBIND11: 'OFF'
 
           - build: 11
             label: C++26
             cxx-standard: 26
             validate_install: 'OFF'
+            IMATH_TEST_PYBIND11: 'OFF'
