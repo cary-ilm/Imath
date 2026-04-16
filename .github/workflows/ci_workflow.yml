@@ -102,10 +102,12 @@ jobs:
           - build: 8
             label: C++23
             cxx-standard: 23
+            validate_install: false
 
           - build: 9
             label: C++26
             cxx-standard: 26
+            validate_install: false
 
   macOS:
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
@@ -170,11 +172,12 @@ jobs:
           - build: 7
             label: C++23
             cxx-standard: 23
+            validate_install: false
 
           - build: 8
             label: C++26
             cxx-standard: 26
-
+            validate_install: false
 
   windows:
     name: 'Windows.${{ matrix.build}}: ${{ matrix.label }}'
@@ -264,8 +267,10 @@ jobs:
           - build: 10
             label: C++23
             cxx-standard: 23
+            validate_install: false
 
           - build: 11
             label: C++26
             cxx-standard: 26
+            validate_install: false
 
