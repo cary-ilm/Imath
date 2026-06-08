@@ -121,8 +121,8 @@ jobs:
           python-version: '3.9'
           architecture: 'x86'
 
-      - name: Install python for UCRT64
-        if: inputs.pybind11 == 'ON' && inputs.msystem == 'UCRT64'
+      - name: Install python for UCRT64/CLANG64
+        if: inputs.pybind11 == 'ON' && (inputs.msystem == 'UCRT64' || inputs.msystem == 'CLANG64')
         # Note this requires the msys2 shell
         run: pacboy -S python:p pybind11:p --noconfirm
         shell: msys2 {0}

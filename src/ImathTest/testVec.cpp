@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <type_traits>
 
 // Include ImathForward *after* other headers to validate forward declarations
 #include <ImathForward.h>
@@ -247,6 +248,71 @@ testLength4T ()
     assert (IMATH_INTERNAL_NAMESPACE::equal (v.length (), t * 2, t * e));
     assert (IMATH_INTERNAL_NAMESPACE::equal (v.normalized ().length (), 1, e));
 }
+
+// Detection traits: does Vec<T>::length() exist?
+template <typename V, typename = void>
+struct has_length : std::false_type {};
+
+template <typename V>
+struct has_length<V, decltype(void(std::declval<V>().length()))> : std::true_type {};
+
+// Detection traits: does Vec<T>::normalize() exist?
+template <typename V, typename = void>
+struct has_normalize : std::false_type {};
+
+template <typename V>
+struct has_normalize<V, decltype(void(std::declval<V>().normalize()))> : std::true_type {};
+
+// Detection traits: does Vec<T>::normalized() exist?
+template <typename V, typename = void>
+struct has_normalized : std::false_type {};
+
+template <typename V>
+struct has_normalized<V, decltype(void(std::declval<V>().normalized()))> : std::true_type {};
+
+// Floating-point Vec types must have length/normalize/normalized.
+static_assert(has_length<Vec2<float>>::value,    "Vec2<float> must have length()");
+static_assert(has_length<Vec2<double>>::value,   "Vec2<double> must have length()");
+static_assert(has_length<Vec3<float>>::value,    "Vec3<float> must have length()");
+static_assert(has_length<Vec3<double>>::value,   "Vec3<double> must have length()");
+static_assert(has_length<Vec4<float>>::value,    "Vec4<float> must have length()");
+static_assert(has_length<Vec4<double>>::value,   "Vec4<double> must have length()");
+
+static_assert(has_normalize<Vec2<float>>::value,  "Vec2<float> must have normalize()");
+static_assert(has_normalize<Vec2<double>>::value, "Vec2<double> must have normalize()");
+static_assert(has_normalize<Vec3<float>>::value,  "Vec3<float> must have normalize()");
+static_assert(has_normalize<Vec3<double>>::value, "Vec3<double> must have normalize()");
+static_assert(has_normalize<Vec4<float>>::value,  "Vec4<float> must have normalize()");
+static_assert(has_normalize<Vec4<double>>::value, "Vec4<double> must have normalize()");
+
+static_assert(has_normalized<Vec2<float>>::value,  "Vec2<float> must have normalized()");
+static_assert(has_normalized<Vec2<double>>::value, "Vec2<double> must have normalized()");
+static_assert(has_normalized<Vec3<float>>::value,  "Vec3<float> must have normalized()");
+static_assert(has_normalized<Vec3<double>>::value, "Vec3<double> must have normalized()");
+static_assert(has_normalized<Vec4<float>>::value,  "Vec4<float> must have normalized()");
+static_assert(has_normalized<Vec4<double>>::value, "Vec4<double> must have normalized()");
+
+// Integer Vec types must NOT have length/normalize/normalized.
+static_assert(!has_length<Vec2<int>>::value,    "Vec2<int> must not have length()");
+static_assert(!has_length<Vec2<short>>::value,  "Vec2<short> must not have length()");
+static_assert(!has_length<Vec3<int>>::value,    "Vec3<int> must not have length()");
+static_assert(!has_length<Vec3<short>>::value,  "Vec3<short> must not have length()");
+static_assert(!has_length<Vec4<int>>::value,    "Vec4<int> must not have length()");
+static_assert(!has_length<Vec4<short>>::value,  "Vec4<short> must not have length()");
+
+static_assert(!has_normalize<Vec2<int>>::value,    "Vec2<int> must not have normalize()");
+static_assert(!has_normalize<Vec2<short>>::value,  "Vec2<short> must not have normalize()");
+static_assert(!has_normalize<Vec3<int>>::value,    "Vec3<int> must not have normalize()");
+static_assert(!has_normalize<Vec3<short>>::value,  "Vec3<short> must not have normalize()");
+static_assert(!has_normalize<Vec4<int>>::value,    "Vec4<int> must not have normalize()");
+static_assert(!has_normalize<Vec4<short>>::value,  "Vec4<short> must not have normalize()");
+
+static_assert(!has_normalized<Vec2<int>>::value,    "Vec2<int> must not have normalized()");
+static_assert(!has_normalized<Vec2<short>>::value,  "Vec2<short> must not have normalized()");
+static_assert(!has_normalized<Vec3<int>>::value,    "Vec3<int> must not have normalized()");
+static_assert(!has_normalized<Vec3<short>>::value,  "Vec3<short> must not have normalized()");
+static_assert(!has_normalized<Vec4<int>>::value,    "Vec4<int> must not have normalized()");
+static_assert(!has_normalized<Vec4<short>>::value,  "Vec4<short> must not have normalized()");
 
 } // namespace
 
