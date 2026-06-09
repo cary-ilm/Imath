@@ -252,7 +252,10 @@ testLength4T ()
     assert (IMATH_INTERNAL_NAMESPACE::equal (v.normalized ().length (), 1, e));
 }
 
-/// Custom scalar with the operations ``Vec::length()`` needs.
+// 
+// Class to validate Vec::length() SFINAE constructs
+//
+
 class Foo
 {
 public:
@@ -310,9 +313,6 @@ template <>
 class numeric_limits<Foo>
 {
 public:
-    static constexpr bool is_specialized = true;
-    static constexpr bool is_integer     = false;
-
     static constexpr Foo min () IMATH_NOEXCEPT { return Foo (0); }
     static constexpr Foo lowest () IMATH_NOEXCEPT
     {
@@ -371,21 +371,21 @@ template <typename V>
 struct has_normalized<V, decltype(void(std::declval<V>().normalized()))> : std::true_type {};
 
 static_assert(
-    is_imath_floating_point<float>::value, "float must be imath floating point");
+    imath_is_floating_point<float>::value, "float must be imath floating point");
 static_assert(
-    is_imath_floating_point<double>::value, "double must be imath floating point");
+    imath_is_floating_point<double>::value, "double must be imath floating point");
 static_assert(
-    is_imath_floating_point<half>::value, "half must be imath floating point");
+    imath_is_floating_point<half>::value, "half must be imath floating point");
 static_assert(
-    !is_imath_floating_point<int>::value, "int must not be imath floating point");
+    !imath_is_floating_point<int>::value, "int must not be imath floating point");
 static_assert(
-    !is_imath_floating_point<short>::value,
+    !imath_is_floating_point<short>::value,
     "short must not be imath floating point");
 static_assert(
-    is_imath_floating_point<Foo>::value,
+    imath_is_floating_point<Foo>::value,
     "Foo must be imath floating point");
 static_assert(
-    !is_imath_floating_point<Bar>::value,
+    !imath_is_floating_point<Bar>::value,
     "Bar must not be imath floating point");
 
 // Floating-point Vec types must have length/normalize/normalized.

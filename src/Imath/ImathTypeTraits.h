@@ -34,11 +34,11 @@ template <typename...> using void_t = void;
 #endif
 
 /// True if ``T`` supports the arithmetic operations used by ``Vec::length()``.
-template <typename T, typename = void> struct supports_vec_length : std::false_type
+template <typename T, typename = void> struct imath_supports_vec_length : std::false_type
 {};
 
 template <typename T>
-struct supports_vec_length<
+struct imath_supports_vec_length<
     T,
     void_t<
         decltype (std::declval<T> () * std::declval<T> ()),
@@ -54,10 +54,10 @@ struct supports_vec_length<
 
 /// True for scalar types suitable for ``Vec`` length/normalize.
 template <typename T>
-struct is_imath_floating_point
+struct imath_is_floating_point
     : std::integral_constant<
           bool,
-          supports_vec_length<T>::value && !std::is_integral<T>::value>
+          imath_supports_vec_length<T>::value && !std::is_integral<T>::value>
 {};
 
 /// An enable_if helper to be used in template parameters which results in

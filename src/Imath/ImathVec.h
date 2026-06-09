@@ -38,14 +38,14 @@
     template <                                                                 \
         typename U = T,                                                          \
         typename std::enable_if<                                                 \
-            is_imath_floating_point<U>::value,                                  \
+            imath_is_floating_point<U>::value,                                  \
             int>::type = 0>
 
 #define IMATH_IF_FLOATING_POINT_IMPL                                          \
     template <                                                                \
         typename U,                                                           \
         typename std::enable_if<                                                \
-            is_imath_floating_point<U>::value,                                \
+            imath_is_floating_point<U>::value,                                \
             int>::type>
 
 IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
