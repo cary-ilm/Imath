@@ -10,6 +10,8 @@
 #ifndef INCLUDED_IMATHTYPETRAITS_H
 #define INCLUDED_IMATHTYPETRAITS_H
 
+#include <cmath>
+#include <limits>
 #include <type_traits>
 
 #include "ImathPlatform.h"
@@ -24,6 +26,39 @@ using std::enable_if_t; // Use C++14 std::enable_if_t
 template <bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 #endif
+
+#if (IMATH_CPLUSPLUS_VERSION >= 17)
+using std::void_t;
+#else
+template <typename...> using void_t = void;
+#endif
+
+/// True if ``T`` supports the arithmetic operations used by ``Vec::length()``.
+template <typename T, typename = void> struct supports_vec_length : std::false_type
+{};
+
+template <typename T>
+struct supports_vec_length<
+    T,
+    void_t<
+        decltype (std::declval<T> () * std::declval<T> ()),
+        decltype (std::declval<T> () + std::declval<T> ()),
+        decltype (std::declval<T> () / std::declval<T> ()),
+        decltype (std::declval<T> () < std::declval<T> ()),
+        decltype (T (0)),
+        decltype (T (2)),
+        decltype (std::numeric_limits<T>::min ()),
+        decltype (std::sqrt (std::declval<T> ())),
+        decltype (std::abs (std::declval<T> ()))>> : std::true_type
+{};
+
+/// True for scalar types suitable for ``Vec`` length/normalize.
+template <typename T>
+struct is_imath_floating_point
+    : std::integral_constant<
+          bool,
+          supports_vec_length<T>::value && !std::is_integral<T>::value>
+{};
 
 /// An enable_if helper to be used in template parameters which results in
 /// much shorter symbols.

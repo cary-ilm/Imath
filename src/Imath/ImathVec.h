@@ -34,8 +34,19 @@
 #    pragma warning(disable : 4290)
 #endif
 
-#define IMATH_IF_FLOATING_POINT \
-  template <typename U=T, typename std::enable_if<std::is_floating_point<U>::value, int>::type = 0>
+#define IMATH_IF_FLOATING_POINT                                                  \
+    template <                                                                 \
+        typename U = T,                                                          \
+        typename std::enable_if<                                                 \
+            is_imath_floating_point<U>::value,                                  \
+            int>::type = 0>
+
+#define IMATH_IF_FLOATING_POINT_IMPL                                          \
+    template <                                                                \
+        typename U,                                                           \
+        typename std::enable_if<                                                \
+            is_imath_floating_point<U>::value,                                \
+            int>::type>
 
 IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
 
@@ -1409,7 +1420,7 @@ Vec2<T>::operator/ (T a) const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline T
 Vec2<T>::lengthTiny () const IMATH_NOEXCEPT
 {
@@ -1435,7 +1446,7 @@ Vec2<T>::lengthTiny () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline T
 Vec2<T>::length () const IMATH_NOEXCEPT
 {
@@ -1455,7 +1466,7 @@ Vec2<T>::length2 () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline const Vec2<T>&
 Vec2<T>::normalize () IMATH_NOEXCEPT
 {
@@ -1477,7 +1488,7 @@ Vec2<T>::normalize () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 inline const Vec2<T>&
 Vec2<T>::normalizeExc ()
 {
@@ -1492,7 +1503,7 @@ Vec2<T>::normalizeExc ()
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline const Vec2<T>&
 Vec2<T>::normalizeNonNull () IMATH_NOEXCEPT
 {
@@ -1503,7 +1514,7 @@ Vec2<T>::normalizeNonNull () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec2<T>
 Vec2<T>::normalized () const IMATH_NOEXCEPT
 {
@@ -1515,7 +1526,7 @@ Vec2<T>::normalized () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 inline Vec2<T>
 Vec2<T>::normalizedExc () const
 {
@@ -1528,7 +1539,7 @@ Vec2<T>::normalizedExc () const
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec2<T>
 Vec2<T>::normalizedNonNull () const IMATH_NOEXCEPT
 {
@@ -1894,7 +1905,7 @@ Vec3<T>::operator/ (T a) const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline T
 Vec3<T>::lengthTiny () const IMATH_NOEXCEPT
 {
@@ -1924,7 +1935,7 @@ Vec3<T>::lengthTiny () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline T
 Vec3<T>::length () const IMATH_NOEXCEPT
 {
@@ -1944,7 +1955,7 @@ Vec3<T>::length2 () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline const Vec3<T>&
 Vec3<T>::normalize () IMATH_NOEXCEPT
 {
@@ -1967,7 +1978,7 @@ Vec3<T>::normalize () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 inline const Vec3<T>&
 Vec3<T>::normalizeExc ()
 {
@@ -1983,7 +1994,7 @@ Vec3<T>::normalizeExc ()
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline const Vec3<T>&
 Vec3<T>::normalizeNonNull () IMATH_NOEXCEPT
 {
@@ -1995,7 +2006,7 @@ Vec3<T>::normalizeNonNull () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec3<T>
 Vec3<T>::normalized () const IMATH_NOEXCEPT
 {
@@ -2007,7 +2018,7 @@ Vec3<T>::normalized () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 inline Vec3<T>
 Vec3<T>::normalizedExc () const
 {
@@ -2020,7 +2031,7 @@ Vec3<T>::normalizedExc () const
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec3<T>
 Vec3<T>::normalizedNonNull () const IMATH_NOEXCEPT
 {
@@ -2351,7 +2362,7 @@ Vec4<T>::operator/ (T a) const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 inline T
 Vec4<T>::lengthTiny () const IMATH_NOEXCEPT
 {
@@ -2386,7 +2397,7 @@ Vec4<T>::lengthTiny () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline T
 Vec4<T>::length () const IMATH_NOEXCEPT
 {
@@ -2406,7 +2417,7 @@ Vec4<T>::length2 () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE const inline Vec4<T>&
 Vec4<T>::normalize () IMATH_NOEXCEPT
 {
@@ -2430,7 +2441,7 @@ Vec4<T>::normalize () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 const inline Vec4<T>&
 Vec4<T>::normalizeExc ()
 {
@@ -2447,7 +2458,7 @@ Vec4<T>::normalizeExc ()
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline const Vec4<T>&
 Vec4<T>::normalizeNonNull () IMATH_NOEXCEPT
 {
@@ -2460,7 +2471,7 @@ Vec4<T>::normalizeNonNull () IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec4<T>
 Vec4<T>::normalized () const IMATH_NOEXCEPT
 {
@@ -2472,7 +2483,7 @@ Vec4<T>::normalized () const IMATH_NOEXCEPT
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 inline Vec4<T>
 Vec4<T>::normalizedExc () const
 {
@@ -2485,7 +2496,7 @@ Vec4<T>::normalizedExc () const
 }
 
 template <class T>
-template <typename U, typename std::enable_if<std::is_floating_point<U>::value, int>::type>
+IMATH_IF_FLOATING_POINT_IMPL
 IMATH_HOSTDEVICE inline Vec4<T>
 Vec4<T>::normalizedNonNull () const IMATH_NOEXCEPT
 {
