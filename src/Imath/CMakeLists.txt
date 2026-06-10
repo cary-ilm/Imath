@@ -9,7 +9,6 @@ set(IMATH_LIBRARY Imath)
 
 set(IMATH_SOURCES
     half.cpp
-    ImathFun.cpp
     ImathMatrixAlgo.cpp
     toFloat.h
 )

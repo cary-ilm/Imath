@@ -12,6 +12,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <cmath>
 #include <cstdint>
 #include <limits>
 
@@ -192,11 +193,37 @@ modp (int x, int y) IMATH_NOEXCEPT
 //
 //----------------------------------------------------------
 
-IMATH_EXPORT float succf (float f) IMATH_NOEXCEPT;
-IMATH_EXPORT float predf (float f) IMATH_NOEXCEPT;
+inline IMATH_EXPORT float
+succf (float f) IMATH_NOEXCEPT
+{
+    return std::isfinite (f)
+               ? std::nextafter (f, std::numeric_limits<float>::infinity ())
+               : f;
+}
 
-IMATH_EXPORT double succd (double d) IMATH_NOEXCEPT;
-IMATH_EXPORT double predd (double d) IMATH_NOEXCEPT;
+inline IMATH_EXPORT float
+predf (float f) IMATH_NOEXCEPT
+{
+    return std::isfinite (f)
+               ? std::nextafter (f, -std::numeric_limits<float>::infinity ())
+               : f;
+}
+
+inline IMATH_EXPORT double
+succd (double d) IMATH_NOEXCEPT
+{
+    return std::isfinite (d)
+               ? std::nextafter (d, std::numeric_limits<double>::infinity ())
+               : d;
+}
+
+inline IMATH_EXPORT double
+predd (double d) IMATH_NOEXCEPT
+{
+    return std::isfinite (d)
+               ? std::nextafter (d, -std::numeric_limits<double>::infinity ())
+               : d;
+}
 
 //
 // Return true if the number is not a NaN or Infinity.
