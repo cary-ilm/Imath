@@ -9,7 +9,6 @@ set(IMATH_LIBRARY Imath)
 
 set(IMATH_SOURCES
     half.cpp
-    ImathColorAlgo.cpp
     ImathFun.cpp
     ImathMatrixAlgo.cpp
     ImathRandom.cpp

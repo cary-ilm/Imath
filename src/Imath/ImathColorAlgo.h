@@ -18,55 +18,80 @@
 
 IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
 
-//
-// Non-templated helper routines for color conversion.
-// These routines eliminate type warnings under g++.
-//
-
-///
-/// Convert 3-channel hsv to rgb. Non-templated helper routine.
-IMATH_EXPORT Vec3<double> hsv2rgb_d (const Vec3<double>& hsv) IMATH_NOEXCEPT;
-
-///
-/// Convert 4-channel hsv to rgb (with alpha). Non-templated helper routine.
-IMATH_EXPORT Color4<double>
-             hsv2rgb_d (const Color4<double>& hsv) IMATH_NOEXCEPT;
-
-///
-/// Convert 3-channel rgb to hsv. Non-templated helper routine.
-IMATH_EXPORT Vec3<double> rgb2hsv_d (const Vec3<double>& rgb) IMATH_NOEXCEPT;
-
-///
-/// Convert 4-channel rgb to hsv. Non-templated helper routine.
-IMATH_EXPORT Color4<double>
-             rgb2hsv_d (const Color4<double>& rgb) IMATH_NOEXCEPT;
-
 ///
 /// Convert 3-channel hsv to rgb.
 ///
 
 template <class T>
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Vec3<T>
-                                   hsv2rgb (const Vec3<T>& hsv) IMATH_NOEXCEPT
+hsv2rgb (const Vec3<T>& hsv) IMATH_NOEXCEPT
 {
     if (std::numeric_limits<T>::is_integer)
     {
-        Vec3<double> v = Vec3<double> (
-            hsv.x / double (std::numeric_limits<T>::max ()),
-            hsv.y / double (std::numeric_limits<T>::max ()),
-            hsv.z / double (std::numeric_limits<T>::max ()));
-        Vec3<double> c = hsv2rgb_d (v);
+        const double invMax =
+            1.0 / double (std::numeric_limits<T>::max ());
+        const double maxVal = double (std::numeric_limits<T>::max ());
+        const Vec3<double> norm (
+            hsv.x * invMax, hsv.y * invMax, hsv.z * invMax);
+        const Vec3<double> rgb = hsv2rgb<double> (norm);
         return Vec3<T> (
-            (T) (c.x * std::numeric_limits<T>::max ()),
-            (T) (c.y * std::numeric_limits<T>::max ()),
-            (T) (c.z * std::numeric_limits<T>::max ()));
+            (T) (rgb.x * maxVal),
+            (T) (rgb.y * maxVal),
+            (T) (rgb.z * maxVal));
     }
+
+    T hue = hsv.x;
+    T sat = hsv.y;
+    T val = hsv.z;
+
+    T x = T (0), y = T (0), z = T (0);
+
+    if (hue == T (1))
+        hue = T (0);
     else
+        hue *= T (6);
+
+    const int i = int (std::floor (hue));
+    const T   f = hue - T (i);
+    const T   p = val * (T (1) - sat);
+    const T   q = val * (T (1) - (sat * f));
+    const T   t = val * (T (1) - (sat * (T (1) - f)));
+
+    switch (i)
     {
-        Vec3<double> v = Vec3<double> (hsv.x, hsv.y, hsv.z);
-        Vec3<double> c = hsv2rgb_d (v);
-        return Vec3<T> ((T) c.x, (T) c.y, (T) c.z);
+        case 0:
+            x = val;
+            y = t;
+            z = p;
+            break;
+        case 1:
+            x = q;
+            y = val;
+            z = p;
+            break;
+        case 2:
+            x = p;
+            y = val;
+            z = t;
+            break;
+        case 3:
+            x = p;
+            y = q;
+            z = val;
+            break;
+        case 4:
+            x = t;
+            y = p;
+            z = val;
+            break;
+        case 5:
+            x = val;
+            y = p;
+            z = q;
+            break;
     }
+
+    return Vec3<T> (x, y, z);
 }
 
 ///
@@ -75,28 +100,11 @@ IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Vec3<T>
 
 template <class T>
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Color4<T>
-                                   hsv2rgb (const Color4<T>& hsv) IMATH_NOEXCEPT
+hsv2rgb (const Color4<T>& hsv) IMATH_NOEXCEPT
 {
-    if (std::numeric_limits<T>::is_integer)
-    {
-        Color4<double> v = Color4<double> (
-            hsv.r / float (std::numeric_limits<T>::max ()),
-            hsv.g / float (std::numeric_limits<T>::max ()),
-            hsv.b / float (std::numeric_limits<T>::max ()),
-            hsv.a / float (std::numeric_limits<T>::max ()));
-        Color4<double> c = hsv2rgb_d (v);
-        return Color4<T> (
-            (T) (c.r * std::numeric_limits<T>::max ()),
-            (T) (c.g * std::numeric_limits<T>::max ()),
-            (T) (c.b * std::numeric_limits<T>::max ()),
-            (T) (c.a * std::numeric_limits<T>::max ()));
-    }
-    else
-    {
-        Color4<double> v = Color4<double> (hsv.r, hsv.g, hsv.b, hsv.a);
-        Color4<double> c = hsv2rgb_d (v);
-        return Color4<T> ((T) c.r, (T) c.g, (T) c.b, (T) c.a);
-    }
+  const Vec3<T> rgb =
+      hsv2rgb (Vec3<T> (hsv.r, hsv.g, hsv.b));
+  return Color4<T> (rgb.x, rgb.y, rgb.z, hsv.a);
 }
 
 ///
@@ -105,26 +113,54 @@ IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Color4<T>
 
 template <class T>
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Vec3<T>
-                                   rgb2hsv (const Vec3<T>& rgb) IMATH_NOEXCEPT
+rgb2hsv (const Vec3<T>& rgb) IMATH_NOEXCEPT
 {
     if (std::numeric_limits<T>::is_integer)
     {
-        Vec3<double> v = Vec3<double> (
-            rgb.x / double (std::numeric_limits<T>::max ()),
-            rgb.y / double (std::numeric_limits<T>::max ()),
-            rgb.z / double (std::numeric_limits<T>::max ()));
-        Vec3<double> c = rgb2hsv_d (v);
+        const double invMax =
+            1.0 / double (std::numeric_limits<T>::max ());
+        const double maxVal = double (std::numeric_limits<T>::max ());
+        const Vec3<double> norm (
+            rgb.x * invMax, rgb.y * invMax, rgb.z * invMax);
+        const Vec3<double> hsv = rgb2hsv<double> (norm);
         return Vec3<T> (
-            (T) (c.x * std::numeric_limits<T>::max ()),
-            (T) (c.y * std::numeric_limits<T>::max ()),
-            (T) (c.z * std::numeric_limits<T>::max ()));
+            (T) (hsv.x * maxVal),
+            (T) (hsv.y * maxVal),
+            (T) (hsv.z * maxVal));
     }
-    else
+
+    const T& x = rgb.x;
+    const T& y = rgb.y;
+    const T& z = rgb.z;
+
+    const T max =
+        (x > y) ? ((x > z) ? x : z) : ((y > z) ? y : z);
+    const T min =
+        (x < y) ? ((x < z) ? x : z) : ((y < z) ? y : z);
+    const T range = max - min;
+    T       val   = max;
+    T       sat   = T (0);
+    T       hue   = T (0);
+
+    if (max != T (0)) sat = range / max;
+
+    if (sat != T (0))
     {
-        Vec3<double> v = Vec3<double> (rgb.x, rgb.y, rgb.z);
-        Vec3<double> c = rgb2hsv_d (v);
-        return Vec3<T> ((T) c.x, (T) c.y, (T) c.z);
+        T h;
+
+        if (x == max)
+            h = (y - z) / range;
+        else if (y == max)
+            h = T (2) + (z - x) / range;
+        else
+            h = T (4) + (x - y) / range;
+
+        hue = h / T (6);
+
+        if (hue < T (0)) hue += T (1);
     }
+
+    return Vec3<T> (hue, sat, val);
 }
 
 ///
@@ -133,28 +169,40 @@ IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Vec3<T>
 
 template <class T>
 IMATH_HOSTDEVICE IMATH_CONSTEXPR14 Color4<T>
-                                   rgb2hsv (const Color4<T>& rgb) IMATH_NOEXCEPT
+rgb2hsv (const Color4<T>& rgb) IMATH_NOEXCEPT
 {
-    if (std::numeric_limits<T>::is_integer)
-    {
-        Color4<double> v = Color4<double> (
-            rgb.r / float (std::numeric_limits<T>::max ()),
-            rgb.g / float (std::numeric_limits<T>::max ()),
-            rgb.b / float (std::numeric_limits<T>::max ()),
-            rgb.a / float (std::numeric_limits<T>::max ()));
-        Color4<double> c = rgb2hsv_d (v);
-        return Color4<T> (
-            (T) (c.r * std::numeric_limits<T>::max ()),
-            (T) (c.g * std::numeric_limits<T>::max ()),
-            (T) (c.b * std::numeric_limits<T>::max ()),
-            (T) (c.a * std::numeric_limits<T>::max ()));
-    }
-    else
-    {
-        Color4<double> v = Color4<double> (rgb.r, rgb.g, rgb.b, rgb.a);
-        Color4<double> c = rgb2hsv_d (v);
-        return Color4<T> ((T) c.r, (T) c.g, (T) c.b, (T) c.a);
-    }
+  const Vec3<T> hsv =
+      rgb2hsv (Vec3<T> (rgb.r, rgb.g, rgb.b));
+  return Color4<T> (hsv.x, hsv.y, hsv.z, rgb.a);
+}
+
+///
+/// Backwards-compatible double-precision helpers. Prefer hsv2rgb<double>()
+/// and rgb2hsv<double>().
+///
+
+inline IMATH_EXPORT Vec3<double>
+hsv2rgb_d (const Vec3<double>& hsv) IMATH_NOEXCEPT
+{
+    return hsv2rgb<double> (hsv);
+}
+
+inline IMATH_EXPORT Color4<double>
+hsv2rgb_d (const Color4<double>& hsv) IMATH_NOEXCEPT
+{
+    return hsv2rgb<double> (hsv);
+}
+
+inline IMATH_EXPORT Vec3<double>
+rgb2hsv_d (const Vec3<double>& rgb) IMATH_NOEXCEPT
+{
+    return rgb2hsv<double> (rgb);
+}
+
+inline IMATH_EXPORT Color4<double>
+rgb2hsv_d (const Color4<double>& rgb) IMATH_NOEXCEPT
+{
+    return rgb2hsv<double> (rgb);
 }
 
 ///
