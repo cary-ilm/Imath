@@ -11,7 +11,7 @@ endif()
 
 set(PYBINDIMATH_MODULE_NAME pybindimath)
 set(PYBINDIMATH_MODULE ${PYBINDIMATH_MODULE_NAME}_module)
-set(IMATH_LIBRARY Imath)
+set(PYBINDIMATH_LIBRARY PyBindImath)
 
 # Execute the test by invoking python with the script as an
 # argument, with PATH and PYTHONPATH set properly
@@ -19,7 +19,7 @@ set(IMATH_LIBRARY Imath)
 add_test(NAME PyBindImath.PyBindImathTest 
   COMMAND ${CMAKE_COMMAND} -E env
           "PYTHONPATH=$<TARGET_FILE_DIR:${PYBINDIMATH_MODULE}>"
-          "PATH=$<TARGET_FILE_DIR:${IMATH_LIBRARY}>:$ENV{PATH}"
+          "PATH=$<TARGET_FILE_DIR:${PYBINDIMATH_LIBRARY}>:$ENV{PATH}"
           ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pyBindImathTest.py
 )
 

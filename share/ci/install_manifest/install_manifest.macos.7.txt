@@ -36,6 +36,7 @@ lib/Imath.framework/Headers/ImathVecAlgo.h
 lib/Imath.framework/Headers/half.h
 lib/Imath.framework/Headers/halfFunction.h
 lib/Imath.framework/Headers/halfLimits.h
+lib/Imath.framework/Headers/toFloat.h
 lib/Imath.framework/Imath
 lib/Imath.framework/Info.plist
 lib/Imath.framework/Resources/ImathConfig.cmake

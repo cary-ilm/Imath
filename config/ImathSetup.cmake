@@ -20,9 +20,9 @@ option(IMATH_ENABLE_LARGE_STACK "Enables code to take advantage of large stack s
 # Option to make it possible to build without the noexcept specifier
 option(IMATH_USE_NOEXCEPT "Compile with noexcept specifier" ON)
 
-# What C++ standard to compile for.  VFX Platform 18 is c++14, so
-# that's the default.
-set(tmp 14)
+# What C++ standard to compile for.  Imath is header-only and requires
+# C++17 for inline global variables.
+set(tmp 17)
 if(CMAKE_CXX_STANDARD)
   set(tmp ${CMAKE_CXX_STANDARD})
 endif()

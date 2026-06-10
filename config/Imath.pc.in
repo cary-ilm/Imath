@@ -13,5 +13,5 @@ Description: Imath library: vector/matrix and math operations, plus the half typ
 Version: @IMATH_VERSION@
 Requires:
 Conflicts:
-Libs: -L${libdir} -lImath${libsuffix}
+Libs:
 Cflags: -I${includedir} -I${includedir}/Imath

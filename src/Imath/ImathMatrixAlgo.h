@@ -31,17 +31,29 @@ IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
 //------------------
 
 /// M22f identity matrix
-IMATH_EXPORT_CONST M22f identity22f;
+IMATH_INLINE_CONST M22f identity22f (1, 0,
+                                     0, 1);
 /// M33f identity matrix
-IMATH_EXPORT_CONST M33f identity33f;
+IMATH_INLINE_CONST M33f identity33f (1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1);
 /// M44f identity matrix
-IMATH_EXPORT_CONST M44f identity44f;
+IMATH_INLINE_CONST M44f identity44f (1, 0, 0, 0,
+                                     0, 1, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1);
 /// M22d identity matrix
-IMATH_EXPORT_CONST M22d identity22d;
+IMATH_INLINE_CONST M22d identity22d (1, 0,
+                                     0, 1);
 /// M33d identity matrix
-IMATH_EXPORT_CONST M33d identity33d;
+IMATH_INLINE_CONST M33d identity33d (1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1);
 /// M44d identity matrix
-IMATH_EXPORT_CONST M44d identity44d;
+IMATH_INLINE_CONST M44d identity44d (1, 0, 0, 0,
+                                     0, 1, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1);
 
 //----------------------------------------------------------------------
 // Extract scale, shear, rotation, and translation values from a matrix:

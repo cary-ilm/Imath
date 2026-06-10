@@ -31,9 +31,11 @@
 #    if defined(IMATH_EXPORTS)
 #        define IMATH_EXPORT __declspec(dllexport)
 #        define IMATH_EXPORT_CONST extern __declspec(dllexport)
+#        define IMATH_INLINE_CONST inline const __declspec(dllexport)
 #    else
 #        define IMATH_EXPORT __declspec(dllimport)
 #        define IMATH_EXPORT_CONST extern __declspec(dllimport)
+#        define IMATH_INLINE_CONST inline const __declspec(dllimport)
 #    endif
 
 // DLLs don't support these types of visibility controls, just leave them as empty
@@ -46,9 +48,11 @@
 #    ifdef IMATH_PUBLIC_SYMBOL_ATTRIBUTE
 #        define IMATH_EXPORT IMATH_PUBLIC_SYMBOL_ATTRIBUTE
 #        define IMATH_EXPORT_CONST extern const IMATH_PUBLIC_SYMBOL_ATTRIBUTE
+#        define IMATH_INLINE_CONST inline const IMATH_PUBLIC_SYMBOL_ATTRIBUTE
 #    else
 #        define IMATH_EXPORT
 #        define IMATH_EXPORT_CONST extern const
+#        define IMATH_INLINE_CONST inline const
 #    endif
 
 #    ifdef IMATH_PUBLIC_TYPE_VISIBILITY_ATTRIBUTE

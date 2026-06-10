@@ -36,6 +36,7 @@ include/Imath/ImathVecAlgo.h
 include/Imath/half.h
 include/Imath/halfFunction.h
 include/Imath/halfLimits.h
+include/Imath/toFloat.h
 include/PyBindImath/PyBindImath.h
 include/PyBindImath/PyBindImathExport.h
 include/PyImath/PyImath.h
@@ -88,10 +89,6 @@ lib/cmake/Imath/PyBindImathTargets-release.cmake
 lib/cmake/Imath/PyBindImathTargets.cmake
 lib/cmake/Imath/PyImathTargets-release.cmake
 lib/cmake/Imath/PyImathTargets.cmake
-lib/libImath.so
-lib/libImathTEST_NAMESPACE.so
-lib/libImathTEST_NAMESPACE.so.$SOVERSION
-lib/libImathTEST_NAMESPACE.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
 lib/libPyBindImath.so
 lib/libPyBindImathPYBIND_TEST_NAMESPACE.so
 lib/libPyBindImathPYBIND_TEST_NAMESPACE.so.$SOVERSION

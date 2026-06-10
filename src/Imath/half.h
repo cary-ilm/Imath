@@ -263,11 +263,24 @@ typedef imath_half_bits_t half;
 
 #if defined(IMATH_HALF_USE_LOOKUP_TABLE)
 #    if defined(__cplusplus)
-extern "C"
+
+// clang-format off
+inline const imath_half_uif_t imath_half_to_float_table_data[1 << 16] =
+#include "toFloat.h"
+    ;
+// clang-format on
+
+extern "C" {
+inline const imath_half_uif_t* const imath_half_to_float_table =
+    imath_half_to_float_table_data;
+}
+
 #    else
-extern
+
+extern const imath_half_uif_t imath_half_to_float_table_data[1 << 16];
+extern const imath_half_uif_t*  imath_half_to_float_table;
+
 #    endif
-    IMATH_EXPORT const imath_half_uif_t* imath_half_to_float_table;
 #endif
 
 ///

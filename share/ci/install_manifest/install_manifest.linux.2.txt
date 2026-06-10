@@ -37,6 +37,7 @@ include/Imath/ImathVecAlgo.h
 include/Imath/half.h
 include/Imath/halfFunction.h
 include/Imath/halfLimits.h
+include/Imath/toFloat.h
 include/Imath/PyBindImath.h
 include/Imath/PyBindImathExport.h
 include/Imath/PyImath.h
@@ -89,10 +90,6 @@ lib/cmake/Imath/PyBindImathTargets-debug.cmake
 lib/cmake/Imath/PyBindImathTargets.cmake
 lib/cmake/Imath/PyImathTargets-debug.cmake
 lib/cmake/Imath/PyImathTargets.cmake
-lib/libImath-$MAJOR_$MINOR_d.so
-lib/libImath-$MAJOR_$MINOR_d.so.$SOVERSION
-lib/libImath-$MAJOR_$MINOR_d.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
-lib/libImath_d.so
 lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR_d.so
 lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR_d.so.$SOVERSION
 lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR_d.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
