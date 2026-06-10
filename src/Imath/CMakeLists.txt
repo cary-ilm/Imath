@@ -46,11 +46,6 @@ set(IMATH_HEADERS
     ${IMATH_CONFIG_DIR}/ImathConfig.h
 )
 
-if(IMATH_BUILD_APPLE_FRAMEWORKS)
-    message(FATAL_ERROR
-        "IMATH_BUILD_APPLE_FRAMEWORKS is not supported for header-only Imath")
-endif()
-
 add_library(${IMATH_LIBRARY} INTERFACE)
 add_library(Imath::Imath ALIAS ${IMATH_LIBRARY})
 

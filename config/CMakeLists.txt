@@ -22,16 +22,14 @@ target_include_directories(ImathConfig INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}>)
 
 if (IMATH_INSTALL)
-  if (NOT IMATH_BUILD_APPLE_FRAMEWORKS)
-    install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.h
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
-    )
-  endif()
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${IMATH_OUTPUT_SUBDIR}
+  )
   install(TARGETS ImathConfig EXPORT Imath)
 endif()
 
-if(IMATH_INSTALL_PKG_CONFIG AND NOT IMATH_BUILD_APPLE_FRAMEWORKS)
+if(IMATH_INSTALL_PKG_CONFIG)
 
   # Prepend prefix for includedir only if CMAKE_INSTALL_INCLUDEDIR is relative
   if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
@@ -81,20 +79,18 @@ write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/ImathConfigVersion
 )
 
 if (IMATH_INSTALL)
-  if (NOT IMATH_BUILD_APPLE_FRAMEWORKS)
-    install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.cmake
-            ${CMAKE_CURRENT_BINARY_DIR}/ImathConfigVersion.cmake
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Imath
-    )
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/ImathConfig.cmake
+          ${CMAKE_CURRENT_BINARY_DIR}/ImathConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Imath
+  )
 
-    install(EXPORT Imath
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Imath
-      FILE ImathTargets.cmake
-      NAMESPACE Imath::
-      EXPORT_LINK_INTERFACE_LIBRARIES
-    )
-  endif()
+  install(EXPORT Imath
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Imath
+    FILE ImathTargets.cmake
+    NAMESPACE Imath::
+    EXPORT_LINK_INTERFACE_LIBRARIES
+  )
 
   export(EXPORT Imath
     FILE "${CMAKE_CURRENT_BINARY_DIR}/ImathTargets.cmake"

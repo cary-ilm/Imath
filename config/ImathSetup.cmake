@@ -36,12 +36,6 @@ set(IMATH_INTERNAL_NAMESPACE "Imath_${IMATH_VERSION_API}" CACHE STRING "Real nam
 set(IMATH_NAMESPACE "Imath" CACHE STRING "Public namespace alias for Imath")
 set(IMATH_PACKAGE_NAME "Imath ${IMATH_VERSION}${IMATH_VERSION_RELEASE_TYPE}" CACHE STRING "Public string / label for displaying package")
 
-if(WIN32)
-  option(IMATH_INSTALL_SYM_LINK "Create symbolic links for shared objects" OFF)
-else()
-  option(IMATH_INSTALL_SYM_LINK "Create symbolic links for shared objects" ON)
-endif()
-
 # Whether to generate and install a pkg-config file Imath.pc on
 option(IMATH_INSTALL_PKG_CONFIG "Install Imath.pc file" ON)
 
@@ -61,18 +55,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # install those)
 set(CMAKE_DEBUG_POSTFIX "_d" CACHE STRING "Suffix for debug builds")
 
-# Usual cmake option to build shared libraries or not
-option(BUILD_SHARED_LIBS "Build shared library" ON)
-
 # Suffix to append to root name, this helps with version management
 # but can be turned off if you don't care, or otherwise customized
 set(IMATH_LIB_SUFFIX "-${IMATH_VERSION_API}" CACHE STRING "string added to the end of all the libraries")
-
-# When building static, the additional string to add to the library name such
-# that a static build of Imath is easily distinguishable.
-# To use the static library, you would use
-# -lImath_static (or target_link_libraries(xxx Imath::Imath_static))
-set(IMATH_STATIC_LIB_SUFFIX "_static" CACHE STRING "name to append to static library (in addition to normal suffix)")
 
 # rpath related setup. Make sure we force an rpath to the rpath we're compiling
 set(CMAKE_SKIP_BUILD_RPATH FALSE)

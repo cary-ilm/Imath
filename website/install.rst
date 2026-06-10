@@ -169,48 +169,28 @@ add ``PyImath`` as a ``COMPONENT`` to ``find_package(Imath)``:
 Library Names and Namespaces
 ----------------------------
 
-When building shared a library, the library is identified with a
-series of symbolic links with embedded release numbers in the
-filenames:
+Imath itself is a header-only C++ library. The C++ namespace embeds
+the major and minor release numbers, i.e. ``Imath_3_2``, ``Imath_3_1``,
+etc. This namespacing can be controlled through the build-time cmake
+option ``IMATH_NAMESPACE``.
+
+When the Python bindings are enabled, the ``libPyImath`` and
+``libPyBindImath`` shared libraries are identified with a series of
+symbolic links with embedded release numbers in the filenames:
 
 .. code-block::
 
-    libImath.so -> libImath-3_2.so.31
-    libImath-3_2.so.31 -> libImath-3_2.so.31.3.2.0
-    libImath-3_2.so.31.3.2.0 (the actual shared object file)
+    libPyImath.so -> libPyImath_Python3_12-3_2.so.30
+    libPyImath_Python3_12-3_2.so.30 -> libPyImath_Python3_12-3_2.so.30.3.2.0
+    libPyImath_Python3_12-3_2.so.30.3.2.0 (the actual shared object file)
 
-The ``31`` identifies the soversion of the ABI, and the ``3.2.0``
-identifies the release major, minor, and patch numbers. Furthermore,
-by default, the library name is suffixed with the major and minor
-release numbers, which serves as an aid in building an application
-that requires simultaneous support for multiple versions of the
-library, i.e linking against both release v3.2 and v3.1 in teh same
-application, in the rare event this is ever necessary. Note that this
-feature is accompanied by the C++ namespace, which by default embeds
-all symbols in a namespace that encodes the major and minor release,
-i.e. ``Imath_3_2``, ``Imath_3_1``, etc.
-
-This namespacing and library suffixing can be controlled throught the
-build-time cmake option ``IMATH_NAMESPACE`` and ``IMATH_LIB_SUFFIX``,
-respectively. If ``IMATH_LIB_SUFFIX`` is provided when configuring
-cmake, that string will appear after ``libImath`` in the library
-filename, in place of the default ``-3_2``.  Note that if
-``IMATH_LIB_SUFFIX=""``, the suffix will be empty.
-
-In addition to the versioned and suffixed shared object names, the
-build also installs a symbolic link with the unversioned and
-unsuffixed name ``libImath.so``. This can be disabled with the
-``IMATH_INSTALL_SYM_LINK`` cmake option.
+The soversion identifies the ABI, and the release major, minor, and
+patch numbers appear in the full library filename. The library suffix
+can be controlled through ``PYIMATH_LIB_SUFFIX`` and
+``PYBINDIMATH_LIB_SUFFIX``.
 
 CMake Build-time Configuration Options
 --------------------------------------
-
-* ``BUILD_SHARED_LIBS``
-
-  This is the primary control whether to build static libraries or
-  shared libraries / dlls (side note: technically a convention, hence
-  not an official ``CMAKE_`` variable, it is defined within cmake and
-  used everywhere to control this static / shared behavior)
 
 * ``BUILD_TESTING``
 
@@ -220,18 +200,6 @@ CMake Build-time Configuration Options
 * ``IMATH_INSTALL_PKG_CONFIG``
 
   If true, install the ``Imath.pc`` package config file. On by default.
-
-* ``IMATH_INSTALL_SYM_LINK``
-
-  If true, create a symbolic link to the shared object with a name
-  with no suffix, i.e. ``libImath.so``. On by default.
-
-* ``IMATH_BUILD_APPLE_FRAMEWORKS``
-
-  If true, the build configures the library into an Apple framework,
-  i.e. ``Imath.framework``, rather than the traditional ``lib`` and
-  ``includes`` subdirectories.  Use in conjunction with
-  ``CMAKE_SYSTEM_NAME=iOS``.
 
 Building the Python Bindings
 ----------------------------
