@@ -135,20 +135,11 @@ conversion, this is generally slower than the lookup table, but it
 may be preferable when memory limits preclude storing of the
 65,536-entry lookup table.
 
-The lookup table symbol is included in the compilation even if
-``IMATH_HALF_USE_LOOKUP_TABLE`` is false, because application code
-using the exported ``half.h`` may choose to enable the use of the table.
-
-An implementation can eliminate the table from compilation by
-defining the ``IMATH_HALF_NO_LOOKUP_TABLE`` preprocessor symbol.
-Simply add:
-
-.. code-block::
-
-    #define IMATH_HALF_NO_LOOKUP_TABLE
-
-before including ``half.h``, or define the symbol on the compile
-command line.
+When ``IMATH_HALF_USE_LOOKUP_TABLE`` is enabled at configure time, the
+lookup table is compiled into the Imath library and the
+``IMATH_HALF_USE_LOOKUP_TABLE`` preprocessor symbol is defined in
+``ImathConfig.h``. When disabled, half-to-float conversion uses F16C
+instructions (if available) or the bit-shift algorithm.
 
 Furthermore, an implementation wishing to receive ``FE_OVERFLOW``
 and ``FE_UNDERFLOW`` floating point exceptions when converting

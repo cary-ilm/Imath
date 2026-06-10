@@ -9,7 +9,7 @@ if(NOT "${CMAKE_PROJECT_NAME}" STREQUAL "${PROJECT_NAME}")
   message(STATUS "Imath is configuring as a cmake sub project")
 endif()
 
-option(IMATH_HALF_USE_LOOKUP_TABLE "Convert half-to-float using a lookup table (on by default)" ON)
+option(IMATH_HALF_USE_LOOKUP_TABLE "Convert half-to-float using a lookup table (on by default)" OFF)
 
 option(IMATH_USE_DEFAULT_VISIBILITY "Makes the compile use default visibility (by default compiles tidy, hidden-by-default)"     OFF)
 

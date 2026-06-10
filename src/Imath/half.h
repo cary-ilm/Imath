@@ -138,18 +138,11 @@
 /// may be preferable when memory limits preclude storing of the
 /// 65,536-entry lookup table.
 ///
-/// The lookup table symbol is included in the compilation even if
-/// ``IMATH_HALF_USE_LOOKUP_TABLE`` is false, because application code
-/// using the exported ``half.h`` may choose to enable the use of the table.
-///
-/// An implementation can eliminate the table from compilation by
-/// defining the ``IMATH_HALF_NO_LOOKUP_TABLE`` preprocessor symbol.
-/// Simply add:
-///
-///     #define IMATH_HALF_NO_LOOKUP_TABLE
-///
-/// before including ``half.h``, or define the symbol on the compile
-/// command line.
+/// When ``IMATH_HALF_USE_LOOKUP_TABLE`` is enabled at configure time,
+/// the lookup table is compiled into the Imath library and the
+/// ``IMATH_HALF_USE_LOOKUP_TABLE`` preprocessor symbol is defined in
+/// ``ImathConfig.h``. When disabled, half-to-float conversion uses F16C
+/// instructions (if available) or the bit-shift algorithm.
 ///
 /// Furthermore, an implementation wishing to receive ``FE_OVERFLOW``
 /// and ``FE_UNDERFLOW`` floating point exceptions when converting
@@ -268,7 +261,7 @@ typedef uint16_t imath_half_bits_t;
 typedef imath_half_bits_t half;
 #endif
 
-#if !defined(IMATH_HALF_NO_LOOKUP_TABLE)
+#if defined(IMATH_HALF_USE_LOOKUP_TABLE)
 #    if defined(__cplusplus)
 extern "C"
 #    else
@@ -296,8 +289,7 @@ imath_half_to_float (imath_half_bits_t h)
 #    else
     return _cvtsh_ss (h);
 #    endif
-#elif defined(IMATH_HALF_USE_LOOKUP_TABLE) &&                                  \
-    !defined(IMATH_HALF_NO_LOOKUP_TABLE)
+#elif defined(IMATH_HALF_USE_LOOKUP_TABLE)
     return imath_half_to_float_table[h].f;
 #else
     imath_half_uif_t v;
@@ -890,15 +882,26 @@ half::setBits (uint16_t bits) IMATH_NOEXCEPT
 
 IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
 
+#include <iostream>
+#include <limits>
+
 /// Output h to os, formatted as a float
-IMATH_EXPORT std::ostream&
-             operator<< (std::ostream& os, IMATH_INTERNAL_NAMESPACE::half h);
+inline IMATH_EXPORT std::ostream&
+operator<< (std::ostream& os, IMATH_INTERNAL_NAMESPACE::half h)
+{
+    os << float (h);
+    return os;
+}
 
 /// Input h from is
-IMATH_EXPORT std::istream&
-             operator>> (std::istream& is, IMATH_INTERNAL_NAMESPACE::half& h);
-
-#include <limits>
+inline IMATH_EXPORT std::istream&
+operator>> (std::istream& is, IMATH_INTERNAL_NAMESPACE::half& h)
+{
+    float f;
+    is >> f;
+    h = IMATH_INTERNAL_NAMESPACE::half (f);
+    return is;
+}
 
 namespace std
 {
@@ -996,11 +999,63 @@ public:
 // Debugging
 //----------
 
-IMATH_EXPORT void
-printBits (std::ostream& os, IMATH_INTERNAL_NAMESPACE::half h);
-IMATH_EXPORT void printBits (std::ostream& os, float f);
-IMATH_EXPORT void printBits (char c[19], IMATH_INTERNAL_NAMESPACE::half h);
-IMATH_EXPORT void printBits (char c[35], float f);
+inline IMATH_EXPORT void
+printBits (std::ostream& os, IMATH_INTERNAL_NAMESPACE::half h)
+{
+    unsigned short b = h.bits ();
+
+    for (int i = 15; i >= 0; i--)
+    {
+        os << (((b >> i) & 1) ? '1' : '0');
+
+        if (i == 15 || i == 10) os << ' ';
+    }
+}
+
+inline IMATH_EXPORT void
+printBits (std::ostream& os, float f)
+{
+    IMATH_INTERNAL_NAMESPACE::half::uif x;
+    x.f = f;
+
+    for (int i = 31; i >= 0; i--)
+    {
+        os << (((x.i >> i) & 1) ? '1' : '0');
+
+        if (i == 31 || i == 23) os << ' ';
+    }
+}
+
+inline IMATH_EXPORT void
+printBits (char c[19], IMATH_INTERNAL_NAMESPACE::half h)
+{
+    unsigned short b = h.bits ();
+
+    for (int i = 15, j = 0; i >= 0; i--, j++)
+    {
+        c[j] = (((b >> i) & 1) ? '1' : '0');
+
+        if (i == 15 || i == 10) c[++j] = ' ';
+    }
+
+    c[18] = 0;
+}
+
+inline IMATH_EXPORT void
+printBits (char c[35], float f)
+{
+    IMATH_INTERNAL_NAMESPACE::half::uif x;
+    x.f = f;
+
+    for (int i = 31, j = 0; i >= 0; i--, j++)
+    {
+        c[j] = (((x.i >> i) & 1) ? '1' : '0');
+
+        if (i == 31 || i == 23) c[++j] = ' ';
+    }
+
+    c[34] = 0;
+}
 
 #if !defined(__CUDACC__) && !defined(__CUDA_FP16_HPP__) && !defined(__HIP__)
 using half = IMATH_INTERNAL_NAMESPACE::half;

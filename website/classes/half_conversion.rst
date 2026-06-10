@@ -39,24 +39,11 @@ conversion via the ``IMATH_HALF_USE_LOOKUP_TABLE`` CMake option:
 
     $ cmake -DIMATH_HALF_USE_LOOKUP_TABLE=OFF <source directory>
 
-Note that when building and installing the Imath library itself, the
-65,536-entry lookup table symbol will be compiled into the library
-even if the ``IMATH_HALF_USE_LOOKUP_TABLE`` setting is false. This
-allows applications using that installed Imath library downstream to
-choose at compile time which conversion method to use.
-
-Applications with memory limitations that cannot accomodate the
-conversion lookup table can eliminate it from the library by building
-Imath with the C preprocessor define ``IMATH_HALF_NO_LOOKUP_TABLE``
-defined. Note that this is a compile-time option, not a CMake setting
-(making it possible for application code to choose the desired
-behavior). Simply add:
-::
-
-    #define IMATH_HALF_NO_LOOKUP_TABLE
-
-before including ``half.h``, or define the symbol on the compile
-command line.
+When ``IMATH_HALF_USE_LOOKUP_TABLE`` is off, the lookup table is not
+compiled into the Imath library and the ``IMATH_HALF_USE_LOOKUP_TABLE``
+preprocessor symbol is not defined in ``ImathConfig.h``. Half-to-float
+conversion then uses F16C instructions (if available) or the bit-shift
+algorithm.
 
 Furthermore, an implementation wishing to receive ``FE_OVERFLOW`` and
 ``FE_UNDERFLOW`` floating point exceptions when converting float to

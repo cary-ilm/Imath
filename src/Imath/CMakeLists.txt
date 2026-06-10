@@ -8,10 +8,12 @@
 set(IMATH_LIBRARY Imath)
 
 set(IMATH_SOURCES
-    half.cpp
     ImathMatrixAlgo.cpp
-    toFloat.h
 )
+
+if(IMATH_HALF_USE_LOOKUP_TABLE)
+    list(APPEND IMATH_SOURCES half.cpp toFloat.h)
+endif()
 
 set(IMATH_HEADERS
     half.h

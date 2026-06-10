@@ -7,7 +7,8 @@
 // ``half.h`` works as a "header-only" implementation not requiring
 // the compiled library. Note that the C-language support for half
 // only includes conversion to and from float.
-#define IMATH_HALF_NO_LOOKUP_TABLE
+#include <ImathConfig.h>
+#undef IMATH_HALF_USE_LOOKUP_TABLE
 
 #include <half.h>
 #include <math.h>
