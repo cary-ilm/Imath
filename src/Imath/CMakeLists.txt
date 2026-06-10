@@ -11,7 +11,6 @@ set(IMATH_SOURCES
     half.cpp
     ImathFun.cpp
     ImathMatrixAlgo.cpp
-    ImathRandom.cpp
     toFloat.h
 )
 
