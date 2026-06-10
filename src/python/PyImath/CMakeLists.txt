@@ -14,6 +14,14 @@
 
 set(PYIMATH_LIBRARY PyImath)
 
+# The SOVERSION tracks the PyImath ABI version. Increment whenever, and
+# only when, the PyImath ABI changes in non-backwards-compatible ways.
+# The VERSION appends the Imath release number to the shared object name.
+set(PYIMATH_LIB_SOVERSION 30)
+set(PYIMATH_LIB_VERSION "${PYIMATH_LIB_SOVERSION}.${Imath_VERSION}")
+set(PYIMATH_LIB_SOVERSION ${PYIMATH_LIB_SOVERSION} CACHE INTERNAL "PyImath ABI soversion")
+set(PYIMATH_LIB_VERSION ${PYIMATH_LIB_VERSION} CACHE INTERNAL "PyImath shared library version")
+
 message(STATUS "Configuring imath module and ${PYIMATH_LIBRARY} library")
 
 set(PYIMATH_SOURCES
@@ -110,8 +118,8 @@ add_library(Imath::PyImath ALIAS ${PYIMATH_LIBRARY})
 
 set_target_properties(${PYIMATH_LIBRARY} PROPERTIES
   OUTPUT_NAME "${PYIMATH_LIBRARY}${PYIMATH_LIB_SUFFIX}"
-  SOVERSION ${IMATH_LIB_SOVERSION}
-  VERSION ${IMATH_LIB_VERSION}
+  SOVERSION ${PYIMATH_LIB_SOVERSION}
+  VERSION ${PYIMATH_LIB_VERSION}
   POSITION_INDEPENDENT_CODE ON
 )
 
@@ -249,17 +257,44 @@ if (IMATH_INSTALL)
     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
     set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-    set(lib_suffix "${IMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}")
     set(pylib_suffix "${PYIMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}")
 
     # boost lib/dir
-    set(BOOST_PYTHON_LOCATION ${Boost_PYTHON_LIBRARY_RELEASE})
+    set(BOOST_PYTHON_LOCATION "")
+    if(TARGET Boost::python)
+      if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        get_target_property(BOOST_PYTHON_LOCATION Boost::python IMPORTED_LOCATION_DEBUG)
+      endif()
+      if(NOT BOOST_PYTHON_LOCATION)
+        get_target_property(BOOST_PYTHON_LOCATION Boost::python IMPORTED_LOCATION_RELEASE)
+      endif()
+      if(NOT BOOST_PYTHON_LOCATION)
+        get_target_property(BOOST_PYTHON_LOCATION Boost::python IMPORTED_LOCATION)
+      endif()
+    endif()
+    if(NOT BOOST_PYTHON_LOCATION)
+      if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(BOOST_PYTHON_LOCATION ${Boost_PYTHON_LIBRARY_DEBUG})
+      else()
+        set(BOOST_PYTHON_LOCATION ${Boost_PYTHON_LIBRARY_RELEASE})
+      endif()
+    endif()
     get_filename_component(boost_libdir "${BOOST_PYTHON_LOCATION}" DIRECTORY)
     get_filename_component(boost_libname "${BOOST_PYTHON_LOCATION}" NAME_WE)
     string(REGEX REPLACE "^lib" "" boost_libname "${boost_libname}")
 
     # python lib/dir
-    get_filename_component(python_libdir "${Python3_LIBRARIES}" DIRECTORY)
+    set(_python_libloc "")
+    if(TARGET Python3::Module)
+      get_target_property(_python_libloc Python3::Module IMPORTED_LOCATION)
+      if(NOT _python_libloc)
+        get_target_property(_python_libloc Python3::Module IMPORTED_LOCATION_RELEASE)
+      endif()
+    endif()
+    if(NOT _python_libloc)
+      set(_python_libloc "${Python3_LIBRARIES}")
+    endif()
+    get_filename_component(python_libdir "${_python_libloc}" DIRECTORY)
     set(python_libname "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
 
     string(REPLACE ".in" "" pcout ${pcinfile})

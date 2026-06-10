@@ -90,12 +90,12 @@ lib/cmake/Imath/PyImathTargets-release.cmake
 lib/cmake/Imath/PyImathTargets.cmake
 lib/libPyBindImath.so
 lib/libPyBindImathPYBIND_TEST_NAMESPACE.so
-lib/libPyBindImathPYBIND_TEST_NAMESPACE.so.$SOVERSION
-lib/libPyBindImathPYBIND_TEST_NAMESPACE.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
-lib/libPyImathPY_TEST_NAMESPACE.so
-lib/libPyImathPY_TEST_NAMESPACE.so.$SOVERSION
-lib/libPyImathPY_TEST_NAMESPACE.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
+lib/libPyBindImathPYBIND_TEST_NAMESPACE.so.$PYBINDIMATH_SOVERSION
+lib/libPyBindImathPYBIND_TEST_NAMESPACE.so.$PYBINDIMATH_SOVERSION.$MAJOR.$MINOR.$PATCH
 lib/libPyImath.so
+lib/libPyImathPY_TEST_NAMESPACE.so
+lib/libPyImathPY_TEST_NAMESPACE.so.$PYIMATH_SOVERSION
+lib/libPyImathPY_TEST_NAMESPACE.so.$PYIMATH_SOVERSION.$MAJOR.$MINOR.$PATCH
 lib/pkgconfig/Imath.pc
 lib/pkgconfig/PyBindImath.pc
 lib/pkgconfig/PyImath.pc

@@ -12,24 +12,12 @@ set(IMATH_VERSION_RELEASE_TYPE "-dev" CACHE STRING "Extra version tag string for
 set(IMATH_VERSION ${Imath_VERSION})
 set(IMATH_VERSION_API "${Imath_VERSION_MAJOR}_${Imath_VERSION_MINOR}")
 
-# The SOVERSION (i.e. numerical component of SONAME) tracks the ABI
-# version. Increment this number whenever, and only when, the ABI changes in
-# non-backwards-compatible ways.
-#
-# The OpenEXR project policy is to append the library version
-# "major.minor.patch" to the SONAME to form the real shared library name.
-# For example, in "libImath.so.31.3.2.0", "libImath.so.31" is the SONAME
-# and ".3.2.0" identifies the corresponding library release.
-
-set(IMATH_LIB_SOVERSION 30)
-set(IMATH_LIB_VERSION "${IMATH_LIB_SOVERSION}.${IMATH_VERSION}") # e.g. "30.3.2.0"
-
 # ImathSetup.cmake declares all the configuration variables visible
 # in cmake-gui or similar and the rest of the global
 # project setup. Check the context to see what is configurable.
 include(config/ImathSetup.cmake)
 
-message(STATUS "Configure ${IMATH_PACKAGE_NAME}, library API version: ${IMATH_LIB_VERSION}")
+message(STATUS "Configure ${IMATH_PACKAGE_NAME}, version: ${IMATH_VERSION}")
 
 option(IMATH_INSTALL "Install Imath library" ON)
 

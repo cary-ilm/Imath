@@ -23,7 +23,8 @@
 #   $MAJOR = IMATH_VERSION_MAJOR
 #   $MINOR = IMATH_VERSION_MINOR
 #   $PATCH = IMATH_VERSION_PATCH
-#   $SOVERSION = IMATH_LIB_SOVERSION
+#   $PYIMATH_SOVERSION = PyImath ABI soversion
+#   $PYBINDIMATH_SOVERSION = PyBindImath ABI soversion
 # The values of these variables are extracted from the CMakeLists.txt
 # in the current diretory and the CMakeCache.txt file from the build 
 # directory, provided as an argument. This is so the reference manifests
@@ -51,19 +52,9 @@ import re
 import argparse
 from pathlib import Path
 
-def imath_soversion():
-
-    with open("CMakeLists.txt", "r") as f:
-        for line in f:
-            m = re.search(r"set\(IMATH_LIB_SOVERSION (\d+)\)", line)
-            if m:
-                return m.group(1)
-
-    print("Can't find soversion")
-    sys.exit(1)
-
 def imath_version(CMakeCache):
     major = minor = patch = None
+    pyimath_sover = pybindimath_sover = None
     with open(CMakeCache, 'r') as f:
         for line in f:
             if line.startswith('CMAKE_PROJECT_VERSION_MAJOR:STATIC='):
@@ -72,38 +63,49 @@ def imath_version(CMakeCache):
                 minor = line.split('=')[1].strip()
             elif line.startswith('CMAKE_PROJECT_VERSION_PATCH:STATIC='):
                 patch = line.split('=')[1].strip()
-            if major != None and minor != None and patch != None:
-                return major, minor, patch
-                
-    print("Can't find Imath version!")
-    sys.exit(1)
+            elif line.startswith('PYIMATH_LIB_SOVERSION:INTERNAL='):
+                pyimath_sover = line.split('=')[1].strip()
+            elif line.startswith('PYBINDIMATH_LIB_SOVERSION:INTERNAL='):
+                pybindimath_sover = line.split('=')[1].strip()
 
-def process_line(line, major, minor, patch, so):
+    if major is None or minor is None or patch is None:
+        print("Can't find Imath version!")
+        sys.exit(1)
+
+    return major, minor, patch, pyimath_sover, pybindimath_sover
+
+def process_line(line, major, minor, patch, pyimath_sover, pybindimath_sover):
     path = line.strip().split("/_install/", 1)[-1]
     path = path.replace("lib64", "lib")  # ignore differences between "lib64" and "lib"
     path = path.replace("$MAJOR", major)
     path = path.replace("$MINOR", minor)
     path = path.replace("$PATCH", patch)
-    path = path.replace("$SOVERSION", so)
+    if pyimath_sover:
+        path = path.replace("$PYIMATH_SOVERSION", pyimath_sover)
+    if pybindimath_sover:
+        path = path.replace("$PYBINDIMATH_SOVERSION", pybindimath_sover)
     path = path.replace("$PYTHONMAJOR", str(sys.version_info.major))
     path = path.replace("$PYTHONMINOR", str(sys.version_info.minor))
     return path
 
-def load_manifest(path, major, minor, patch, so):
+def load_manifest(path, major, minor, patch, pyimath_sover, pybindimath_sover):
     """Load and return the list of files from the install manifest."""
     with open(path, 'r') as file:
-        return sorted(process_line(line, major, minor, patch, so) for line in file if line.strip() and not line.lstrip().startswith('#'))
+        return sorted(process_line(line, major, minor, patch, pyimath_sover, pybindimath_sover) for line in file if line.strip() and not line.lstrip().startswith('#'))
 
 def validate_install(build_manifest_path, reference_manifest_path, CMakeCache):
     """Main function to verify the installed files."""
 
-    major, minor, patch = imath_version(CMakeCache)
-    so = imath_soversion()
+    major, minor, patch, pyimath_sover, pybindimath_sover = imath_version(CMakeCache)
 
-    build_manifest = load_manifest(build_manifest_path, major, minor, patch, so)
-    reference_manifest = load_manifest(reference_manifest_path, major, minor, patch, so)
+    build_manifest = load_manifest(build_manifest_path, major, minor, patch, pyimath_sover, pybindimath_sover)
+    reference_manifest = load_manifest(reference_manifest_path, major, minor, patch, pyimath_sover, pybindimath_sover)
 
-    print(f"imath version: {major}.{minor}.{patch} soversion={so}")
+    print(f"imath version: {major}.{minor}.{patch}")
+    if pyimath_sover:
+        print(f"pyimath soversion: {pyimath_sover}")
+    if pybindimath_sover:
+        print(f"pybindimath soversion: {pybindimath_sover}")
     print(f"python version: {sys.version_info.major}.{sys.version_info.minor}")
     print("reference_manifest:")
     for l in reference_manifest:

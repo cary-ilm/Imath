@@ -13,6 +13,14 @@ find_package(pybind11 CONFIG REQUIRED)
 
 set(PYBINDIMATH_LIBRARY PyBindImath)
 
+# The SOVERSION tracks the PyBindImath ABI version. Increment whenever, and
+# only when, the PyBindImath ABI changes in non-backwards-compatible ways.
+# The VERSION appends the Imath release number to the shared object name.
+set(PYBINDIMATH_LIB_SOVERSION 30)
+set(PYBINDIMATH_LIB_VERSION "${PYBINDIMATH_LIB_SOVERSION}.${Imath_VERSION}")
+set(PYBINDIMATH_LIB_SOVERSION ${PYBINDIMATH_LIB_SOVERSION} CACHE INTERNAL "PyBindImath ABI soversion")
+set(PYBINDIMATH_LIB_VERSION ${PYBINDIMATH_LIB_VERSION} CACHE INTERNAL "PyBindImath shared library version")
+
 message(STATUS "Configuring pybindimath module and ${PYBINDIMATH_LIBRARY} library")
 
 set(PYBINDIMATH_SOURCES
@@ -54,8 +62,8 @@ add_library(Imath::PyBindImath ALIAS ${PYBINDIMATH_LIBRARY})
 
 set_target_properties(${PYBINDIMATH_LIBRARY} PROPERTIES
   OUTPUT_NAME "${PYBINDIMATH_LIBRARY}${PYBINDIMATH_LIB_SUFFIX}"
-  SOVERSION ${IMATH_LIB_SOVERSION}
-  VERSION ${IMATH_LIB_VERSION}
+  SOVERSION ${PYBINDIMATH_LIB_SOVERSION}
+  VERSION ${PYBINDIMATH_LIB_VERSION}
   POSITION_INDEPENDENT_CODE ON
 )
 
@@ -197,6 +205,8 @@ if (IMATH_INSTALL)
     set(exec_prefix "\${prefix}")
     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
     set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+    set(pybind_lib_suffix "${PYBINDIMATH_LIB_SUFFIX}${CMAKE_${uppercase_CMAKE_BUILD_TYPE}_POSTFIX}")
     string(REPLACE ".in" "" pcout ${pcinfile})
     configure_file(${pcinfile} ${CMAKE_CURRENT_BINARY_DIR}/${pcout} @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pcout} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

@@ -90,12 +90,12 @@ lib/cmake/Imath/PyImathTargets-release.cmake
 lib/cmake/Imath/PyImathTargets.cmake
 lib/libPyBindImath.so
 lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so
-lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$SOVERSION
-lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
+lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$PYBINDIMATH_SOVERSION
+lib/libPyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$PYBINDIMATH_SOVERSION.$MAJOR.$MINOR.$PATCH
 lib/libPyImath.so
 lib/libPyImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so
-lib/libPyImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$SOVERSION
-lib/libPyImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$SOVERSION.$MAJOR.$MINOR.$PATCH
+lib/libPyImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$PYIMATH_SOVERSION
+lib/libPyImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR.so.$PYIMATH_SOVERSION.$MAJOR.$MINOR.$PATCH
 lib/pkgconfig/Imath.pc
 lib/pkgconfig/PyBindImath.pc
 lib/pkgconfig/PyImath.pc

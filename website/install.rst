@@ -175,18 +175,14 @@ etc. This namespacing can be controlled through the build-time cmake
 option ``IMATH_NAMESPACE``.
 
 When the Python bindings are enabled, the ``libPyImath`` and
-``libPyBindImath`` shared libraries are identified with a series of
-symbolic links with embedded release numbers in the filenames:
+``libPyBindImath`` shared libraries install an unversioned symlink that
+points at the version-suffixed library name, for example:
 
 .. code-block::
 
-    libPyImath.so -> libPyImath_Python3_12-3_2.so.30
-    libPyImath_Python3_12-3_2.so.30 -> libPyImath_Python3_12-3_2.so.30.3.2.0
-    libPyImath_Python3_12-3_2.so.30.3.2.0 (the actual shared object file)
+    libPyImath.so -> libPyImath_Python3_12-3_2.so
 
-The soversion identifies the ABI, and the release major, minor, and
-patch numbers appear in the full library filename. The library suffix
-can be controlled through ``PYIMATH_LIB_SUFFIX`` and
+The library suffix can be controlled through ``PYIMATH_LIB_SUFFIX`` and
 ``PYBINDIMATH_LIB_SUFFIX``.
 
 CMake Build-time Configuration Options
