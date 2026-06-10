@@ -83,7 +83,6 @@ include/Imath/PyImathVec4Impl.h
 include/Imath/PyImathVecOperators.h
 lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
-lib/cmake/Imath/ImathTargets-debug.cmake
 lib/cmake/Imath/ImathTargets.cmake
 lib/cmake/Imath/PyBindImathTargets-debug.cmake
 lib/cmake/Imath/PyBindImathTargets.cmake

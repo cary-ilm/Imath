@@ -41,5 +41,4 @@ include/Imath/toFloat.h
 lib/Imath-$MAJOR_$MINOR.lib
 lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
-lib/cmake/Imath/ImathTargets-release.cmake
 lib/cmake/Imath/ImathTargets.cmake

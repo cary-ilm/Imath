@@ -47,7 +47,6 @@ lib/Imath-$MAJOR_$MINOR_d.lib
 lib/PyBindImath_Python$PYTHONMAJOR_$PYTHONMINOR-$MAJOR_$MINOR_d.lib
 lib/cmake/Imath/ImathConfig.cmake
 lib/cmake/Imath/ImathConfigVersion.cmake
-lib/cmake/Imath/ImathTargets-debug.cmake
 lib/cmake/Imath/ImathTargets.cmake
 lib/cmake/Imath/PyBindImathTargets-debug.cmake
 lib/cmake/Imath/PyBindImathTargets.cmake
