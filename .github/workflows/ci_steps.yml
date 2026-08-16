@@ -527,6 +527,42 @@ jobs:
           fi
         shell: bash
 
+      - name: Test ImathTest Standalone (msys2)
+        if: inputs.msystem != '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS != 'ON'
+        # Same as "Test ImathTest Standalone" above, but run in the
+        # msys2 shell against the msys2-toolchain-built/installed
+        # Imath. This is needed to reproduce toolchain-specific
+        # issues such as AcademySoftwareFoundation/openexr#2101,
+        # which only manifests when compiling against an
+        # already-installed Imath with the msys2 clang toolchain
+        # (not when building Imath in-tree).
+        run: |
+          set -x
+          IMATHTEST_BUILD_DIR=$WORKSPACE/_build.imathTest
+          cmake_args=("-B" "$IMATHTEST_BUILD_DIR" "-S" "$WORKSPACE/src/ImathTest")
+          cmake_args+=("-DCMAKE_PREFIX_PATH=$INSTALL_DIR")
+          cmake_args+=("-DCMAKE_BUILD_TYPE=${{ inputs.build-type }}")
+          cmake_args+=("-DCMAKE_CXX_STANDARD=${{ inputs.cxx-standard }}")
+          cmake_args+=("-DCMAKE_CXX_FLAGS=${{ inputs.cxx-flags }}")
+          cmake_args+=("-DCMAKE_VERBOSE_MAKEFILE=ON")
+          LINK_LOG="$IMATHTEST_BUILD_DIR/CMakeFiles/ImathTest.dir/link.txt"
+          if [ -n "${{ env.CMAKE_TOOLCHAIN_FILE }}" ]; then
+              cmake_args+=("-DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}")
+          fi
+          quoted_args=$(printf '%q ' "${cmake_args[@]}")
+          $CMAKE $quoted_args
+          $CMAKE --build $IMATHTEST_BUILD_DIR --config ${{ inputs.build-type }}
+
+          # Validate that there is no dependency on PyImath in the link log
+          if grep -r 'PyImath' "$LINK_LOG"; then
+              echo "error configuring ImathTest standalone: PyImath referenced in build artifacts"
+              echo "ImathTest should not depend on PyImath"
+              exit 1
+          fi
+          export PATH="$IMATH_PATH:$PATH"
+          $IMATHTEST_BUILD_DIR/bin/ImathTest
+        shell: msys2 {0}
+
       - name: Test ImathTest Standalone (iOS)
         if: inputs.msystem == '' && inputs.IMATH_BUILD_APPLE_FRAMEWORKS == 'ON'
         # Use the ImathTest program as an example of an application

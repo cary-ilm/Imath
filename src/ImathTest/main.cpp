@@ -20,6 +20,7 @@
 #include "testFrustumTest.h"
 #include "testFun.h"
 #include "testFunction.h"
+#include "testForwardDeclOrder.h"
 #include "testInterop.h"
 #include "testNoInterop.h"
 #include "testInterval.h"
@@ -88,6 +89,7 @@ main (int argc, char* argv[])
     TEST (testFrustumTest);
     TEST (testInterop);
     TEST (testNoInterop);
+    TEST (testForwardDeclOrder);
     // NB: If you add a test here, make sure to enumerate it in the
     // CMakeLists.txt so it runs as part of the test suite
 

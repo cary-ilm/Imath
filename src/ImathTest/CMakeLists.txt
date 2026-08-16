@@ -21,6 +21,7 @@ endif()
 add_executable(ImathTest 
   main.cpp
   testBox.cpp
+  testForwardDeclOrder.cpp
   testBoxAlgo.cpp
   testColor.cpp
   testExtractEuler.cpp
