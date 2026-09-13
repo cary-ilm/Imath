@@ -1,0 +1,111 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Contributors to the OpenEXR Project.
+
+# Diagnostic workflow for https://github.com/AcademySoftwareFoundation/Imath/issues/515
+#
+# PR #596 (python wheels) found that array quaternion operations
+# (slerp, normalize, inverse, etc.) diverge from the equivalent scalar
+# operations in the last few bits on some architectures, and worked
+# around it in PyImathTest by loosening the comparison tolerance on
+# those architectures. That test change should not depend on the wheel
+# work: this workflow reproduces the underlying discrepancy on its own,
+# using a normal CMake build (no cibuildwheel, no wheel packaging), so
+# it can be bisected/fixed independently.
+#
+# It intentionally runs pyImathTest.py as it exists on main -- i.e.
+# *before* any tolerance workaround -- with exact (==) comparisons, so
+# a real divergence surfaces as a normal Python AssertionError.
+#
+# Two build modes are covered, toggled by the internal_boost input:
+#   - internal_boost=false: Boost.Python from the system package
+#     manager, the same Boost configuration the rest of CI already
+#     uses on these architectures.
+#   - internal_boost=true: Boost.Python built from source via
+#     IMATH_FORCE_INTERNAL_BOOST (the mechanism added in PR #596),
+#     matching how the wheel itself builds Boost.
+# Comparing the two tells us whether the discrepancy is a general
+# arm64 floating point/vectorization issue, or specific to the
+# internal, statically-built Boost.Python used by the wheel.
+#
+# This is a manual diagnostic tool, not part of normal CI: trigger it
+# from the Actions tab (workflow_dispatch) while debugging issue #515.
+
+name: Quat Array Precision Repro
+
+on:
+  workflow_dispatch:
+    inputs:
+      internal_boost:
+        description: 'Build Boost.Python from source (IMATH_FORCE_INTERNAL_BOOST), matching the wheel build, instead of using the system Boost package'
+        type: boolean
+        default: true
+      tmate_on_failure:
+        description: 'Open a tmate SSH session on failure for interactive debugging'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    name: '${{ matrix.label }} (internal_boost=${{ inputs.internal_boost }})'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The two architectures the wheel build actually failed on
+          # (issue #515 also lists loongarch64/ppc64le/s390x, but none
+          # of those are available as GitHub-hosted runners).
+          - os: ubuntu-24.04-arm
+            label: linux-arm64
+          - os: macos-14
+            label: macos-arm64
+          # x86_64 controls: expected to pass, confirming the failure
+          # really is arch-specific and not a general test bug.
+          - os: ubuntu-latest
+            label: linux-x64
+          - os: macos-15-intel
+            label: macos-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install system Boost.Python (Linux, internal_boost=false)
+        if: ${{ !inputs.internal_boost && runner.os == 'Linux' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-python-dev
+
+      - name: Install system Boost.Python (macOS, internal_boost=false)
+        if: ${{ !inputs.internal_boost && runner.os == 'macOS' }}
+        run: brew install boost-python3
+
+      - name: Install Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPYTHON=ON \
+            -DPYIMATHNUMPY=OFF \
+            -DBUILD_TESTING=ON \
+            -DIMATH_TEST_PYTHON=ON \
+            -DIMATH_FORCE_INTERNAL_BOOST=${{ inputs.internal_boost && 'ON' || 'OFF' }}
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Run PyImathTest (exact quaternion comparisons, no tolerance)
+        working-directory: build
+        run: ctest -R 'PyImath\.PyImathTest$' --output-on-failure
+
+      - name: Debug session on failure
+        if: ${{ failure() && inputs.tmate_on_failure }}
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
+        timeout-minutes: 30
