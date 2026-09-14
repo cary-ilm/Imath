@@ -70,8 +70,18 @@ manylinux-x86_64-image = "manylinux_2_28"
 manylinux-i686-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
 
+# TEMPORARY diagnostic for issue #515: disable FMA contraction to test
+# whether it's the source of the scalar-vs-array quaternion divergence
+# on arm64 (see quatEqual / quatTolerantArchs in pyImathTest.py). GCC
+# and Clang only -- not applied on Windows/MSVC, which doesn't
+# recognize -ffp-contract and isn't in quatTolerantArchs anyway.
+# Remove once the hypothesis is confirmed/refuted.
+[tool.cibuildwheel.linux.environment]
+CMAKE_ARGS = "-DCMAKE_CXX_FLAGS=-ffp-contract=off -DCMAKE_C_FLAGS=-ffp-contract=off"
+
 # Needed for full C++17 support
 [tool.cibuildwheel.macos.environment]
 MACOSX_DEPLOYMENT_TARGET = "10.15"
 # pass compilers directly to avoid Homebrew LLVM libunwind
-CMAKE_ARGS = "-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++"
+# -ffp-contract=off is the same TEMPORARY diagnostic described above.
+CMAKE_ARGS = "-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_CXX_FLAGS=-ffp-contract=off -DCMAKE_C_FLAGS=-ffp-contract=off"
