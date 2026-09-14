@@ -27,8 +27,11 @@
 # arm64 floating point/vectorization issue, or specific to the
 # internal, statically-built Boost.Python used by the wheel.
 #
-# This is a manual diagnostic tool, not part of normal CI: trigger it
-# from the Actions tab (workflow_dispatch) while debugging issue #515.
+# This is a manual diagnostic tool, not part of normal CI. Trigger it
+# either from the Actions tab (workflow_dispatch -- requires the file
+# to be on the repo's default branch) or, more conveniently while this
+# lives on a feature branch, just push a change to this file: the
+# `push` trigger below fires on any branch.
 
 name: Quat Array Precision Repro
 
@@ -43,6 +46,12 @@ on:
         description: 'Open a tmate SSH session on failure for interactive debugging'
         type: boolean
         default: false
+  push:
+    # Fires on any branch when this file itself changes, so it can be
+    # (re-)triggered without needing to be on the default branch. Just
+    # push a no-op change (e.g. touch a comment) to re-run.
+    paths:
+      - '.github/workflows/quat_array_precision_repro.yml'
 
 permissions:
   contents: read
@@ -74,13 +83,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install system Boost.Python (Linux, internal_boost=false)
-        if: ${{ !inputs.internal_boost && runner.os == 'Linux' }}
+        if: ${{ inputs.internal_boost == false && runner.os == 'Linux' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y libboost-python-dev
 
       - name: Install system Boost.Python (macOS, internal_boost=false)
-        if: ${{ !inputs.internal_boost && runner.os == 'macOS' }}
+        if: ${{ inputs.internal_boost == false && runner.os == 'macOS' }}
         run: brew install boost-python3
 
       - name: Install Python
@@ -96,7 +105,7 @@ jobs:
             -DPYIMATHNUMPY=OFF \
             -DBUILD_TESTING=ON \
             -DIMATH_TEST_PYTHON=ON \
-            -DIMATH_FORCE_INTERNAL_BOOST=${{ inputs.internal_boost && 'ON' || 'OFF' }}
+            -DIMATH_FORCE_INTERNAL_BOOST=${{ inputs.internal_boost == false && 'OFF' || 'ON' }}
 
       - name: Build
         run: cmake --build build --config Release --parallel
