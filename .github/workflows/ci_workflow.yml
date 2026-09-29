@@ -104,6 +104,8 @@ jobs:
             label: Fedora Rawhide
             container: fedora:rawhide
             cmake: '3.31.6'
+            python: 'OFF'
+            pybind11: 'OFF'
             validate_install: 'OFF'
 
 
