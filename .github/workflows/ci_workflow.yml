@@ -46,7 +46,7 @@ jobs:
       # values.
       os: ubuntu-latest
       build: ${{ matrix.build }}
-      container: ${{ matrix.container || format('aswf/ci-openexr:{0}', matrix.vfx-cy || '2026') }}
+      container: ${{ matrix.container }}
       cmake: ${{ matrix.cmake || '3.15.7' }}
       cxx-standard: ${{ matrix.cxx-standard || '14' }}
       cxx-compiler: ${{ matrix.cxx-compiler || 'g++' }}
