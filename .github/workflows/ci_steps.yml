@@ -387,6 +387,8 @@ jobs:
               INSTALL_PREFIX=$INSTALL_DIR/bin/lib
           elif [[ "$RUNNER_OS" == "Windows" ]]; then
               INSTALL_PREFIX=$INSTALL_DIR/bin/
+          elif [[ "${{ inputs.container }}" == 'fedora:rawhide')
+              INSTALL_PREFIX=$INSTALL_DIR/lib64/lib
           else
               INSTALL_PREFIX=$INSTALL_DIR/lib/lib
           fi
