@@ -136,10 +136,13 @@ jobs:
         if: startsWith(inputs.container, 'fedora:')
         run: |
           dnf install -y gcc gcc-c++ cmake make git wget libdeflate-devel
+          if [[ "${{ inputs.python }}" == "ON" || "${{ inputs.pybind11 }}" == "ON" ]]; then
+              dnf install -y python3-devel
+          fi
         shell: bash
 
       - name: Install Python dev packages (Linux)
-        if: (inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && runner.os == 'Linux'
+        if: (inputs.python == 'ON' || inputs.pybind11 == 'ON' ) && runner.os == 'Linux' && !startsWith(inputs.container, 'fedora:')
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-dev
