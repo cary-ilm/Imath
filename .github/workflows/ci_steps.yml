@@ -21,6 +21,8 @@ on:
         type: string
       os:
         type: string
+      container:
+        type: string
       cmake:
         type: string
       cxx-standard:
@@ -59,6 +61,9 @@ on:
 jobs:
   steps:
     runs-on: ${{ inputs.os }}
+
+    container:
+      image: ${{ inputs.container }}
 
     env:
       CXX: ${{ inputs.cxx-compiler }}

@@ -46,6 +46,7 @@ jobs:
       # values.
       os: ubuntu-latest
       build: ${{ matrix.build }}
+      container: ${{ matrix.container || format('aswf/ci-openexr:{0}', matrix.vfx-cy || '2026') }}
       cmake: ${{ matrix.cmake || '3.15.7' }}
       cxx-standard: ${{ matrix.cxx-standard || '14' }}
       cxx-compiler: ${{ matrix.cxx-compiler || 'g++' }}
@@ -98,6 +99,13 @@ jobs:
           - build: 7
             label: cmake 4
             cmake: 4.0.3
+
+          - build: 8
+            label: Fedora Rawhide
+            container: fedora:rawhide
+            cmake: '3.31.6'
+            validate_install: 'OFF'
+
 
   macOS:
     name: 'macOS.${{ matrix.build}}: ${{ matrix.label }}'
