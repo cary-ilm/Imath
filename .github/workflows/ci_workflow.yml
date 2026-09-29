@@ -104,7 +104,8 @@ jobs:
             label: Fedora Rawhide
             container: fedora:rawhide
             cmake: '3.31.6'
-            python: 'OFF'
+            python: 'ON'
+            IMATH_FORCE_INTERNAL_BOOST: 'ON'
             pybind11: 'OFF'
             validate_install: 'OFF'
 
